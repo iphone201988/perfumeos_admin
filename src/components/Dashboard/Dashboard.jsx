@@ -4,7 +4,7 @@ import total_perfume_icon from '../../assets/icons/total-perfume-icon.svg'
 
 const Dashboard = () => {
   return (
-    <div className='flex gap-[32px]'>
+    <div className='flex gap-[32px] m-5'>
       <div className="bg-[#D4F4F4] p-[16px] rounded-[16px] max-w-[320px] w-full">
         <span className=' bg-[#352AA4] w-[68px] h-[68px] rounded-[12px] flex items-center justify-center'>
             <img src={total_user_icon} alt="" />
