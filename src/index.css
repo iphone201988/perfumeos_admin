@@ -1,0 +1,97 @@
+@import "tailwindcss";
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-2xl: 1580px;
+  --breakpoint-xl: 1366px;
+  --breakpoint-mlg: 1280px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-md: 767px;
+  --breakpoint-sm: 480px;
+}
+body {
+  font-family: "Poppins", sans-serif;
+}
+::placeholder{color: #666666;}
+/* common */
+.my-container {
+  width: 100%;
+  max-width: 1440px;
+  padding-left: 40px;
+  padding-right: 40px;
+  margin: 0 auto;
+}
+
+.btn-pri {
+  background-color: #352AA4;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 32px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+.btn-pri:hover {
+  background-color: #1b1555;
+}
+.btn-sec {
+  background-color: #fff;
+  color: #352AA4;
+  border: 1px solid #352AA4;
+  font-size: 16px;
+  border-radius: 32px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+.btn-sec:hover {
+  background-color: #1b1555;
+  color: #fff;
+}
+
+/* sidebar */
+ .sidebar-link{display: flex; color: #4896FF; padding: 16px 30px; gap: 16px;}
+ .sidebar-link.active{background-color: rgba(21, 201, 201, 0.30); color: #352AA4; border-left: 3px solid #352AA4;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
