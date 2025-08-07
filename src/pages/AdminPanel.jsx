@@ -1,10 +1,10 @@
 import React from 'react'
 import SideBar from '../components/SideBar/SideBar'
 import Header from '../components/Header/Header'
-import Dashboard from '../components/Dashboard/Dashboard'
-import ManageUsers from '../components/ManageUsers/ManageUsers'
+import Dashboard from './Dashboard'
+import ManageUsers from './ManageUsers'
 import ManageUserPopup from '../components/ManageUsers/ManageUserPopup'
-import ManagePerfum from '../components/ManagePerfum/ManagePerfum'
+import ManagePerfum from './ManagePerfum'
 import PerfumDetailPopup from '../components/ManagePerfum/PerfumDetailPopup/PerfumDetailPopup'
 import AddPerfumPopup from '../components/ManagePerfum/AddPerfumPopup/AddPerfumPopup'
 

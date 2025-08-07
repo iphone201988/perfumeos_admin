@@ -48,6 +48,7 @@ body {
   color: #fff;
 }
 
+
 /* sidebar */
  .sidebar-link{display: flex; color: #4896FF; padding: 16px 30px; gap: 16px;}
  .sidebar-link.active{background-color: rgba(21, 201, 201, 0.30); color: #352AA4; border-left: 3px solid #352AA4;}

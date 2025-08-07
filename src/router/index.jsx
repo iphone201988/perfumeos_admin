@@ -1,18 +1,74 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import AdminLayout from "../components/Layout/Layout";
-import Dashboard from "../components/Dashboard/Dashboard";
-
+import Dashboard from "../pages/Dashboard";
+import ManageUsers from "../pages/ManageUsers";
+import ManagePerfum from "../pages/ManagePerfum";
+import NotFound from "../pages/NotFound";
+import Login from "../pages/Login";
+import PublicRoute from "./PublicRoute";
+import PrivateRoute from "./PrivateRoute";
+import ManageQuiz from "../pages/ManageQuiz";
+import ManageArticle from "../pages/ManageArticle";
+import UserDetails from "../components/ManageUsers/UserDetails";
+import PerfumDetails from "../components/ManagePerfum/PerfumDetails";
+import EditPerfume from "../components/ManagePerfum/EditPerfume";
+const hasToken = () => !!localStorage.getItem("token");
 const router = createBrowserRouter([
     {
+        path: "/login",
+        element:
+            <PublicRoute>
+                <Login />
+            </PublicRoute>,
+    },
+    {
         path: "/",
-        element: <AdminLayout />
-        ,
+        element:
+            <PrivateRoute>
+                <AdminLayout />
+            </PrivateRoute>,
         children: [
             {
                 path: "",
                 element: <Dashboard />,
             },
+            {
+                path: "dashboard",
+                element: <Navigate to="/" />,
+            },
+            {
+                path: "users",
+                element: <ManageUsers />,
+            },
+            {
+                path: "user/:id",
+                element: <UserDetails />,
+            },
+            {
+                path: "perfumes",
+                element: <ManagePerfum />,
+            },
+            {
+                path: "perfume/:id",
+                element: <PerfumDetails />,
+            },
+            {
+                path: "perfumes/:id/edit",
+                element: <EditPerfume/>,
+            },
+            {
+                path: "quiz",
+                element: <ManageQuiz />,
+            },
+            {
+                path: "articles",
+                element: <ManageArticle />,
+            },
         ],
+    },
+    {
+        path: "*",
+        element: <NotFound />,
     },
 ]);
 
