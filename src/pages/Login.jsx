@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import logo from '../assets/logo.png';
 import { useForm } from 'react-hook-form';
 import { useAdminLoginMutation } from '../api';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const {
@@ -13,20 +14,36 @@ const Login = () => {
   } = useForm();
 
   const [
-    login, 
+    login,
     { isLoading, error, isSuccess, data }
   ] = useAdminLoginMutation();
-const navigate = useNavigate();
-  // Submit handler
-  const onSubmit = async (formData) => {
-    try {
-      const response = await login(formData).unwrap();
-      // Set token, navigate elsewhere, etc.
-      localStorage.setItem('token', response.data.token); // adjust based on response!
+  const navigate = useNavigate();
+  // ✅ Fixed: Use useEffect to handle error toast only once
+  useEffect(() => {
+    if (error) {
+      console.log("error", error);
+      toast.error(error.data?.message || 'Login failed. Please try again.');
+    }
+  }, [error]);
+
+  // ✅ Fixed: Handle success in useEffect as well
+  useEffect(() => {
+    if (isSuccess && data) {
+      toast.success('Login successful!');
+      localStorage.setItem('token', data.data?.token);
       navigate('/dashboard');
       reset();
+    }
+  }, [isSuccess, data, navigate, reset]);
+
+  // Submit handler - simplified
+  const onSubmit = async (formData) => {
+    try {
+      await login(formData).unwrap();
+      // Success is handled in useEffect above
     } catch (err) {
-      console.log("login",error)
+      // Error is handled in useEffect above
+      console.log("Login attempt failed:", err);
     }
   };
 
@@ -56,7 +73,7 @@ const navigate = useNavigate();
               )}
             </label>
           </div>
-          
+
           {/* Password */}
           <div>
             <label className='flex flex-col w-full'>

@@ -25,7 +25,11 @@ const ImageUploader = ({ onImageSelect, currentImage = null }) => {
             <div className="flex flex-col justify-center items-center w-full h-full">
                 {currentImage ? (
                     <img
-                        src={currentImage}
+                        src={currentImage
+                            ? currentImage.includes("/uploads")
+                                ? `${import.meta.env.VITE_BASE_URL}${currentImage}`
+                                : currentImage
+                            : addpic_icon}
                         alt="Perfume"
                         className="w-full h-full object-cover rounded"
                     />

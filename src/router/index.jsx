@@ -12,6 +12,7 @@ import ManageArticle from "../pages/ManageArticle";
 import UserDetails from "../components/ManageUsers/UserDetails";
 import PerfumDetails from "../components/ManagePerfum/PerfumDetails";
 import EditPerfume from "../components/ManagePerfum/EditPerfume";
+import AddPerfume from "../components/ManagePerfum/AddPerfume";
 const hasToken = () => !!localStorage.getItem("token");
 const router = createBrowserRouter([
     {
@@ -49,8 +50,12 @@ const router = createBrowserRouter([
                 element: <ManagePerfum />,
             },
             {
-                path: "perfume/:id",
+                path: "perfumes/:id",
                 element: <PerfumDetails />,
+            },
+            {
+                path: "perfumes/add",
+                element: <AddPerfume />,
             },
             {
                 path: "perfumes/:id/edit",

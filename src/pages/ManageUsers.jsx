@@ -7,6 +7,7 @@ import user_icon from '../assets/user-img.png';
 import { useUsersDetailsQuery } from '../api';
 import ManageUsersSkeleton from '../components/Skeleton/ManageUsersSkeleton';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../components/Loader/Loader';
 
 const ManageUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,7 +40,7 @@ const ManageUsers = () => {
   });
   console.log("sortValue", sortValue)
   if (isLoading) {
-    return <ManageUsersSkeleton />;
+     return <Loader message="Fetching Users" />;
   }
   console.log("usersResponse", usersResponse);
 

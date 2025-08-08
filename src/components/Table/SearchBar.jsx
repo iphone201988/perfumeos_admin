@@ -1,7 +1,7 @@
 import React from 'react';
 import search_icon from '../../assets/icons/search-icon.svg';
 
-const SearchBar = ({ searchTerm, onSearchChange, sortValue, onSortChange }) => {
+const SearchBar = ({ searchTerm, onSearchChange, sortValue, onSortChange ,placeholder="Search users..." }) => {
   return (
     <div className="flex gap-[16px] flex-wrap max-sm:gap-[8px] max-sm:w-full">
       {/* Search Input */}
@@ -9,7 +9,7 @@ const SearchBar = ({ searchTerm, onSearchChange, sortValue, onSortChange }) => {
         <img src={search_icon} alt="Search" className="w-4 h-4 flex-shrink-0" />
         <input
           type="text"
-          placeholder="Search users..."
+          placeholder={placeholder}
           value={searchTerm}
           onChange={onSearchChange}
           className="placeholder:!text-white bg-transparent outline-none text-white w-full max-sm:text-sm max-sm:placeholder:text-sm"

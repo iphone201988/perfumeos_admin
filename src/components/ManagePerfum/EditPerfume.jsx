@@ -1,219 +1,307 @@
 // EditPerfume.jsx
-import React, { useMemo, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  useGetPerfumeByIdQuery,
-  useUpdatePerfumeMutation,
-  useGetNotesQuery,
-  useGetPerfumersQuery,
-} from "../../api";
-
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useGetNotesQuery, useGetPerfumeByIdQuery, useGetPerfumersQuery, useUpdatePerfumeMutation } from "../../api";
 import ImageUploader from "../Form/ImageUploader";
 import FormField from "../Form/FormField";
-import FragranceNotesSection from "../Form/FragranceNotesSection";
+import { useNavigate, useParams } from "react-router-dom";
+import IntendedForMultiSelect from "../Form/IntendedForMultiSelect";
 import SeasonFields from "../Form/SeasonFields";
 import AccordsList from "./Accords/AccordsList";
-import { usePerfumeForm } from "../../hooks/usePerfumeForm";
-import CustomMultiSelect from "../Form/CustomMultiSelect";
-import IntendedForMultiSelect from "../Form/IntendedForMultiSelect";
+import { hexToRgb, rgbToHex } from "../../Utils/function";
+import Select from 'react-select';
+import Loader from "../Loader/Loader";
 
 const EditPerfume = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  // API hooks
   const { data: perfumeData, isLoading, error } = useGetPerfumeByIdQuery(params.id);
   const { data: notesResponse, isLoading: notesLoading } = useGetNotesQuery();
   const { data: perfumersResponse, isLoading: perfumersLoading } = useGetPerfumersQuery();
-  const [updatePerfume, { isLoading: updating }] = useUpdatePerfumeMutation();
-
   const perfume = useMemo(() => perfumeData?.data || null, [perfumeData]);
+  const [updating, setUpdating] = useState(false);
+  const [updatePerfume, { isLoading: updateLoading }] = useUpdatePerfumeMutation();
+  const [file, setFile] = useState(null);
 
-  // Use custom hook for form management
-  const {
-    form,
-    perfumerIds,
-    fragranceTop,
-    fragranceMiddle,
-    fragranceBottom,
-    fragranceNotes,
-    mainAccords,
-    isFormInitialized,
-    setPerfumerIds,
-    setFragranceTop,
-    setFragranceMiddle,
-    setFragranceBottom,
-    setFragranceNotes,
-    handleInputChange,
-    handleAccordUpdate,
-    handleAddAccord,
-    handleRemoveAccord,
-    onImageSelect,
-    handleIntendedForChange
-  } = usePerfumeForm(perfume);
+  const [form, setForm] = useState({
+    name: "",
+    brand: "",
+    image: "",
+    intendedFor: [],
+    description: "",
+    yearRelease: "",
+    concentration: "",
+    occasionDay: "",
+    occasionEvening: "",
+    seasonWinter: "",
+    seasonSummer: "",
+    seasonAutumn: "",
+    seasonSpring: "",
+  });
 
-  // Memoized options
+  const [mainAccords, setMainAccords] = useState([]);
+  const [perfumerIds, setPerfumerIds] = useState([]);
+  const [fragranceTop, setFragranceTop] = useState([]);
+  const [fragranceMiddle, setFragranceMiddle] = useState([]);
+  const [fragranceBottom, setFragranceBottom] = useState([]);
+  const [fragranceNotes, setFragranceNotes] = useState([]);
+
+  useEffect(() => {
+    if (perfume && perfumersResponse?.data && notesResponse?.data) {
+      setMainAccords((perfume.mainAccords || []).map((a, index) => ({
+        ...a,
+        backgroundColor: rgbToHex(a.backgroundColor || "#000000"),
+        width: a.width?.split("%")[0],
+        id: index,
+      })) || []);
+      setForm({
+        name: perfume.name || "",
+        brand: perfume.brand || "",
+        image: perfume.image || "",
+        description: perfume.description || "",
+        intendedFor: perfume.intendedFor || [],
+        yearRelease: perfume.year || "",
+        concentration: perfume.concentration || "",
+        occasionDay: perfume.occasions?.find((o) => o.name === "day")?.width.split("%")[0] || "",
+        occasionEvening: perfume.occasions?.find((o) => o.name === "night")?.width.split("%")[0] || "",
+        seasonWinter: perfume.seasons?.find((s) => s.name === "winter")?.width.split("%")[0] || "",
+        seasonSummer: perfume.seasons?.find((s) => s.name === "summer")?.width.split("%")[0] || "",
+        seasonAutumn: perfume.seasons?.find((s) => s.name === "fall")?.width.split("%")[0] || "",
+        seasonSpring: perfume.seasons?.find((s) => s.name === "spring")?.width.split("%")[0] || "",
+      });
+
+      // Convert perfumer IDs to react-select format
+      const perfumerIdList = Array.isArray(perfume.perfumers)
+        ? perfume.perfumers.map((p) => p.perfumerId || p._id)
+        : [];
+      const selectedPerfumers = perfumerIdList.map(id => {
+        const perfumer = perfumersResponse.data.find(p => p._id === id);
+        return perfumer ? { value: perfumer._id, label: perfumer.name } : null;
+      }).filter(Boolean);
+
+      // Convert note IDs to react-select format
+      const topNotes = perfume.notes?.top?.map((n) => {
+        const note = notesResponse.data.find(note => note._id === (n.noteId || n._id));
+        return note ? { value: note._id, label: note.name } : null;
+      }).filter(Boolean) || [];
+
+      const middleNotes = perfume.notes?.middle?.map((n) => {
+        const note = notesResponse.data.find(note => note._id === (n.noteId || n._id));
+        return note ? { value: note._id, label: note.name } : null;
+      }).filter(Boolean) || [];
+
+      const baseNotes = perfume.notes?.base?.map((n) => {
+        const note = notesResponse.data.find(note => note._id === (n.noteId || n._id));
+        return note ? { value: note._id, label: note.name } : null;
+      }).filter(Boolean) || [];
+
+      const noteNotes = perfume.notes?.note?.map((n) => {
+        const note = notesResponse.data.find(note => note._id === (n.noteId || n._id));
+        return note ? { value: note._id, label: note.name } : null;
+      }).filter(Boolean) || [];
+
+      setPerfumerIds(selectedPerfumers);
+      setFragranceTop(topNotes);
+      setFragranceMiddle(middleNotes);
+      setFragranceBottom(baseNotes);
+      setFragranceNotes(noteNotes);
+    }
+  }, [perfume, perfumersResponse?.data, notesResponse?.data]);
+
+  // Convert data to react-select format
   const noteOptions = useMemo(() => {
     if (!notesResponse?.data) return [];
     return notesResponse.data.map((note) => ({
-      label: note.name,
       value: note._id,
-      key: note._id,
+      label: note.name,
     }));
   }, [notesResponse?.data]);
 
   const perfumerOptions = useMemo(() => {
     if (!perfumersResponse?.data) return [];
     return perfumersResponse.data.map((p) => ({
-      label: p.name,
       value: p._id,
-      key: p._id,
+      label: p.name,
     }));
   }, [perfumersResponse?.data]);
 
+  const handleInputChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
-  // Memoized selected values
-  const selectedValues = useMemo(() => {
-    const perfumerIdsSet = new Set(perfumerIds);
-    const fragranceTopSet = new Set(fragranceTop);
-    const fragranceMiddleSet = new Set(fragranceMiddle);
-    const fragranceBottomSet = new Set(fragranceBottom);
-    const fragranceNoteSet = new Set(fragranceNotes);
+  const onImageSelect = useCallback((url, file) => {
+    setForm((pre) => ({ ...pre, image: url }));
+    setFile(file);
+  }, []);
 
-    return {
-      selectedPerfumers: perfumerOptions.filter((option) => perfumerIdsSet.has(option.value)),
-      selectedTopNotes: noteOptions.filter((option) => fragranceTopSet.has(option.value)),
-      selectedMiddleNotes: noteOptions.filter((option) => fragranceMiddleSet.has(option.value)),
-      selectedBottomNotes: noteOptions.filter((option) => fragranceBottomSet.has(option.value)),
-      selectedNoteNotes: noteOptions.filter((option) => fragranceNoteSet.has(option.value)),
-    };
-  }, [perfumerOptions, noteOptions, perfumerIds, fragranceTop, fragranceMiddle, fragranceBottom, fragranceNotes]);
+  const handleIntendedForChange = useCallback((newValues) => {
+    setForm((prev) => ({
+      ...prev,
+      intendedFor: Array.isArray(newValues) ? newValues : [newValues],
+    }));
+  }, []);
 
-  // Handlers with optimization
-  const handlePerfumerChange = useCallback((selectedOptions) => {
-    const ids = selectedOptions.map((option) => option.value);
-    setPerfumerIds(prevIds => {
-      if (prevIds.length !== ids.length || !ids.every(id => prevIds.includes(id))) {
-        return ids;
-      }
-      return prevIds;
+  const handleAccordUpdate = useCallback((idx, field, value) => {
+    setMainAccords((prev) => {
+      const updated = [...prev];
+      updated[idx] = {
+        ...updated[idx],
+        [field]: field === "backgroundColor" ? rgbToHex(value) : value,
+      };
+      return updated;
     });
-  }, [setPerfumerIds]);
+  }, []);
 
-  const handleTopNotesChange = useCallback((selectedOptions) => {
-    const ids = selectedOptions.map((option) => option.value);
-    setFragranceTop(prevIds => {
-      if (prevIds.length !== ids.length || !ids.every(id => prevIds.includes(id))) {
-        return ids;
-      }
-      return prevIds;
-    });
-  }, [setFragranceTop]);
+  // React-select change handlers
+  const onPerfumerChange = useCallback((selectedOptions) => {
+    setPerfumerIds(selectedOptions || []);
+  }, []);
 
-  const handleMiddleNotesChange = useCallback((selectedOptions) => {
-    const ids = selectedOptions.map((option) => option.value);
-    setFragranceMiddle(prevIds => {
-      if (prevIds.length !== ids.length || !ids.every(id => prevIds.includes(id))) {
-        return ids;
-      }
-      return prevIds;
-    });
-  }, [setFragranceMiddle]);
+  const onTopNotesChange = useCallback((selectedOptions) => {
+    setFragranceTop(selectedOptions || []);
+  }, []);
 
-  const handleBottomNotesChange = useCallback((selectedOptions) => {
-    const ids = selectedOptions.map((option) => option.value);
-    setFragranceBottom(prevIds => {
-      if (prevIds.length !== ids.length || !ids.every(id => prevIds.includes(id))) {
-        return ids;
-      }
-      return prevIds;
-    });
-  }, [setFragranceBottom]);
+  const onMiddleNotesChange = useCallback((selectedOptions) => {
+    setFragranceMiddle(selectedOptions || []);
+  }, []);
 
-  const handleNoteNotesChange = useCallback((selectedOptions) => {
-    const ids = selectedOptions.map((option) => option.value);
-    setFragranceNotes(prevIds => {
-      if (prevIds.length !== ids.length || !ids.every(id => prevIds.includes(id))) {
-        return ids;
-      }
-      return prevIds;
-    });
-  }, [setFragranceNotes]);
+  const onBottomNotesChange = useCallback((selectedOptions) => {
+    setFragranceBottom(selectedOptions || []);
+  }, []);
 
+  const onNoteNotesChange = useCallback((selectedOptions) => {
+    setFragranceNotes(selectedOptions || []);
+  }, []);
+
+  const handleAddAccord = useCallback(() => {
+    setMainAccords((prev, i) => [
+      ...prev,
+      {
+        name: "",
+        width: 50,
+        backgroundColor: "#000000",
+        id: i,
+      },
+    ]);
+  }, []);
+
+  const handleRemoveAccord = useCallback((idx) => {
+    setMainAccords((prev) => prev.filter((_, i) => i !== idx));
+  }, []);
+
+  // MOVED BEFORE THE EARLY RETURN - This was the issue!
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
 
-    const updatedData = {
-      name: form.name,
-      brand: form.brand,
-      category: form.category,
-      year: form.yearRelease ? Number(form.yearRelease) : null,
-      concentration: form.concentration,
-      perfumers: perfumerIds,
-      occasions: [
-        { name: "day", width: form.occasionDay },
-        { name: "night", width: form.occasionEvening },
-      ],
-      notes: {
-        top: fragranceTop.map((id) => ({ noteId: id })),
-        middle: fragranceMiddle.map((id) => ({ noteId: id })),
-        base: fragranceBottom.map((id) => ({ noteId: id })),
-      },
-      seasons: [
-        { name: "winter", width: form.seasonWinter },
-        { name: "summer", width: form.seasonSummer },
-        { name: "fall", width: form.seasonAutumn },
-        { name: "spring", width: form.seasonSpring },
-      ],
-      mainAccords: mainAccords.map((accord) => ({
-        name: accord.name,
-        width: `${accord.width}%`,
-        backgroundColor: accord.backgroundColor || "",
-      })),
-    };
+    const formData = new FormData();
+
+    // Basic fields - Map frontend field names to backend expected names
+    formData.append('name', form.name);
+    formData.append('brand', form.brand);
+    formData.append('description', form.description);
+    formData.append('year', form.yearRelease); // Backend expects 'year', not 'yearRelease'
+    formData.append('concentration', form.concentration);
+
+    // Handle image file upload
+    if (file) {
+      formData.append('file', file); // Changed from 'file' to 'image' to match backend
+    }
+
+    // Complex objects as JSON strings
+    formData.append('intendedFor', JSON.stringify(form.intendedFor));
+    formData.append('perfumers', JSON.stringify(perfumerIds.map(p => ({ perfumerId: p.value }))));
+    console.log("checking mainAccords", mainAccords)
+    // Filter out empty main accords
+    const validMainAccords = mainAccords.filter(accord =>
+      accord.name && accord.name.trim() != '' && accord.width != '0%'
+    );
+    formData.append('mainAccords', JSON.stringify(validMainAccords.map(accord => ({
+      name: accord.name,
+      width: accord.width ? `${accord.width}%` : '0%',
+      backgroundColor: hexToRgb(accord.backgroundColor)
+    }))));
+
+    formData.append('notes', JSON.stringify({
+      top: fragranceTop.map(note => ({ noteId: note.value })),
+      middle: fragranceMiddle.map(note => ({ noteId: note.value })),
+      base: fragranceBottom.map(note => ({ noteId: note.value })),
+      note: fragranceNotes.map(note => ({ noteId: note.value }))
+    }));
+
+    formData.append('occasions', JSON.stringify([
+      { name: "day", width: form.occasionDay },
+      { name: "night", width: form.occasionEvening }
+    ]));
+
+    formData.append('seasons', JSON.stringify([
+      { name: "winter", width: form.seasonWinter },
+      { name: "summer", width: form.seasonSummer },
+      { name: "fall", width: form.seasonAutumn },
+      { name: "spring", width: form.seasonSpring }
+    ]));
+
+    console.log("FormData contents:");
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
 
     try {
-      await updatePerfume({ id: params.id, ...updatedData }).unwrap();
+      setUpdating(true);
+      await updatePerfume({ id: params.id, formData }).unwrap();
       alert("Perfume updated successfully!");
-      navigate(`/perfume/${params.id}`);
+      navigate(`/perfumes/${params.id}`);
     } catch (err) {
       console.error("Update error:", err);
       alert("Failed to update perfume");
+    } finally {
+      setUpdating(false);
     }
-  }, [form, perfumerIds, fragranceTop, fragranceMiddle, fragranceBottom, mainAccords, params.id, updatePerfume, navigate]);
+  }, [form, perfumerIds, fragranceTop, fragranceMiddle, fragranceBottom, fragranceNotes, mainAccords, params.id]);
 
-  // Loading states
-  if (isLoading || notesLoading || perfumersLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-lg">Loading...</div>
-      </div>
-    );
+  // Custom styles for react-select to match your design
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      border: '1px solid #d1d5db',
+      borderRadius: '0.375rem',
+      minHeight: '40px',
+      fontSize: '14px',
+    }),
+    multiValue: (provided) => ({
+      ...provided,
+      backgroundColor: '#e0f2fe',
+    }),
+    multiValueLabel: (provided) => ({
+      ...provided,
+      color: '#0891b2',
+    }),
+    multiValueRemove: (provided) => ({
+      ...provided,
+      color: '#0891b2',
+      ':hover': {
+        backgroundColor: '#0891b2',
+        color: 'white',
+      },
+    }),
+  };
+
+  // Early return AFTER all hooks have been called
+  if (isLoading) {
+    return <Loader message="Geting perfume data" />;
+  }; 
+  if (notesLoading || perfumersLoading) {
+    return <Loader message="Loading perfume data" />;
+  }
+  if(updateLoading){
+    return <Loader message="Updating perfume" />
   }
 
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-red-500">Error loading perfume data</div>
-      </div>
-    );
-  }
-
-  if (!noteOptions.length || !perfumerOptions.length) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-lg">Preparing form...</div>
-      </div>
-    );
-  }
-  console.log("form", form)
   return (
     <div>
       <div className="bg-[#E1F8F8] rounded-[30px] py-[24px] px-[32px] max-lg:p-[16px]">
         <h6 className="text-[20px] font-semibold text-[#352AA4] mb-4">Edit Perfume</h6>
-
         <form onSubmit={handleSubmit} className="flex flex-col gap-[16px]">
-          {/* Image + Major info */}
           <div className="flex gap-[20px] max-md:flex-wrap max-md:gap-[16px]">
             <ImageUploader onImageSelect={onImageSelect} currentImage={form.image} />
             <FormField
@@ -234,24 +322,11 @@ const EditPerfume = () => {
             />
           </div>
 
-          {/* Category / Year */}
           <div className="flex gap-[16px] max-md:flex-wrap">
             <IntendedForMultiSelect
               value={form.intendedFor}
               onChange={handleIntendedForChange}
             />
-            {/* <FormField
-              label="Perfume Category"
-              name="category"
-              type="select"
-              value={form.category}
-              onChange={handleInputChange}
-            >
-              <option value="Flora">Flora</option>
-              <option value="Woody">Woody</option>
-              <option value="Fresh">Fresh</option>
-              <option value="Oriental">Oriental</option>
-            </FormField> */}
             <FormField
               label="Description"
               name="description"
@@ -263,9 +338,7 @@ const EditPerfume = () => {
             />
           </div>
 
-          {/* Concentration / Occasions */}
           <div className="flex gap-[16px] max-md:flex-wrap">
-
             <FormField
               label="Concentration"
               name="concentration"
@@ -283,47 +356,106 @@ const EditPerfume = () => {
               max={new Date().getFullYear()}
               placeholder="Enter here"
             />
-
           </div>
-          <div className="flex gap-[16px] max-md:flex-wrap">
 
-            <FormField
-              label="Occasion (Day Time)"
-              name="occasionDay"
-              value={form.occasionDay}
-              onChange={handleInputChange}
-              placeholder="Enter here"
-            />
-            <FormField
-              label="Occasion (Evening)"
-              name="occasionEvening"
-              value={form.occasionEvening}
-              onChange={handleInputChange}
-              placeholder="Enter here"
-            />
-
+          <div>
+            <h4 className="text-[20px] font-medium mt-4 mb-4">Occasion</h4>
+            <div className="flex gap-[16px] max-md:flex-wrap">
+              <FormField
+                label="Occasion (Day Time)"
+                name="occasionDay"
+                value={form.occasionDay}
+                onChange={handleInputChange}
+                placeholder="Enter here"
+              />
+              <FormField
+                label="Occasion (Evening)"
+                name="occasionEvening"
+                value={form.occasionEvening}
+                onChange={handleInputChange}
+                placeholder="Enter here"
+              />
+            </div>
           </div>
-          {/* Season Fields */}
+
           <SeasonFields form={form} onInputChange={handleInputChange} />
-          {/* Fragrance Notes Section */}
-          <FragranceNotesSection
-            noteOptions={noteOptions}
-            perfumerOptions={perfumerOptions}
-            selectedPerfumers={selectedValues.selectedPerfumers}
-            selectedTopNotes={selectedValues.selectedTopNotes}
-            selectedMiddleNotes={selectedValues.selectedMiddleNotes}
-            selectedBottomNotes={selectedValues.selectedBottomNotes}
-            selectedNoteNotes={selectedValues.selectedNoteNotes}
-            onPerfumerChange={handlePerfumerChange}
-            onTopNotesChange={handleTopNotesChange}
-            onMiddleNotesChange={handleMiddleNotesChange}
-            onBottomNotesChange={handleBottomNotesChange}
-            onNoteNotesChange={handleNoteNotesChange}
-          />
 
+          {/* Perfumer Multi-Select */}
+          <div className="flex flex-col">
+            <label className="text-[#7C7C7C] text-[14px] mb-1">Perfumer</label>
+            <Select
+              isMulti
+              options={perfumerOptions}
+              value={perfumerIds}
+              onChange={onPerfumerChange}
+              placeholder="Select perfumers..."
+              styles={customStyles}
+              closeMenuOnSelect={false}
+            />
+          </div>
 
+          {/* Fragrance Notes Multi-Selects */}
+          <div>
+            <h4 className="text-[20px] font-medium mt-4 mb-4">Fragrance Notes</h4>
+            <div className="flex gap-[16px] max-md:flex-wrap max-lg:flex-wrap">
+              <div className="flex flex-col w-full">
+                <label className="text-[#7C7C7C] text-[14px] mb-1">Top Notes</label>
+                <Select
+                  isMulti
+                  options={noteOptions}
+                  value={fragranceTop}
+                  onChange={onTopNotesChange}
+                  placeholder="Select top notes..."
+                  styles={customStyles}
+                  closeMenuOnSelect={false}
+                />
+              </div>
+              <div className="flex flex-col w-full">
+                <label className="text-[#7C7C7C] text-[14px] mb-1">Middle Notes</label>
+                <Select
+                  isMulti
+                  options={noteOptions}
+                  value={fragranceMiddle}
+                  onChange={onMiddleNotesChange}
+                  placeholder="Select middle notes..."
+                  styles={customStyles}
+                  closeMenuOnSelect={false}
+                />
+              </div>
+            </div>
 
-          {/* Main Accords */}
+            <div className="flex gap-[16px] max-md:flex-wrap max-lg:flex-wrap">
+              <div className="flex flex-col w-full">
+                <label className="text-[#7C7C7C] text-[14px] mb-1">Base Notes</label>
+                <Select
+                  isMulti
+                  options={noteOptions}
+                  value={fragranceBottom}
+                  onChange={onBottomNotesChange}
+                  placeholder="Select base notes..."
+                  styles={customStyles}
+                  closeMenuOnSelect={false}
+                />
+              </div>
+              {/* Other Notes Multi-Select */}
+              {fragranceNotes.length > 0 && (
+                <div className="flex flex-col w-full">
+                  <label className="text-[#7C7C7C] text-[14px] mb-1">Other Notes</label>
+                  <Select
+                    isMulti
+                    options={noteOptions}
+                    value={fragranceNotes}
+                    onChange={onNoteNotesChange}
+                    placeholder="Select other notes..."
+                    styles={customStyles}
+                    closeMenuOnSelect={false}
+                  />
+                </div>
+
+              )}
+            </div>
+          </div>
+
           <AccordsList
             accords={mainAccords}
             onUpdate={handleAccordUpdate}
@@ -336,9 +468,9 @@ const EditPerfume = () => {
             <button
               type="button"
               className="btn-sec px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              onClick={() => alert("Remove Perfume function")}
+              onClick={() => navigate(-1)}
             >
-              Remove Perfume
+              Back
             </button>
             <button
               type="submit"

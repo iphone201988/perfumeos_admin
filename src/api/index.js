@@ -7,6 +7,7 @@ const Tags = {
   PERFUME: "PERFUME",
   QUIZ: "QUIZ",
   ARTICLE: "ARTICLE",
+  PERFUMEBYID: "PERFUMEBYID",
 };
 console.log("BASE_URL", BASE_URL);
 export const apis = createApi({
@@ -22,7 +23,7 @@ export const apis = createApi({
       return headers;
     },
   }),
-  tagTypes: [Tags.ADMIN, Tags.USER, Tags.PERFUME, Tags.QUIZ, Tags.ARTICLE],
+  tagTypes: [Tags.ADMIN, Tags.USER, Tags.PERFUME, Tags.PERFUMEBYID, Tags.QUIZ, Tags.ARTICLE],
   endpoints: (builder) => ({
     adminLogin: builder.mutation({
       query: (userData) => ({
@@ -86,7 +87,7 @@ export const apis = createApi({
       }),
     }),
     questions: builder.query({
-      query: ({ page, limit, type,  }) => {
+      query: ({ page, limit, type }) => {
         const params = new URLSearchParams();
         if (type) params.append("type", type);
         if (page) params.append("page", page.toString());
@@ -100,6 +101,12 @@ export const apis = createApi({
         url: `/admin/question/${id}`,
         method: "PUT",
         body: formData,
+      }),
+    }),
+    deleteQuestion: builder.mutation({
+      query: (id) => ({
+        url: `/admin/question/${id}`,
+        method: "DELETE",
       }),
     }),
     getArticles: builder.query({
@@ -147,34 +154,48 @@ export const apis = createApi({
       },
       providesTags: [Tags.PERFUME],
     }),
-  getPerfumeById: builder.query({
-    query: (id) => ({
-      url: `/admin/perfume/${id}`,
-      method: "GET",
+    getPerfumeById: builder.query({
+      query: (id) => ({
+        url: `/admin/perfume/${id}`,
+        method: "GET",
+      }),
+      providesTags: [Tags.PERFUMEBYID],
     }),
-    invalidatesTags: [Tags.PERFUME],
-  }),
-  updatePerfume: builder.mutation({
-    query: ({ id, formData }) => ({
-      url: `/admin/perfume/${id}`,
-      method: "PUT",
-      body: formData,
+    updatePerfume: builder.mutation({
+      query: ({ id, formData }) => ({
+        url: `/admin/perfume/${id}`,
+        method: "PUT",
+        body: formData,
+      }),
+      invalidatesTags: [Tags.PERFUME, Tags.PERFUMEBYID],
     }),
-    invalidatesTags: [Tags.PERFUME],
-  }),
-  getNotes: builder.query({
-   query: () => ({
+    createPerFume: builder.mutation({
+      query: (formData) => ({
+        url: "/admin/addPerfume",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: [Tags.PERFUME],
+    }),
+    deletePerfume: builder.mutation({
+      query: (id) => ({
+        url: `/admin/perfume/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [Tags.PERFUME],
+    }),
+    getNotes: builder.query({
+      query: () => ({
         url: `/admin/notes`,
         method: "GET",
       }),
-  }),
-  getPerfumers: builder.query({
-    query: () => ({
-      url: `/admin/perfumers`,
-      method: "GET",
     }),
-  })
-
+    getPerfumers: builder.query({
+      query: () => ({
+        url: `/admin/perfumers`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -197,5 +218,8 @@ export const {
   useGetPerfumeByIdQuery,
   useUpdatePerfumeMutation,
   useGetNotesQuery,
-  useGetPerfumersQuery
+  useGetPerfumersQuery,
+  useCreatePerFumeMutation,
+  useDeletePerfumeMutation,
+  useDeleteQuestionMutation,
 } = apis;

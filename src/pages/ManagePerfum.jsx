@@ -8,6 +8,7 @@ import Pagination from '../components/Table/Pagination';
 import { useGetPerfumeQuery } from '../api';
 import { useNavigate } from 'react-router-dom';
 import ManageUsersSkeleton from '../components/Skeleton/ManageUsersSkeleton';
+import Loader from '../components/Loader/Loader';
 
 const ManagePerfum = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -38,7 +39,7 @@ const ManagePerfum = () => {
     sort: sortValue
   });
   if (isLoading) {
-    return <ManageUsersSkeleton />;
+    return <Loader  message="Fetching Perfumes" />;
   }
 
   // Process users data and add serial numbers
@@ -87,7 +88,7 @@ const ManagePerfum = () => {
     setCurrentPage(page);
   };
   const handleView = (id) => {
-    navigate(`/perfume/${id}`);
+    navigate(`/perfumes/${id}`);
   };
   return (
     <>
@@ -107,6 +108,7 @@ const ManagePerfum = () => {
             onSearchChange={handleSearch}
             sortValue={sortValue}
             onSortChange={handleSortChange}
+            placeholder="Search perfumes..."
           />
         </div>
         {/* table */}
@@ -141,7 +143,7 @@ const ManagePerfum = () => {
       )}
       </div>
       <div className="mt-[24px] flex">
-        <button className='btn-pri ml-auto'>Add Perfum</button>
+        <button onClick={()=>navigate("/perfumes/add")} className='btn-pri ml-auto'>Add Perfum</button>
       </div>
     </>
   )

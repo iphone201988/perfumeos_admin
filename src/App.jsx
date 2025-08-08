@@ -2,11 +2,13 @@ import { RouterProvider } from 'react-router-dom';
 import router from './router';
 import { Provider } from 'react-redux';
 import store from './store';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
 
   return (
     <Provider store={store}>
+      <ToastContainer />
       <RouterProvider router={router} />
     </Provider>
   );

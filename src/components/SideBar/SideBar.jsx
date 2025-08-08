@@ -20,7 +20,7 @@ const SideBar = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
   };
 
   const handleLogout = () => {
-    // localStorage.removeItem('token');
+    localStorage.clear();
     navigate('/login');
   };
 
@@ -68,14 +68,14 @@ const SideBar = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
 
         {/* profile section */}
         <div className="flex flex-col items-start justify-between mt-auto px-4 py-5 w-full">
-          <Link
+          {/* <Link
             to="/settings"
             className="sidebar-link text-[#7C7C7C] w-full flex items-center gap-3 py-3"
             onClick={handleLinkClick}
           >
             <img src={setting_icon} alt="Settings" className="w-6 h-6" />
             Settings
-          </Link>
+          </Link> */}
           <div
             to="/logout"
             className="sidebar-link !text-[#FF4040] bg-[rgba(255,64,64,0.10)] w-full flex items-center gap-3 py-3"
