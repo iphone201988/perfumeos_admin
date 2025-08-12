@@ -255,7 +255,7 @@ const ManageQuiz = () => {
       )}
 
       {/* Tabs */}
-      <div className="tabs flex gap-[24px] mb-[16px] flex-wrap">
+      <div className="tabs flex gap-[24px] mb-[16px] flex-wrap max-md:gap-[16px]">
         <button 
           className={tab === QUESTION_TYPES.TRIVIA ? 'btn-pri' : 'btn-sec'} 
           onClick={() => handleTabChange(QUESTION_TYPES.TRIVIA)}
@@ -304,11 +304,11 @@ const ManageQuiz = () => {
             <div className="flex gap-[16px] flex-wrap">
               <div className="flex items-center gap-[6px]">
                 <span className='w-[24px] h-[24px] rounded-full bg-[#F6595A]'></span>
-                <p className='text-[18px] font-medium text-[#7C7C7C]'>Wrong Answer</p>
+                <p className='text-[18px] font-medium text-[#7C7C7C] max-md:text-[16px]'>Wrong Answer</p>
               </div>
               <div className="flex items-center gap-[6px]">
                 <span className='w-[24px] h-[24px] rounded-full bg-[#0CDD39]'></span>
-                <p className='text-[18px] font-medium text-[#7C7C7C]'>Correct Answer</p>
+                <p className='text-[18px] font-medium text-[#7C7C7C] max-md:text-[16px]'>Correct Answer</p>
               </div>
             </div>
           </div>
@@ -318,8 +318,8 @@ const ManageQuiz = () => {
               <>
                 {questions.map((question, idx) => (
                   <div key={question._id || question.id} className="border-b border-[rgba(21,201,201,0.50)] py-[20px]">
-                    <div className="flex items-center justify-between">
-                      <p className='text-[20px] font-medium text-[#7C7C7C] flex-1 pr-4'>
+                    <div className="flex items-center justify-between max-md:flex-col max-md:items-start max-md:gap-[10px]">
+                      <p className='text-[20px] font-medium text-[#7C7C7C] flex-1 pr-4 max-lg:text-[16px]'>
                         <span className='text-[#4896FF]'>
                           Q{(currentPage - 1) * ITEMS_PER_PAGE + idx + 1}.
                         </span>
@@ -358,7 +358,7 @@ const ManageQuiz = () => {
                         </button>
                       </div>
                     </div>
-                    <div className="flex gap-[24px] flex-wrap max-md:gap-[16px] mt-[12px] ml-[30px]">
+                    <div className="flex gap-[24px] flex-wrap max-md:gap-[16px] mt-[12px] ml-[30px] max-md:ml-0">
                       {renderQuestionOptions(question, idx)}
                     </div>
                   </div>
@@ -388,7 +388,7 @@ const ManageQuiz = () => {
       {/* Image Modal */}
       {selectedImage && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" 
+          className="fixed inset-0 bg-[rgba(0,0,0,0.80)] bg-opacity-50 flex justify-center items-center z-[999999]" 
           onClick={handleCloseImageModal}
         >
           <div 

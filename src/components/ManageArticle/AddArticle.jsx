@@ -56,10 +56,10 @@ const AddArticle = ({ open, onClose, onSubmit, initialData = null }) => {
   if (!open) return null
 
   return (
-    <div className='w-full min-h-[100vh] fixed top-0 left-0 bg-[rgba(0,0,0,0.80)] z-[9999] flex items-center justify-center max-md:p-[20px]'>
+    <div className='w-full p-[20px]  min-h-[100vh] fixed top-0 left-0 bg-[rgba(0,0,0,0.80)] z-[9999] flex items-center justify-center max-md:p-[20px]'>
       <form
         onSubmit={handleSubmit}
-        className="bg-[#fff] p-[32px] rounded-[24px] max-w-[600px] w-full max-md:p-[16px] max-md:overflow-scroll max-md:h-[600px]"
+        className="bg-[#fff] p-[32px] h-full rounded-[24px] max-w-[600px] w-full max-md:p-[16px] max-md:overflow-scroll max-md:h-[600px]"
         autoComplete="off"
       >
         <div className="flex items-center justify-between">
@@ -118,7 +118,7 @@ const AddArticle = ({ open, onClose, onSubmit, initialData = null }) => {
             <label className='flex flex-col w-full'>
               <span className='text-[#7C7C7C] text-[14px]'>Content</span>
               <textarea
-                className='border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px] h-[120px]'
+                className='border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px] h-[220px]'
                 placeholder='Enter here'
                 value={content}
                 onChange={(e) => setContent(e.target.value)}

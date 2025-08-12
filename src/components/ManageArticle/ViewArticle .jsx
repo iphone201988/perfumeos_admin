@@ -17,8 +17,8 @@ const ViewArticle = ({ open, onClose, data = null, onEdit, onRemove }) => {
     };
 
     return (
-        <div className='w-full min-h-[100vh] fixed top-0 left-0 bg-[rgba(0,0,0,0.80)] z-[9999] flex items-center justify-center max-md:p-[20px]'>
-            <div className="bg-[#fff] p-[32px] rounded-[24px] max-w-[600px] w-full max-md:p-[16px] max-md:overflow-scroll max-md:h-[600px]">
+        <div className='w-full p-[20px] h-full overflow-auto min-h-[100vh] fixed top-0 left-0 bg-[rgba(0,0,0,0.80)] z-[9999] flex items-center justify-center max-md:p-[20px]'>
+            <div className="bg-[#fff] p-[32px] h-full overflow-auto rounded-[24px] max-w-[600px] w-full max-md:p-[16px] max-md:overflow-scroll max-md:h-[600px]">
                 <div className="flex items-center justify-between">
                     <h5 className='text-[20px] text-[#352AA4] font-semibold'>Article Details</h5>
                     <button className='cursor-pointer' onClick={onClose} aria-label="Close">

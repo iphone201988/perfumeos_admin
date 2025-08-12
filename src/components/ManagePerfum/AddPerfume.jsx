@@ -224,14 +224,17 @@ const AddPerfume = () => {
     const customStyles = {
         control: (provided) => ({
             ...provided,
-            border: '1px solid #d1d5db',
-            borderRadius: '0.375rem',
+            border: '1px solid #eeeeee',
+            borderRadius: '16px',
             minHeight: '40px',
-            fontSize: '14px',
+            fontSize: '16px',
+            padding:'8px 6px',
+            backgroundColor:'#fff'
         }),
         multiValue: (provided) => ({
             ...provided,
-            backgroundColor: '#e0f2fe',
+            backgroundColor: '#E1F8F8',
+            borderRadius: '8px',
         }),
         multiValueLabel: (provided) => ({
             ...provided,
@@ -256,9 +259,10 @@ const AddPerfume = () => {
             <div className="bg-[#E1F8F8] rounded-[30px] py-[24px] px-[32px] max-lg:p-[16px]">
                 <h6 className="text-[20px] font-semibold text-[#352AA4] mb-4">Add New Perfume</h6>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-[16px]">
-                    <div className="flex gap-[20px] max-md:flex-wrap max-md:gap-[16px]">
+                    <div className="flex gap-[20px] flex-col max-md:flex-wrap max-md:gap-[16px]">
                         <ImageUploader onImageSelect={onImageSelect} currentImage={form.image} />
-                        <FormField
+                        <div className="flex gap-[20px] max-md:flex-wrap max-md:gap-[16px]">
+                            <FormField
                             label="Perfume Name"
                             name="name"
                             value={form.name}
@@ -274,6 +278,7 @@ const AddPerfume = () => {
                             placeholder="Enter brand name"
                             required
                         />
+                        </div>
                     </div>
 
                     <div className="flex gap-[16px] max-md:flex-wrap">
@@ -405,7 +410,7 @@ const AddPerfume = () => {
                         onRemove={handleRemoveAccord}
                     />
 
-                    <div className="flex justify-end gap-[16px] mt-[24px] pt-4 border-t">
+                    <div className="flex justify-end gap-[16px] mt-[24px] pt-4 border-t max-md:flex-wrap">
                         <button
                             type="button"
                             className="btn-sec px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"

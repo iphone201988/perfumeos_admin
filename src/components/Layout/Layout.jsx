@@ -45,7 +45,7 @@ const AdminLayout = () => {
                     mobileMenuOpen={mobileMenuOpen}
                     setMobileMenuOpen={setMobileMenuOpen}
                 />
-                <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-sm:px-0 m-5'>
+                <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-sm:px-[20px] m-5'>
                     <Outlet />
                 </div>
             </main>

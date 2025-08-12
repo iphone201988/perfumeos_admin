@@ -260,31 +260,34 @@ const EditPerfume = () => {
   }, [form, perfumerIds, fragranceTop, fragranceMiddle, fragranceBottom, fragranceNotes, mainAccords, params.id]);
 
   // Custom styles for react-select to match your design
-  const customStyles = {
-    control: (provided) => ({
-      ...provided,
-      border: '1px solid #d1d5db',
-      borderRadius: '0.375rem',
-      minHeight: '40px',
-      fontSize: '14px',
-    }),
-    multiValue: (provided) => ({
-      ...provided,
-      backgroundColor: '#e0f2fe',
-    }),
-    multiValueLabel: (provided) => ({
-      ...provided,
-      color: '#0891b2',
-    }),
-    multiValueRemove: (provided) => ({
-      ...provided,
-      color: '#0891b2',
-      ':hover': {
-        backgroundColor: '#0891b2',
-        color: 'white',
-      },
-    }),
-  };
+   const customStyles = {
+        control: (provided) => ({
+            ...provided,
+            border: '1px solid #eeeeee',
+            borderRadius: '16px',
+            minHeight: '40px',
+            fontSize: '16px',
+            padding:'8px 6px',
+            backgroundColor:'#fff'
+        }),
+        multiValue: (provided) => ({
+            ...provided,
+            backgroundColor: '#E1F8F8',
+            borderRadius: '8px',
+        }),
+        multiValueLabel: (provided) => ({
+            ...provided,
+            color: '#0891b2',
+        }),
+        multiValueRemove: (provided) => ({
+            ...provided,
+            color: '#0891b2',
+            ':hover': {
+                backgroundColor: '#0891b2',
+                color: 'white',
+            },
+        }),
+    };
 
   // Early return AFTER all hooks have been called
   if (isLoading) {
@@ -302,9 +305,10 @@ const EditPerfume = () => {
       <div className="bg-[#E1F8F8] rounded-[30px] py-[24px] px-[32px] max-lg:p-[16px]">
         <h6 className="text-[20px] font-semibold text-[#352AA4] mb-4">Edit Perfume</h6>
         <form onSubmit={handleSubmit} className="flex flex-col gap-[16px]">
-          <div className="flex gap-[20px] max-md:flex-wrap max-md:gap-[16px]">
+          <div className="flex gap-[20px] flex-col max-md:flex-wrap max-md:gap-[16px]">
             <ImageUploader onImageSelect={onImageSelect} currentImage={form.image} />
-            <FormField
+            <div className="flex gap-[16px] max-md:flex-wrap">
+               <FormField
               label="Perfume Name"
               name="name"
               value={form.name}
@@ -320,6 +324,7 @@ const EditPerfume = () => {
               placeholder="Enter here"
               required
             />
+            </div>
           </div>
 
           <div className="flex gap-[16px] max-md:flex-wrap">
@@ -426,7 +431,7 @@ const EditPerfume = () => {
 
             <div className="flex gap-[16px] max-md:flex-wrap max-lg:flex-wrap">
               <div className="flex flex-col w-full">
-                <label className="text-[#7C7C7C] text-[14px] mb-1">Base Notes</label>
+                <label className="text-[#7C7C7C] text-[14px] mb-1 mt-[12px]">Base Notes</label>
                 <Select
                   isMulti
                   options={noteOptions}

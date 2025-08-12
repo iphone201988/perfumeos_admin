@@ -11,7 +11,7 @@ const AccordsList = ({ accords, onUpdate, onAdd, onRemove }) => {
       <h4 className="text-[20px] font-medium">Main Accords</h4>
       
       {accords.length === 0 ? (
-        <div className="text-gray-500 text-center py-8 border-2 border-dashed border-gray-200 rounded-lg">
+        <div className="text-gray-500 text-center py-8 border-1 bg-white border-dashed border-[#eeeeee] rounded-[16px]">
           No accords added yet. Click the button below to add your first accord.
         </div>
       ) : (
@@ -29,7 +29,7 @@ const AccordsList = ({ accords, onUpdate, onAdd, onRemove }) => {
       <button
         type="button"
         onClick={handleAddAccord}
-        className="self-start px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg border border-blue-200 transition-colors"
+        className="self-start btn-sec px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg border border-blue-200 transition-colors"
       >
         + Add accord
       </button>

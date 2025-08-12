@@ -291,7 +291,7 @@ const UserDetails = () => {
                     )}
                   </>
                 ) : (
-                  <p className="py-[14px] px-[18px] capitalize">{formData.fullname}</p>
+                  <p className="py-[14px] px-[18px] capitalize bg-white border rounded-2xl border-[#EEEEEE]">{formData.fullname}</p>
                 )}
               </label>
               {/* Email */}
@@ -334,7 +334,7 @@ const UserDetails = () => {
                     )}
                   </>
                 ) : (
-                  <p className="py-[14px] px-[18px]">{formData.gender}</p>
+                  <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">{formData.gender}</p>
                 )}
               </label>
               {/* Date of birth */}
@@ -356,7 +356,7 @@ const UserDetails = () => {
                     )}
                   </>
                 ) : (
-                  <p className="py-[14px] px-[18px]">
+                  <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">
                     {data.dob ? `${calculateAge(data.dob)} Years` : "Not provided"}
                   </p>
                 )}
@@ -384,7 +384,7 @@ const UserDetails = () => {
                   ))}
                 </div>
               ) : (
-                <p className="py-[14px] px-[18px]">
+                <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">
                   {formData.enjoySmell.length > 0 ? formData.enjoySmell.join(", ") : "Not specified"}
                 </p>
               )}
@@ -409,7 +409,7 @@ const UserDetails = () => {
                     ))}
                   </select>
                 ) : (
-                  <p className="py-[14px] px-[18px]">{formData.reasonForWearPerfume || "Not specified"}</p>
+                  <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">{formData.reasonForWearPerfume || "Not specified"}</p>
                 )}
               </label>
               {/* Perfume Budget */}
@@ -430,7 +430,7 @@ const UserDetails = () => {
                     ))}
                   </select>
                 ) : (
-                  <p className="py-[14px] px-[18px]">{formData.perfumeBudget || "Not specified"}</p>
+                  <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">{formData.perfumeBudget || "Not specified"}</p>
                 )}
               </label>
             </div>
@@ -456,7 +456,7 @@ const UserDetails = () => {
                     <span className="text-[#352AA4] font-medium">{(formData.perfumeStrength || 0).toFixed(2)}</span>
                   </>
                 ) : (
-                  <p className="py-[14px] px-[18px]">{(formData.perfumeStrength || 0).toFixed(2)}</p>
+                  <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">{(formData.perfumeStrength || 0).toFixed(2)}</p>
                 )}
               </label>
               {/* Referral Source */}
@@ -479,7 +479,7 @@ const UserDetails = () => {
                     ))}
                   </select>
                 ) : (
-                  <p className="py-[14px] px-[18px]">{formData.referralSource || "Not specified"}</p>
+                  <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">{formData.referralSource || "Not specified"}</p>
                 )}
               </label>
             </div>
@@ -488,7 +488,7 @@ const UserDetails = () => {
               <div className="flex gap-[16px] max-md:flex-wrap">
                 <label className="flex flex-col w-full">
                   <span className="text-[#7C7C7C] text-[14px]">Joined</span>
-                  <p className="py-[14px] px-[18px]">{formData.joined}</p>
+                  <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">{formData.joined}</p>
                 </label>
               </div>
             )}

@@ -13,7 +13,7 @@ const Dashboard = () => {
     console.log("dashboardData", dashboardData);
     const { totalUsers, totalPerfumes,usersMoreThanLastMonth,perfumesAddedThisMonth } = dashboardData?.data || {};
   return (
-    <div className="flex gap-[32px] m-5">
+    <div className="flex gap-[32px] my-5 max-md:flex-col max-md:justify-center max-md:items-center">
       <StatCard
         icon={total_user_icon}
         title="Total Users"

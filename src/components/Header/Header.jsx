@@ -94,10 +94,10 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
         </button>
       )}
 
-      <div className={`w-full flex items-center justify-between ${isMobile ? 'ml-[60px]' : ''}`}>
+      <div className={`w-full flex items-center justify-between ${isMobile ? 'ml-[60px] max-md:ml-[40px]' : ''}`}>
         {/* Dynamic title */}
-        <div className="flex items-center gap-2">
-          <h4 className='text-[24px] font-semibold text-[#352AA4]'>
+        <div className="flex items-center gap-2 max-md:flex-col max-md:items-start max-md:gap-0">
+          <h4 className='text-[24px] font-semibold text-[#352AA4] max-md:text-[16px]'>
             {pageTitle}
           </h4>
           {/* ✅ Updated breadcrumb condition */}

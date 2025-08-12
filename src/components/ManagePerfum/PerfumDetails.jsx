@@ -39,7 +39,7 @@ const PerfumDetails = () => {
 
         {/* Main Info */}
         <div className="flex gap-[32px] items-start max-md:flex-wrap mt-[16px]">
-          <div className="flex justify-center items-center border bg-white border-[#EFEFEF] rounded-2xl p-[8px] h-[170px] w-[130px]">
+          <div className="flex justify-center items-center border bg-white border-[#EFEFEF] rounded-2xl p-[8px] h-[170px] w-[230px]">
             <img
               src={
                 perfume.image
@@ -85,9 +85,10 @@ const PerfumDetails = () => {
         {/* Fragrance Pyramid */}
         <div className="mt-[24px]">
           <h4 className="text-[20px] font-medium mb-2">Fragrance Pyramid</h4>
-          {["top", "middle", "base", "note"]?.map((layer) => (
-            <div key={layer} className="mb-[16px]">
-              <div className="text-[#7C7C7C] text-[16px] font-semibold capitalize mb-1">{layer} notes</div>
+          <div className="">
+            {["top", "middle", "base", "note"]?.map((layer) => (
+            <div key={layer} className="py-[8px] border-b border-[#fff]">
+              <div className="text-[#352AA4] text-[16px] font-semibold capitalize mb-1 ml-[12px]">{layer} notes</div>
               <div className="flex flex-wrap gap-4">
                 {(perfume.notes?.[layer] || []).map((note) => (
                   <div key={note._id || note.noteId} className="flex flex-col items-center w-[80px]">
@@ -98,6 +99,7 @@ const PerfumDetails = () => {
               </div>
             </div>
           ))}
+          </div>
         </div>
 
         {/* Main Accords */}
@@ -123,12 +125,12 @@ const PerfumDetails = () => {
         </div>
 
         {/* Season & Occasions */}
-        <div className="mt-[24px] gap-2 flex flex-wrap">
+        <div className="mt-[24px] gap-[24px] flex flex-col">
           <div>
             <h4 className="text-[20px] font-medium">Season</h4>
-            <ul>
+            <ul className=" flex flex-wrap mt-1 max-md:gap-[6px]">
               {perfume.seasons?.map((season) => (
-                <li key={season._id}>
+                <li className="px-[20px] border-r border-[#352AA4] max-md:w-[46%] max-md:px-[12px]" key={season._id}>
                   {season.name.charAt(0).toUpperCase() + season.name.slice(1)}:{" "}
                   {Math.round(parseFloat(season.width))}%
                 </li>
@@ -137,9 +139,9 @@ const PerfumDetails = () => {
           </div>
           <div>
             <h4 className="text-[20px] font-medium">Occasion</h4>
-            <ul>
+            <ul className=" flex flex-wrap mt-1 max-md:gap-[6px]">
               {perfume.occasions?.map((occ) => (
-                <li key={occ._id}>
+                <li className="px-[20px] border-r border-[#352AA4] max-md:w-[46%] max-md:px-[12px]" key={occ._id}>
                   {occ.name.charAt(0).toUpperCase() + occ.name.slice(1)}:{" "}
                   {Math.round(parseFloat(occ.width))}%
                 </li>
@@ -151,15 +153,15 @@ const PerfumDetails = () => {
         {/* Perfumer */}
         <div className="mt-[24px]">
           <h4 className="text-[20px] font-medium">Perfumer</h4>
-          <div className="flex gap-4">
+          <div className="flex gap-4 mt-1 flex-wrap">
             {(perfume.perfumers || [])?.map((p) => (
-              <div key={p._id} className="flex flex-col items-center w-[120px]">
+              <div key={p._id} className="flex flex-col items-center w-[120px] ">
                 <img
                   src={p.image}
                   alt={p.name}
                   className="rounded-full h-[60px] w-[60px] mb-1"
                 />
-                <span>{p.name}</span>
+                <span className="text-center">{p.name}</span>
               </div>
             ))}
           </div>

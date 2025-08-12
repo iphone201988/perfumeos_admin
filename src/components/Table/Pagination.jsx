@@ -44,7 +44,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
   return (
     <div className="flex items-center justify-between mt-6">
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-gray-600 max-md:hidden">
         Showing page {safePage} of {totalPages}
       </div>
 

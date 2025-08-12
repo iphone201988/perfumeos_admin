@@ -70,20 +70,20 @@ const AccordItem = React.memo(({ accord, index, onUpdate, onRemove }) => {
     }, [index, onRemove]);
 
     return (
-        <div className="flex flex-wrap gap-4 items-center border p-3 rounded-lg bg-white">
+        <div className="flex flex-wrap gap-4 items-center border border-[#eeeeee] rounded-2xl p-3  bg-white">
             <input
                 type="text"
                 placeholder="Accord name"
                 value={name}
                 onChange={handleNameChange}
-                className="flex-1 min-w-[150px] bg-white border border-gray-200 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 min-w-[150px] bg-white border border-[#eeeeee] rounded-[12px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
             <input
                 type="color"
                 value={backgroundColor}
                 onChange={handleColorChange}
-                className="h-10 w-10 p-0 border-0 cursor-pointer rounded"
+                className="h-10 w-10 p-0 border-0 cursor-pointer rounded-2xl"
                 title="Pick background color"
             />
 

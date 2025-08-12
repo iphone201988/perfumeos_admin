@@ -18,16 +18,16 @@ const CustomMultiSelect = ({ options, selected, onChange, placeholder }) => {
   };
 
   return (
-    <div className="relative border border-gray-300 rounded p-2 bg-white max-w-full">
+    <div className="relative border border-[#eeeeee] rounded-2xl py-[14px] px-[18px] bg-white max-w-full">
       <input
         type="text"
         placeholder={placeholder}
-        className="w-full p-1 mb-2 border rounded"
+        className="w-full p-2 mb-2 border rounded-[8px] border-[#eeeeee]"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
       <div
-        className="max-h-48 overflow-y-auto border rounded border-gray-200"
+        className="max-h-48 overflow-y-auto border rounded-[8px] border-[#eeeeee]"
         style={{ minWidth: 200 }}
       >
         {filteredOptions.length === 0 ? (

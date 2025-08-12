@@ -153,9 +153,9 @@ const GuessTheBottlePopup = ({ open, onClose, onSubmit, initialData = null }) =>
   if (!open) return null;
 
   return (
-    <div className='w-full min-h-[100vh] fixed top-0 left-0 bg-[rgba(0,0,0,0.80)] z-[9999] flex items-center justify-center max-md:p-[20px]'>
+    <div className='w-full p-[20px] overflow-auto h-full min-h-[100vh] fixed top-0 left-0 bg-[rgba(0,0,0,0.80)] z-[9999] flex items-center justify-center max-md:p-[20px]'>
       <form
-        className="bg-white p-[32px] rounded-[24px] max-w-[600px] w-full max-md:p-[16px] max-md:overflow-scroll max-md:max-h-[90vh]"
+        className="bg-white p-[32px] h-full overflow-auto rounded-[24px] max-w-[600px] w-full max-md:p-[16px] max-md:overflow-scroll max-md:max-h-[90vh]"
         onSubmit={handleSubmit}
       >
         <div className="flex items-center justify-between">
