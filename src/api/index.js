@@ -8,6 +8,8 @@ const Tags = {
   QUIZ: "QUIZ",
   ARTICLE: "ARTICLE",
   PERFUMEBYID: "PERFUMEBYID",
+  BADGE: "BADGE",
+  RANKS: "RANKS",
 };
 console.log("BASE_URL", BASE_URL);
 export const apis = createApi({
@@ -23,7 +25,17 @@ export const apis = createApi({
       return headers;
     },
   }),
-  tagTypes: [Tags.ADMIN, Tags.USER, Tags.PERFUME, Tags.PERFUMEBYID, Tags.QUIZ, Tags.ARTICLE],
+  tagTypes: [
+    Tags.ADMIN,
+    Tags.USER,
+    Tags.PERFUME,
+    Tags.PERFUMEBYID,
+    Tags.QUIZ,
+    Tags.ARTICLE,
+    Tags.BADGE,
+    Tags.RANKS,
+
+  ],
   endpoints: (builder) => ({
     adminLogin: builder.mutation({
       query: (userData) => ({
@@ -137,9 +149,10 @@ export const apis = createApi({
       invalidatesTags: [Tags.ARTICLE],
     }),
     deleteArticle: builder.mutation({
-      query: (id) => ({
+      query: ({ id ,data}) => ({
         url: `/admin/article/${id}`,
         method: "DELETE",
+        body: data,
       }),
       invalidatesTags: [Tags.ARTICLE],
     }),
@@ -196,6 +209,72 @@ export const apis = createApi({
         method: "GET",
       }),
     }),
+    getBadges: builder.query({
+      query: ({ page, limit, search, sort }) => {
+        const params = new URLSearchParams();
+        if (page) params.append("page", page.toString());
+        if (limit) params.append("limit", limit.toString());
+        if (search) params.append("search", search);
+        if (sort) params.append("sort", sort);
+        return `/admin/badges?${params.toString()}`;
+      },
+      providesTags: [Tags.BADGE],
+    }),
+    createBadge: builder.mutation({
+      query: (formData) => ({
+        url: "/admin/addBadge",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: [Tags.BADGE],
+    }),
+    updateBadge: builder.mutation({
+      query: ({ id, formData }) => ({
+        url: `/admin/badge/${id}`,
+        method: "PUT",
+        body: formData,
+      }),
+    }),
+    deleteBadge: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/admin/badge/${id}`,
+        method: "DELETE",
+        body: data,
+      }),
+    }),
+    getRanks: builder.query({
+      query: ({ page, limit, search, sort }) => {
+        const params = new URLSearchParams();
+        if (page) params.append("page", page.toString());
+        if (limit) params.append("limit", limit.toString());
+        if (search) params.append("search", search);
+        if (sort) params.append("sort", sort);
+        return `/admin/ranks?${params.toString()}`;
+      },
+      providesTags: [Tags.RANKS],
+    }),
+    createRank: builder.mutation({
+      query: (formData) => ({
+        url: "/admin/addRank",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: [Tags.RANKS],
+    }),
+    updateRank: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/admin/rank/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
+    deleteRank: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/admin/rank/${id}`,
+        method: "DELETE",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -222,4 +301,12 @@ export const {
   useCreatePerFumeMutation,
   useDeletePerfumeMutation,
   useDeleteQuestionMutation,
+  useGetBadgesQuery,
+  useCreateBadgeMutation,
+  useUpdateBadgeMutation,
+  useDeleteBadgeMutation,
+  useGetRanksQuery,
+  useCreateRankMutation,
+  useUpdateRankMutation,
+  useDeleteRankMutation,
 } = apis;

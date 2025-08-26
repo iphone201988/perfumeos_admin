@@ -1,7 +1,7 @@
 import React from 'react';
 import search_icon from '../../assets/icons/search-icon.svg';
-
-const SearchBar = ({ searchTerm, onSearchChange, sortValue, onSortChange ,placeholder="Search users..." }) => {
+const defaultOptions =[{label:"Newest",value:"date_desc"},{label:"Oldest",value:"date_asc"},{label:"A-Z",value:"name_asc"},{label:"Z-A",value:"name_desc"}]
+const SearchBar = ({ searchTerm, onSearchChange, sortValue, onSortChange ,placeholder="Search users...", options=defaultOptions}) => {
   return (
     <div className="flex gap-[16px] flex-wrap max-sm:gap-[8px] max-sm:w-full">
       {/* Search Input */}
@@ -25,10 +25,11 @@ const SearchBar = ({ searchTerm, onSearchChange, sortValue, onSortChange ,placeh
           onChange={onSortChange}
           className="font-semibold bg-[#352AA4] outline-none text-white cursor-pointer max-sm:text-sm"
         >
-          <option value="date_desc">Newest</option>
-          <option value="date_asc">Oldest</option>
-          <option value="name_asc">A-Z</option>
-          <option value="name_desc">Z-A</option>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
       </div>
     </div>

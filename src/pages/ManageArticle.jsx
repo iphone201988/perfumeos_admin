@@ -34,7 +34,7 @@ const ManageArticle = () => {
   // API hooks
   const [addArticle, { isLoading: isAdding, error: addError }] = useCreateArticleMutation();
   const [updateArticle, { isLoading: isUpdating, error: updateError }] = useUpdateArticleMutation();
-  const [deleteArticle, { isLoading: isDeleting , error: deleteError}] = useDeleteArticleMutation();
+  const [deleteArticle, { isLoading: isDeleting, error: deleteError }] = useDeleteArticleMutation();
 
   const {
     data: articlesResponse,
@@ -66,14 +66,14 @@ const ManageArticle = () => {
     setCurrentPage(1);
   }, []);
 
-  const handleDeleteArticle = useCallback(async () => {
+  const handleDeleteArticle = useCallback(async ( id, type ) => {
     if (!selectedArticle) {
       toast.error('No article selected');
       return;
     }
 
     try {
-      await deleteArticle(selectedArticle._id).unwrap();
+      await deleteArticle({ id: id, data: { type } }).unwrap();
       toast.success('Article deleted successfully!');
       setViewArticlePopup(false);
       setSelectedArticle(null);
@@ -108,12 +108,12 @@ const ManageArticle = () => {
         toast.success('Article added successfully!');
         setAddArticlePopup(false);
       }
-      
+
       setSelectedArticle(null);
       refetch();
     } catch (error) {
       console.error('Save error:', error);
-      const errorMessage = error?.data?.message || 
+      const errorMessage = error?.data?.message ||
         (editArticlePopup ? 'Failed to update article' : 'Failed to add article');
       toast.error(errorMessage);
     }
@@ -156,11 +156,11 @@ const ManageArticle = () => {
   const articles = rawArticles.map((article, index) => ({
     ...article,
     sno: (currentPage - 1) * ITEMS_PER_PAGE + index + 1,
-    joinedOn: article.createdAt 
+    joinedOn: article.createdAt
       ? new Date(article.createdAt).toLocaleDateString()
       : 'N/A',
-    image: article?.image 
-      ? `${import.meta.env.VITE_BASE_URL}${article.image}` 
+    image: article?.image
+      ? `${import.meta.env.VITE_BASE_URL}${article.image}`
       : user_icon
   }));
 
@@ -197,13 +197,13 @@ const ManageArticle = () => {
     <>
       {/* ✅ Operation loading overlay */}
       {isOperationLoading && (
-        <Loader 
+        <Loader
           message={
             isDeleting ? 'Deleting article...' :
-            isUpdating ? 'Updating article...' :
-            'Adding article...'
-          } 
-          isVisible={true} 
+              isUpdating ? 'Updating article...' :
+                'Adding article...'
+          }
+          isVisible={true}
         />
       )}
 
@@ -305,8 +305,8 @@ const ManageArticle = () => {
 
       {/* ✅ Enhanced add button section */}
       <div className="mt-[24px] flex">
-        <button 
-          onClick={() => setAddArticlePopup(true)} 
+        <button
+          onClick={() => setAddArticlePopup(true)}
           className={`btn-pri ml-auto ${isOperationLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
           disabled={isOperationLoading}
         >
@@ -316,29 +316,29 @@ const ManageArticle = () => {
 
       {/* Modals */}
       {addArticlePopup && (
-        <AddArticle 
-          open={addArticlePopup} 
-          onClose={handleCloseAdd} 
-          onSubmit={handleAddArticle} 
+        <AddArticle
+          open={addArticlePopup}
+          onClose={handleCloseAdd}
+          onSubmit={handleAddArticle}
         />
       )}
-      
+
       {viewArticlePopup && selectedArticle && (
-        <ViewArticle 
-          open={viewArticlePopup} 
-          onClose={handleCloseView} 
-          data={selectedArticle} 
+        <ViewArticle
+          open={viewArticlePopup}
+          onClose={handleCloseView}
+          data={selectedArticle}
           onEdit={handleEditClick}
           onRemove={handleDeleteArticle}
         />
       )}
-      
+
       {editArticlePopup && selectedArticle && (
-        <AddArticle 
-          open={editArticlePopup} 
-          onClose={handleCloseEdit} 
+        <AddArticle
+          open={editArticlePopup}
+          onClose={handleCloseEdit}
           data={selectedArticle}
-          onSubmit={handleAddArticle} 
+          onSubmit={handleAddArticle}
           initialData={selectedArticle}
         />
       )}

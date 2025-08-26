@@ -129,6 +129,12 @@ const AddArticle = ({ open, onClose, onSubmit, initialData = null }) => {
         </div>
 
         <div className="flex justify-center gap-[16px] mt-[24px] flex-wrap">
+          <button
+            onClick={onClose}
+            className="text-gray-500 bg-white border-2 rounded-full border-gray-500 hover:bg-gray-500 hover:text-white font-semibold py-2 px-4 transition-colors duration-300"
+          >
+            Close
+          </button>
           <button className='btn-pri' type="submit">
             {initialData ? 'Save' : 'Add'}
           </button>

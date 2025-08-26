@@ -13,8 +13,8 @@ const Table = ({ columns, data, renderActions }) => {
             row[accessor] === 'Active'
               ? 'text-[#6AE66F]'
               : row[accessor] === 'Suspended'
-              ? 'text-[#FF4040]'
-              : ''
+                ? 'text-[#FF4040]'
+                : ''
           }
         >
           {row[accessor]}
@@ -65,11 +65,11 @@ const Table = ({ columns, data, renderActions }) => {
       <table className="min-w-full">
         <thead className="text-[#352AA4] text-[14px] font-medium">
           <tr>
-            {columns.map(({ label, accessor, align = 'left' }) => (
+            {columns.map(({ label, accessor, align = 'left', }) => (
               <th
                 key={accessor}
-                className={`px-4 py-3 text-${align} max-lg:p-[12px]`}
-                style={{ textAlign: align }}
+                className={`px-4 py-3 text-${align} max-lg:p-[12px] `}
+                style={{ textAlign: align, }}
               >
                 {label}
               </th>
@@ -90,12 +90,12 @@ const Table = ({ columns, data, renderActions }) => {
           {data.map((row, idx) => (
             <tr key={row.id || idx} className="border-t border-[rgba(21,201,201,0.50)]">
               {columns.map((column) => {
-                const { accessor, align = 'left' } = column;
+                const { accessor, align = 'left',className='none' } = column;
                 return (
                   <td
                     key={accessor}
-                    className={`px-4 py-6 max-lg:p-[12px]`}
-                    style={{ textAlign: align }}
+                    className={`px-4 py-6 max-lg:p-[12px] `}
+                    style={{ textAlign: align , textTransform: className }}
                   >
                     {renderCellContent(row, accessor, column)}
                   </td>

@@ -4,12 +4,12 @@ import ConfirmationModal from '../Modal/ConfirmationModal';
 
 const ViewArticle = ({ open, onClose, data = null, onEdit, onRemove }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    const [type, setType] = useState(1);
     if (!open || !data) return null
     console.log("data", data);
     const handleConfirmRemove = () => {
         setIsModalOpen(false);
-        onRemove();
+        onRemove(data._id, type);
     };
 
     const handleCancelRemove = () => {
@@ -54,6 +54,12 @@ const ViewArticle = ({ open, onClose, data = null, onEdit, onRemove }) => {
                 </div>
 
                 <div className="flex justify-center gap-[16px] mt-[24px] flex-wrap">
+                    <button
+                        onClick={onClose}
+                        className="text-gray-500 bg-white border-2 rounded-full border-gray-500 hover:bg-gray-500 hover:text-white font-semibold py-2 px-4 transition-colors duration-300"
+                    >
+                        Close
+                    </button>
                     {onEdit && (
                         <button
                             type="button"
@@ -64,13 +70,22 @@ const ViewArticle = ({ open, onClose, data = null, onEdit, onRemove }) => {
                         </button>
                     )}
                     {onRemove && (
-                        <button
-                            type="button"
-                            className="text-red-500 bg-white border-2 rounded-full border-red-500 hover:bg-red-500 hover:text-white font-semibold py-2 px-4 transition-colors duration-300"
-                            onClick={() => setIsModalOpen(true)}
-                        >
-                            Remove
-                        </button>
+                        <>
+                            <button
+                                type="button"
+                                className={` bg-white border-2 rounded-full font-semibold py-2 px-4 transition-colors duration-300 ${data?.isDeleted ? "text-green-500 border-green-500 hover:bg-green-500 hover:text-white" : "text-red-500 border-red-500 hover:bg-red-500 hover:text-white"}`}
+                                onClick={() => { setIsModalOpen(true); setType(1); }}
+                            >
+                                {data?.isDeleted ? "Restore" : "Delete"}
+                            </button>
+                            <button
+                                type="button"
+                                className={` bg-white border-2 rounded-full font-semibold py-2 px-4 transition-colors duration-300 text-red-600 border-red-600 hover:bg-red-600 hover:text-white`}
+                                onClick={() => { setIsModalOpen(true); setType(2); }}
+                            >
+                                Hard Delete
+                            </button>
+                        </>
                     )}
                 </div>
             </div>
@@ -79,9 +94,10 @@ const ViewArticle = ({ open, onClose, data = null, onEdit, onRemove }) => {
                 isOpen={isModalOpen}
                 onClose={handleCancelRemove}
                 onConfirm={handleConfirmRemove}
-                message="Are you sure you want to remove this article?"
+               message= {type === 1 ?  data?.isDeleted ? "Are you sure you want to restore this badge?" :"Are you sure you want to delete this badge?" : "Are you sure you want to hard delete this badge?"}
+                    className={type === 1 ? data?.isDeleted ? "text-green-500 border-green-500 hover:bg-green-500" : "text-red-500 border-red-500 hover:bg-red-500": "text-red-500 border-red-500 hover:bg-red-500"}
             />
-        </div>
+        </div >
     )
 }
 

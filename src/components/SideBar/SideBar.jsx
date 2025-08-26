@@ -9,6 +9,8 @@ import quiz_icon from '../../assets/icons/quiz-icon.svg';
 import setting_icon from '../../assets/icons/setting-icon.svg';
 import logout_icon from '../../assets/icons/logout-icon.svg';
 import article_icon from '../../assets/icons/article.svg';
+import badge_icon from '../../assets/icons/badge-icon.svg';
+import rank_icon from '../../assets/icons/rank-icon.svg';
 
 const SideBar = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
   const location = useLocation();
@@ -30,6 +32,9 @@ const SideBar = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     { to: '/perfumes', label: 'Manage Perfum', icon: perfume_icon },
     { to: '/quiz', label: 'Manage Quiz', icon: quiz_icon },
     { to: '/articles', label: 'Manage Articles', icon: article_icon },
+    { to: '/badge', label: 'Manage Badge', icon: badge_icon },
+    { to: '/rank', label: 'Manage Rank', icon: rank_icon },
+
   ];
 
   return (
@@ -59,7 +64,7 @@ const SideBar = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
                 }`}
                 onClick={handleLinkClick}
               >
-                <img src={icon} alt={`${label} icon`} className="active-icon w-6 h-6" />
+                <img src={icon} alt={`${label} icon`} className="active-icon w-6 h-6 " />
                 <span>{label}</span>
               </Link>
             );
