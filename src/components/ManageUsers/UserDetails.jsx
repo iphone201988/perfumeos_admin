@@ -141,7 +141,7 @@ const UserDetails = () => {
     };
 
     try {
-      await updateUser({ id: params.id, data: submitData }).unwrap();
+      await updateUser({ id: params.id, formData: submitData }).unwrap();
       toast.success("User details updated successfully!");
       setIsEditing(false);
       refetch();

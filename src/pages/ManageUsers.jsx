@@ -38,11 +38,9 @@ const ManageUsers = () => {
     search: debouncedSearchTerm,
     sort: sortValue
   });
-  console.log("sortValue", sortValue)
   if (isLoading) {
      return <Loader message="Fetching Users" />;
   }
-  console.log("usersResponse", usersResponse);
 
   // Process users data and add serial numbers
   const rawUsers = usersResponse?.data?.users || [];

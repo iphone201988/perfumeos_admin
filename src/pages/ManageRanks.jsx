@@ -25,7 +25,6 @@ const ManageRanks = () => {
     const [viewRanksPopup, setViewRanksPopup] = useState(false);
     const [selectedRanks, setSelectedRanks] = useState(null);
     const [editRanksPopup, setEditRanksPopup] = useState(false);
-console.log("selectedRanks", selectedRanks,viewRanksPopup);
 
     const navigate = useNavigate();
     const itemsPerPage = 5;
@@ -53,11 +52,9 @@ console.log("selectedRanks", selectedRanks,viewRanksPopup);
         search: debouncedSearchTerm,
         sort: sortValue
     });
-    console.log("sortValue", sortValue)
     if (isLoading) {
         return <Loader message="Fetching Ranks" />;
     }
-    console.log("badgesResponse", badgesResponse);
 
     // Process Ranks data and add serial numbers
     const rawRanks = badgesResponse?.data?.ranks || [];
@@ -115,7 +112,6 @@ console.log("selectedRanks", selectedRanks,viewRanksPopup);
 
     const handleAddRanks = async (data) => {
         try {
-            console.log("data", data);
            
             if (editRanksPopup && selectedRanks) {
                 await updateRanks({ id: selectedRanks._id, data }).unwrap();
@@ -138,7 +134,6 @@ console.log("selectedRanks", selectedRanks,viewRanksPopup);
     };
     const deleteRanksHandler = async (id, type) => {
         try {
-            console.log("id", id, type);
             await deleteRanks({ id: id, data: { type } }).unwrap();
             setSelectedRanks(null);
             setEditRanksPopup(false);

@@ -12,7 +12,8 @@ const AddBadge = ({ open, onClose, onSubmit, initialData = null }) => {
   const [category, setCategory] = useState('')
   const [isOneTimeOnly, setIsOneTimeOnly] = useState(false)
   const [isRepeatable, setIsRepeatable] = useState(false)
-  const [repeatLimit, setRepeatLimit] = useState('')
+  const [repeatLimit, setRepeatLimit] = useState('1')
+  const [repeatType, setRepeatType] = useState('')
   const [note, setNote] = useState('')
   const [unlockCondition, setUnlockCondition] = useState('')
   const [rarity, setRarity] = useState('')
@@ -42,7 +43,8 @@ const AddBadge = ({ open, onClose, onSubmit, initialData = null }) => {
       setCategory(initialData.category || '')
       setIsOneTimeOnly(initialData.isOneTimeOnly || false)
       setIsRepeatable(initialData.isRepeatable || false)
-      setRepeatLimit(initialData.repeatLimit || '')
+      setRepeatLimit(initialData.repeatLimit || '1')
+      setRepeatType(initialData.repeatType || '')
       setNote(initialData.note || '')
       setUnlockCondition(initialData.unlockCondition || '')
       setRarity(initialData.rarity || '')
@@ -58,7 +60,8 @@ const AddBadge = ({ open, onClose, onSubmit, initialData = null }) => {
       setCategory('')
       setIsOneTimeOnly(false)
       setIsRepeatable(false)
-      setRepeatLimit('')
+      setRepeatLimit('1')
+      setRepeatType('')
       setNote('')
       setUnlockCondition('')
       setRarity('')
@@ -121,24 +124,25 @@ const AddBadge = ({ open, onClose, onSubmit, initialData = null }) => {
       category,
       isOneTimeOnly,
       isRepeatable,
-      repeatLimit: repeatLimit ? parseInt(repeatLimit) : null,
       note,
       unlockCondition,
       rarity: rarity ? parseInt(rarity) : 1,
       pointEarned: pointEarned ? parseInt(pointEarned) : null,
       requiredCount: requiredCount ? parseInt(requiredCount) : null,
     }
+    if(isRepeatable){
+      data.repeatLimit = repeatLimit ? parseInt(repeatLimit) : undefined
+      data.repeatType = repeatType
+    }
 
     if (image instanceof File) data.image = image;
     if (otherImage instanceof File) data.otherImage = otherImage;
-    console.log("data", data)
     onSubmit(data)
     onClose()
   }
 
   // Auto-close modal if not open
   if (!open) return null
-  console.log("image", image)
   return (
     <div className='w-full min-h-screen fixed top-0 left-0 bg-[rgba(0,0,0,0.80)] z-[9999] flex items-center justify-center p-4'>
       <form
@@ -264,22 +268,34 @@ const AddBadge = ({ open, onClose, onSubmit, initialData = null }) => {
             </label>
           </div>
           {isRepeatable && (
-
-
-            <label className='flex flex-col w-full'>
-              <span className='text-[#7C7C7C] text-[14px] mb-1'>Repeat Limit</span>
-              <select
-                className='border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px]'
-                value={repeatLimit}
-                onChange={(e) => setRepeatLimit(e.target.value)}
-                required={isRepeatable}
-              >
-                <option value="">Select repeat limit</option>
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-              </select>
-            </label>
+            <>
+              <label className='flex flex-col w-full'>
+                <span className='text-[#7C7C7C] text-[14px] mb-1'>Repeat type</span>
+                <select
+                  className='border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px]'
+                  value={repeatType}
+                  onChange={(e) => setRepeatType(e.target.value)}
+                  required={isRepeatable}
+                >
+                  <option value="">Select repeat type</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </label>
+              <label className='flex flex-col w-full'>
+                <span className='text-[#7C7C7C] text-[14px] mb-1'>Repeat limit</span>
+                <input
+                  className='border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px]'
+                  type="number"
+                  placeholder='Enter here'
+                  value={repeatLimit}
+                  onChange={(e) => setRepeatLimit(e.target.value)}
+                  required={isRepeatable}
+                  min="1"
+                />
+              </label>
+            </>
           )}
 
           <label className='flex flex-col w-full'>
@@ -329,6 +345,7 @@ const AddBadge = ({ open, onClose, onSubmit, initialData = null }) => {
               value={pointEarned}
               onChange={(e) => setPointEarned(e.target.value)}
               required
+              min="0"
             />
           </label>
 
@@ -341,6 +358,7 @@ const AddBadge = ({ open, onClose, onSubmit, initialData = null }) => {
               value={requiredCount}
               onChange={(e) => setRequiredCount(e.target.value)}
               required
+              min="0"
             />
           </label>
 

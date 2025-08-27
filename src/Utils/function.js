@@ -8,7 +8,6 @@ export const calculateAge = (dob) => {
   if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-  console.log("age", age);
   return age;
 };
 

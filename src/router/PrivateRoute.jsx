@@ -5,7 +5,6 @@ const PrivateRoute = ({ children }) => {
     console.log("tokencheck", token);
 
     if (!token) {
-        console.log("check")
         return <Navigate to="/login" replace />;
     }
     return children;

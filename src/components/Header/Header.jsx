@@ -63,13 +63,13 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
 
   // ✅ Handle profile click navigation
   const handleProfileClick = useCallback(() => {
-    navigator('/profile');
+    navigator('#');
   }, [navigator]);
 
   // ✅ Enhanced error handling
   React.useEffect(() => {
     if (error) {
-      console.log("Header error:", error);
+      console.error("Header error:", error);
       toast.error(error?.data?.message || 'Something went wrong');
       
       if (error.status === 401) {

@@ -50,9 +50,9 @@ const ViewBadge = ({ open, onClose, badgeData = null, onEdit, onRemove }) => {
     }
 
     // Format repeat limit display
-    const getRepeatLimitLabel = (repeatLimit) => {
+    const getRepeatLimitLabel = (repeatLimit,repeatType) => {
         if (!repeatLimit) return 'Not specified'
-        return repeatLimit.charAt(0).toUpperCase() + repeatLimit.slice(1)
+        return repeatLimit+ "x " + repeatType.charAt(0).toUpperCase() + repeatType.slice(1) ;
     }
 
     return (
@@ -185,7 +185,7 @@ const ViewBadge = ({ open, onClose, badgeData = null, onEdit, onRemove }) => {
                         )}
                         {badgeData.repeatLimit && (
                             <span className="px-3 py-1 text-sm bg-orange-100 text-orange-800 rounded-full">
-                                {getRepeatLimitLabel(badgeData.repeatLimit)}
+                                {getRepeatLimitLabel(badgeData.repeatLimit,badgeData.repeatType)}
                             </span>
                         )}
                     </div>

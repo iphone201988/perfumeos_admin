@@ -9,7 +9,6 @@ const ImageUploader = ({ onImageSelect, currentImage = null }) => {
             onImageSelect(imageUrl, file); // Pass both the preview and file if needed
         }
     };
-    console.log("currentImage", currentImage)
     return (
         <label
             htmlFor="image-upload"

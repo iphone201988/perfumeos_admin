@@ -21,7 +21,7 @@ const Login = () => {
   // ✅ Fixed: Use useEffect to handle error toast only once
   useEffect(() => {
     if (error) {
-      console.log("error", error);
+      console.error("error", error);
       toast.error(error.data?.message || 'Login failed. Please try again.');
     }
   }, [error]);
@@ -43,7 +43,7 @@ const Login = () => {
       // Success is handled in useEffect above
     } catch (err) {
       // Error is handled in useEffect above
-      console.log("Login attempt failed:", err);
+      console.error("Login attempt failed:", err);
     }
   };
 

@@ -211,7 +211,6 @@ const EditPerfume = () => {
     // Complex objects as JSON strings
     formData.append('intendedFor', JSON.stringify(form.intendedFor));
     formData.append('perfumers', JSON.stringify(perfumerIds.map(p => ({ perfumerId: p.value }))));
-    console.log("checking mainAccords", mainAccords)
     // Filter out empty main accords
     const validMainAccords = mainAccords.filter(accord =>
       accord.name && accord.name.trim() != '' && accord.width != '0%'
@@ -241,7 +240,6 @@ const EditPerfume = () => {
       { name: "spring", width: form.seasonSpring }
     ]));
 
-    console.log("FormData contents:");
     for (let [key, value] of formData.entries()) {
       console.log(key, value);
     }

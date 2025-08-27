@@ -10,7 +10,6 @@ const Dashboard = () => {
       error,
       isLoading,
     } = useDashboardDataQuery(undefined);
-    console.log("dashboardData", dashboardData);
     const { totalUsers, totalPerfumes,usersMoreThanLastMonth,perfumesAddedThisMonth } = dashboardData?.data || {};
   return (
     <div className="flex gap-[32px] my-5 max-md:flex-col max-md:justify-center max-md:items-center">

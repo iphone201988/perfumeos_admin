@@ -15,11 +15,16 @@ const QUESTION_TYPES = {
   SCENT: 'scent',
   GUESS: 'guess'
 };
+const SUB_TAB_TYPES = {
+  QUICK: 'quick',
+  RANkED: 'ranked'
+};
 
 const ITEMS_PER_PAGE = 5;
 
 const ManageQuiz = () => {
   const [tab, setTab] = useState(QUESTION_TYPES.TRIVIA);
+  const [subTab , setSubTab] = useState(SUB_TAB_TYPES.QUICK);
   const [popup, setPopup] = useState(null);
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,31 +35,37 @@ const ManageQuiz = () => {
   const [addQuestion, { isLoading: addLoading }] = useAddQuestionMutation();
   const [updateQuestion, { isLoading: updateLoading }] = useUpdateQuestionMutation();
   const [deleteQuestion, { isLoading: deleteLoading }] = useDeleteQuestionMutation(); // Add delete mutation
-  const { 
-    data, 
-    isLoading: queryLoading, 
+  const {
+    data,
+    isLoading: queryLoading,
     error: queryError,
-    refetch 
-  } = useQuestionsQuery({ 
-    page: currentPage, 
-    limit: ITEMS_PER_PAGE, 
-    type: tab 
+    refetch
+  } = useQuestionsQuery({
+    page: currentPage,
+    limit: ITEMS_PER_PAGE,
+    type: tab,
+    questionType: subTab
   });
 
   const questions = data?.data?.questions || [];
   const totalPages = data?.data?.pagination?.totalPage || 0;
   const isOperationLoading = addLoading || updateLoading || deleteLoading;
-  
+
   // Reset page when changing tabs
   const handleTabChange = useCallback((newTab) => {
     if (newTab === tab) return;
-    
+
     setTab(newTab);
     setCurrentPage(1);
     setEditingQuestion(null);
     setPopup(null);
     setDeleteConfirmation(null);
   }, [tab]);
+
+  const handleSubTabChange = useCallback((newSubTab) => {
+    setSubTab(newSubTab);
+    setCurrentPage(1);
+  }, [subTab]);
 
   const handleAdd = useCallback((type) => {
     setEditingQuestion(null);
@@ -81,12 +92,12 @@ const ManageQuiz = () => {
     try {
       await deleteQuestion(deleteConfirmation.question._id).unwrap();
       toast.success('Question deleted successfully!');
-      
+
       // If we're on the last page and it becomes empty, go to previous page
       if (questions.length === 1 && currentPage > 1) {
         setCurrentPage(prev => prev - 1);
       }
-      
+
       await refetch();
       setDeleteConfirmation(null);
     } catch (error) {
@@ -121,14 +132,15 @@ const ManageQuiz = () => {
 
       if (editingQuestion) {
         // Update existing question
-        await updateQuestion({ 
-          id: editingQuestion.data._id, 
-          formData 
+        await updateQuestion({
+          id: editingQuestion.data._id,
+          formData
         }).unwrap();
         toast.success('Question updated successfully!');
       } else {
         // Add new question
         formData.append('type', type);
+        formData.append('questionType', subTab);
         await addQuestion(formData).unwrap();
         toast.success('Question added successfully!');
       }
@@ -174,21 +186,20 @@ const ManageQuiz = () => {
   // Render question options based on type
   const renderQuestionOptions = (question, questionIndex) => {
     const baseClasses = 'text-[18px] font-medium';
-    
+
     switch (tab) {
       case QUESTION_TYPES.TRIVIA:
       case QUESTION_TYPES.SCENT:
         return question.options?.map((option, i) => (
-          <p 
-            key={i} 
-            className={`${baseClasses} ${
-              option === question.correctAnswer ? 'text-[#0CDD39]' : 'text-[#F6595A]'
-            }`}
+          <p
+            key={i}
+            className={`${baseClasses} ${option === question.correctAnswer ? 'text-[#0CDD39]' : 'text-[#F6595A]'
+              }`}
           >
             {option}
           </p>
         ));
-      
+
       case QUESTION_TYPES.GUESS:
         return (
           <>
@@ -201,18 +212,17 @@ const ManageQuiz = () => {
               />
             )}
             {question.options?.map((option, i) => (
-              <p 
-                key={i} 
-                className={`${baseClasses} ${
-                  question.correctAnswer === option ? 'text-[#0CDD39]' : 'text-[#F6595A]'
-                }`}
+              <p
+                key={i}
+                className={`${baseClasses} ${question.correctAnswer === option ? 'text-[#0CDD39]' : 'text-[#F6595A]'
+                  }`}
               >
                 {option}
               </p>
             ))}
           </>
         );
-      
+
       default:
         return null;
     }
@@ -229,7 +239,7 @@ const ManageQuiz = () => {
           <p className="text-gray-600 mb-4">
             {queryError?.data?.message || 'Something went wrong'}
           </p>
-          <button 
+          <button
             onClick={() => refetch()}
             className="btn-pri"
           >
@@ -244,53 +254,69 @@ const ManageQuiz = () => {
     <div>
       {/* Operation Loading Overlay */}
       {isOperationLoading && (
-        <Loader 
+        <Loader
           message={
             deleteLoading ? 'Deleting question...' :
-            editingQuestion ? 'Updating question...' : 
-            'Adding question...'
-          } 
-          isVisible={true} 
+              editingQuestion ? 'Updating question...' :
+                'Adding question...'
+          }
+          isVisible={true}
         />
       )}
 
       {/* Tabs */}
       <div className="tabs flex gap-[24px] mb-[16px] flex-wrap max-md:gap-[16px]">
-        <button 
-          className={tab === QUESTION_TYPES.TRIVIA ? 'btn-pri' : 'btn-sec'} 
+        <button
+          className={tab === QUESTION_TYPES.TRIVIA ? 'btn-pri' : 'btn-sec'}
           onClick={() => handleTabChange(QUESTION_TYPES.TRIVIA)}
           disabled={isOperationLoading}
         >
           Classic Trivia
         </button>
-        <button 
-          className={tab === QUESTION_TYPES.SCENT ? 'btn-pri' : 'btn-sec'} 
+        <button
+          className={tab === QUESTION_TYPES.SCENT ? 'btn-pri' : 'btn-sec'}
           onClick={() => handleTabChange(QUESTION_TYPES.SCENT)}
           disabled={isOperationLoading}
         >
           Scent or Not?
         </button>
-        <button 
-          className={tab === QUESTION_TYPES.GUESS ? 'btn-pri' : 'btn-sec'} 
+        <button
+          className={tab === QUESTION_TYPES.GUESS ? 'btn-pri' : 'btn-sec'}
           onClick={() => handleTabChange(QUESTION_TYPES.GUESS)}
           disabled={isOperationLoading}
         >
           Guess the Bottle
         </button>
-        <button 
-          className="btn-pri ml-auto" 
+        <button
+          className="btn-pri ml-auto"
           onClick={() => handleAdd(tab)}
           disabled={isOperationLoading}
         >
           + Add
         </button>
       </div>
+      <div className="flex justify-center gap-[16px] mb-4">
+        <button
+          className={subTab === SUB_TAB_TYPES.QUICK ? 'btn-pri' : 'btn-sec'}
+          onClick={() => handleSubTabChange(SUB_TAB_TYPES.QUICK)}
+          disabled={isOperationLoading}
+        >
+          Quick
+        </button>
+        <button
+          className={subTab === SUB_TAB_TYPES.RANkED ? 'btn-pri' : 'btn-sec'}
+          onClick={() => handleSubTabChange(SUB_TAB_TYPES.RANkED)}
+          disabled={isOperationLoading}
+        >
+          Ranked
+        </button>
+      </div>
 
       {/* Loading State */}
       {queryLoading && (
-        <Loader 
-          message={`Fetching ${getTabDisplayName(tab)}`} 
-          isVisible={true} 
+        <Loader
+          message={`Fetching ${getTabDisplayName(tab)}`}
+          isVisible={true}
         />
       )}
 
@@ -325,7 +351,7 @@ const ManageQuiz = () => {
                         </span>
                         {' '}{question.questionText}
                       </p>
-                      
+
                       {/* Action buttons container */}
                       <div className="flex items-center gap-[12px]">
                         {/* Edit button */}
@@ -387,12 +413,12 @@ const ManageQuiz = () => {
 
       {/* Image Modal */}
       {selectedImage && (
-        <div 
-          className="fixed inset-0 bg-[rgba(0,0,0,0.80)] bg-opacity-50 flex justify-center items-center z-[999999]" 
+        <div
+          className="fixed inset-0 bg-[rgba(0,0,0,0.80)] bg-opacity-50 flex justify-center items-center z-[999999]"
           onClick={handleCloseImageModal}
         >
-          <div 
-            className="bg-white p-4 rounded-lg text-center relative max-w-4xl max-h-[90vh] overflow-auto" 
+          <div
+            className="bg-white p-4 rounded-lg text-center relative max-w-4xl max-h-[90vh] overflow-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -442,8 +468,9 @@ const ManageQuiz = () => {
           options: [...data.wrongs, data.correctAnswer],
           correctAnswer: data.correctAnswer
         })}
+        subTab={subTab}
       />
-      
+
       <ScentOrNotPopup
         open={popup === QUESTION_TYPES.SCENT}
         onClose={handleClosePopup}
@@ -453,8 +480,9 @@ const ManageQuiz = () => {
           correctAnswer: data.correctAnswer,
           options: [data.correctAnswer, data.correctAnswer === 'True' ? 'False' : 'True']
         })}
+        subTab={subTab}
       />
-      
+
       <GuessTheBottlePopup
         open={popup === QUESTION_TYPES.GUESS}
         onClose={handleClosePopup}
@@ -465,6 +493,7 @@ const ManageQuiz = () => {
           image: data.image,
           options: [data.correctAnswer, ...data.wrongs]
         })}
+        subTab={subTab}
       />
     </div>
   );

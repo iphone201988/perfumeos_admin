@@ -47,11 +47,9 @@ const ManageBadge = () => {
     search: debouncedSearchTerm,
     sort: sortValue
   });
-  console.log("sortValue", sortValue)
   if (isLoading) {
     return <Loader message="Fetching Badges" />;
   }
-  console.log("badgesResponse", badgesResponse);
 
   // Process badges data and add serial numbers
   const rawBadges = badgesResponse?.data?.badges || [];
@@ -146,7 +144,6 @@ const ManageBadge = () => {
   };
   const deleteBadgeHandler = async (id, type) => {
     try {
-      console.log("id", id, type);
       await deleteBadge({ id: id, data: { type } }).unwrap();
       setSelectedBadge(null);
       setEditBadgePopup(false);

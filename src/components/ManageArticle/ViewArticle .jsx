@@ -6,7 +6,6 @@ const ViewArticle = ({ open, onClose, data = null, onEdit, onRemove }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [type, setType] = useState(1);
     if (!open || !data) return null
-    console.log("data", data);
     const handleConfirmRemove = () => {
         setIsModalOpen(false);
         onRemove(data._id, type);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import cross_icon from '../../../assets/icons/cross-icon.svg';
 import InputField from '../../Form/InputField';
 
-const ClassicTriviaPopup = ({ open, onClose, onSubmit, initialData = null }) => {
+const ClassicTriviaPopup = ({ open, onClose, onSubmit, initialData = null ,subTab}) => {
   const [question, setQuestion] = useState('');
   const [correct, setCorrect] = useState('');
   const [wrongs, setWrongs] = useState(['', '', '']); // Start with 3 wrong options
@@ -77,8 +77,8 @@ const ClassicTriviaPopup = ({ open, onClose, onSubmit, initialData = null }) => 
         onSubmit={handleSubmit}
       >
         <div className="flex items-center justify-between">
-          <h5 className='text-[20px] text-[#352AA4] font-semibold'>
-            {initialData ? 'Edit Question' : 'Add Question'}
+          <h5 className='text-[20px] text-[#352AA4] font-semibold capitalize'>
+            {initialData ? 'Edit Question' : 'Add Question' }( {initialData?.questionType || subTab} ) 
           </h5>
           <button type="button" onClick={onClose} className='cursor-pointer hover:opacity-70'>
             <img src={cross_icon} alt="Close" />

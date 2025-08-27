@@ -11,14 +11,12 @@ const Tags = {
   BADGE: "BADGE",
   RANKS: "RANKS",
 };
-console.log("BASE_URL", BASE_URL);
 export const apis = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: `${BASE_URL}/api/v1`,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("token");
-      console.log("token", token);
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
@@ -99,9 +97,10 @@ export const apis = createApi({
       }),
     }),
     questions: builder.query({
-      query: ({ page, limit, type }) => {
+      query: ({ page, limit, type,questionType }) => {
         const params = new URLSearchParams();
         if (type) params.append("type", type);
+        if (questionType) params.append("questionType", questionType);
         if (page) params.append("page", page.toString());
         if (limit) params.append("limit", limit.toString());
         return `/admin/questions?${params.toString()}`;

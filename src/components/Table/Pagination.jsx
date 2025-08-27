@@ -40,7 +40,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       onPageChange(page);
     }
   };
-  console.log("visiblePages", visiblePages);
 
   return (
     <div className="flex items-center justify-between mt-6">

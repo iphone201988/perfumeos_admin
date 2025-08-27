@@ -6,7 +6,6 @@ import ConfirmationModal from '../Modal/ConfirmationModal'
 const ViewRanks = ({ open, onClose, rankData = null, onEdit, onRemove }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [type, setType] = useState(1);
-    console.log("rankData", rankData);
     
     const handleConfirmRemove = () => {
         setIsModalOpen(false);

@@ -43,7 +43,6 @@ const ManagePerfum = () => {
   }
 
   // Process users data and add serial numbers
-  console.log("perfumesResponse", perfumesResponse);
   const rawPerfumes = perfumesResponse?.data?.perfumes || [];
   const totalPerfumes = perfumesResponse?.data?.pagination?.totalCount || 0;
   const totalPages = perfumesResponse?.data?.pagination?.totalPage || 1;

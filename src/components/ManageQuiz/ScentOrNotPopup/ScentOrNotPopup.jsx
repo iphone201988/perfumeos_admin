@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import cross_icon from '../../../assets/icons/cross-icon.svg';
 import InputField from '../../Form/InputField';
 
-const ScentOrNotPopup = ({ open, onClose, onSubmit, initialData = null }) => {
+const ScentOrNotPopup = ({ open, onClose, onSubmit, initialData = null, subTab }) => {
   const [question, setQuestion] = useState('');
   const [correct, setCorrect] = useState('True');
   const [errors, setErrors] = useState({});
@@ -75,7 +75,7 @@ const ScentOrNotPopup = ({ open, onClose, onSubmit, initialData = null }) => {
       >
         <div className="flex items-center justify-between">
           <h5 className='text-[20px] text-[#352AA4] font-semibold'>
-            {initialData ? 'Edit Question' : 'Add Question'}
+            {initialData ? 'Edit Question' : 'Add Question'}( {initialData?.questionType || subTab} )
           </h5>
           <button type="button" onClick={onClose} className='cursor-pointer hover:opacity-70'>
             <img src={cross_icon} alt="Close" />

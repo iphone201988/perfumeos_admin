@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { rgbToHex } from "../../../Utils/function";
 
 const AccordItem = React.memo(({ accord, index, onUpdate, onRemove }) => {
-    console.log("accord", accord?.width)
     const [name, setName] = useState(accord.name || "");
     const [width, setWidth] = useState(accord?.width || 0);
     const [backgroundColor, setBackgroundColor] = useState(accord.backgroundColor || "#000000");
