@@ -65,6 +65,7 @@ const ClassicTriviaPopup = ({ open, onClose, onSubmit, initialData = null ,subTa
       question,
       correctAnswer: correct,
       wrongs: filteredWrongs,
+      
     });
   };
 

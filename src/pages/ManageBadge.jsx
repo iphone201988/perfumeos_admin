@@ -47,7 +47,7 @@ const ManageBadge = () => {
     search: debouncedSearchTerm,
     sort: sortValue
   });
-  if (isLoading) {
+  if (isLoading || isAdding || isUpdating || isDeleting) {
     return <Loader message="Fetching Badges" />;
   }
 

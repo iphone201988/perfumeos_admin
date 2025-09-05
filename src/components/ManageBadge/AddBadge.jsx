@@ -38,8 +38,6 @@ const AddBadge = ({ open, onClose, onSubmit, initialData = null }) => {
           : `${import.meta.env.VITE_BASE_URL}${initialData.otherImage}`;
         setBlackWhitePreview(otherImageUrl);
       }
-      setPreview(initialData.image || null)
-      setBlackWhitePreview(initialData.otherImage || null)
       setCategory(initialData.category || '')
       setIsOneTimeOnly(initialData.isOneTimeOnly || false)
       setIsRepeatable(initialData.isRepeatable || false)

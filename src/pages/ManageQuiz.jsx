@@ -116,7 +116,7 @@ const ManageQuiz = () => {
     setEditingQuestion(null);
   }, []);
 
-  const handleSaveQuestion = useCallback(async (type, questionData) => {
+  const handleSaveQuestion = useCallback(async (type, questionType, questionData) => {
     try {
       const formData = new FormData();
       formData.append('questionText', questionData.question);
@@ -140,7 +140,7 @@ const ManageQuiz = () => {
       } else {
         // Add new question
         formData.append('type', type);
-        formData.append('questionType', subTab);
+        formData.append('questionType', questionType);
         await addQuestion(formData).unwrap();
         toast.success('Question added successfully!');
       }
@@ -463,7 +463,7 @@ const ManageQuiz = () => {
         open={popup === QUESTION_TYPES.TRIVIA}
         onClose={handleClosePopup}
         initialData={editingQuestion?.type === QUESTION_TYPES.TRIVIA ? editingQuestion.data : null}
-        onSubmit={data => handleSaveQuestion(QUESTION_TYPES.TRIVIA, {
+        onSubmit={data => handleSaveQuestion(QUESTION_TYPES.TRIVIA, subTab, {
           question: data.question,
           options: [...data.wrongs, data.correctAnswer],
           correctAnswer: data.correctAnswer
@@ -475,7 +475,7 @@ const ManageQuiz = () => {
         open={popup === QUESTION_TYPES.SCENT}
         onClose={handleClosePopup}
         initialData={editingQuestion?.type === QUESTION_TYPES.SCENT ? editingQuestion.data : null}
-        onSubmit={data => handleSaveQuestion(QUESTION_TYPES.SCENT, {
+        onSubmit={data => handleSaveQuestion(QUESTION_TYPES.SCENT, subTab, {
           question: data.question,
           correctAnswer: data.correctAnswer,
           options: [data.correctAnswer, data.correctAnswer === 'True' ? 'False' : 'True']
@@ -487,7 +487,7 @@ const ManageQuiz = () => {
         open={popup === QUESTION_TYPES.GUESS}
         onClose={handleClosePopup}
         initialData={editingQuestion?.type === QUESTION_TYPES.GUESS ? editingQuestion.data : null}
-        onSubmit={data => handleSaveQuestion(QUESTION_TYPES.GUESS, {
+        onSubmit={data => handleSaveQuestion(QUESTION_TYPES.GUESS, subTab,{
           question: data.question,
           correctAnswer: data.correctAnswer,
           image: data.image,
