@@ -10,6 +10,8 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
   const [otherImage, setOtherImage] = useState(null)
   const [preview, setPreview] = useState(null)
   const [otherPreview, setOtherPreview] = useState(null)
+  const [imageWithoutLabel, setImageWithoutLabel] = useState(null)
+  const [otherImageWithoutLabel, setOtherImageWithoutLabel] = useState(null)
   const [min, setMin] = useState('')
   const [max, setMax] = useState('')
 
@@ -35,6 +37,13 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
           : `${import.meta.env.VITE_BASE_URL}${initialData.otherImage}`;
         setOtherPreview(otherImageUrl);
       }
+
+      if(initialData.imageWithoutLabel) {
+        const imageUrl = initialData.imageWithoutLabel.startsWith('http')
+          ? initialData.imageWithoutLabel
+          : `${import.meta.env.VITE_BASE_URL}${initialData.imageWithoutLabel}`;
+        setOtherImageWithoutLabel(imageUrl);
+      }
     } else {
       // Reset all fields
       setName('')
@@ -43,6 +52,8 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
       setOtherImage(null)
       setPreview(null)
       setOtherPreview(null)
+      setImageWithoutLabel(null)
+      setOtherImageWithoutLabel(null)
       setMin('')
       setMax('')
     }
@@ -71,8 +82,11 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
       if (otherPreview && otherPreview.startsWith('blob:')) {
         URL.revokeObjectURL(otherPreview);
       }
+      if (otherImageWithoutLabel && otherImageWithoutLabel.startsWith('blob:')) {
+        URL.revokeObjectURL(otherImageWithoutLabel);
+      }
     };
-  }, [preview, otherPreview]);
+  }, [preview, otherPreview, otherImageWithoutLabel ]);
 
   // Image Preview Handlers
   const handleImageChange = (e) => {
@@ -88,6 +102,15 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
     if (file) {
       setOtherImage(file)
       setOtherPreview(URL.createObjectURL(file))
+    }
+  }
+
+  const handleImageWithoutLabelChange = (e) => {
+    console.log(e.target.files[0])
+    const file = e.target.files[0]
+    if (file) {
+      setImageWithoutLabel(file)
+      setOtherImageWithoutLabel(URL.createObjectURL(file))
     }
   }
 
@@ -121,6 +144,10 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
     }
     if (otherImage instanceof File) {
       formData.append('otherImage', otherImage)
+    }
+
+    if (imageWithoutLabel instanceof File) {
+      formData.append('imageWithoutLabel', imageWithoutLabel)
     }
 
     console.log('Submitting rank data:', {
@@ -205,6 +232,28 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
                 )}
                 <p className='text-[#666666] text-center text-sm'>
                   {otherPreview ? 'Change Alt Image' : 'Add Alternative Image'}
+                </p>
+              </div>
+            </label>
+            <label className="flex justify-center items-center border border-[#EFEFEF] rounded-2xl p-4 h-[210px] cursor-pointer flex-1">
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageWithoutLabelChange}
+              />
+              <div className="flex flex-col justify-center items-center">
+                {otherImageWithoutLabel ? (
+                  <img
+                    src={otherImageWithoutLabel}
+                    alt="Image Without Label"
+                    className="max-h-[150px] mb-[10px] rounded-xl object-contain"
+                  />
+                ) : (
+                  <img src={addpic_icon} alt="" />
+                )}
+                <p className='text-[#666666] text-center text-sm'>
+                  {otherImageWithoutLabel ? 'Change Image Without Label' : 'Add Image Without Label'}
                 </p>
               </div>
             </label>

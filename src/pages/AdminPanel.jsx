@@ -4,7 +4,7 @@ import Header from '../components/Header/Header'
 import Dashboard from './Dashboard'
 import ManageUsers from './ManageUsers'
 import ManageUserPopup from '../components/ManageUsers/ManageUserPopup'
-import ManagePerfum from './ManagePerfum'
+import ManagePerfum from './ManagePerfume'
 import PerfumDetailPopup from '../components/ManagePerfum/PerfumDetailPopup/PerfumDetailPopup'
 import AddPerfumPopup from '../components/ManagePerfum/AddPerfumPopup/AddPerfumPopup'
 

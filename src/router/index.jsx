@@ -15,6 +15,8 @@ import EditPerfume from "../components/ManagePerfum/EditPerfume";
 import AddPerfume from "../components/ManagePerfum/AddPerfume";
 import ManageBadge from "../pages/ManageBadge";
 import ManageRanks from "../pages/ManageRanks";
+import ManageNotes from "../pages/ManageNotes";
+import ManagePerfumers from "../pages/ManagePerfumers";
 const hasToken = () => !!localStorage.getItem("token");
 const router = createBrowserRouter([
     {
@@ -62,6 +64,14 @@ const router = createBrowserRouter([
             {
                 path: "perfumes/:id/edit",
                 element: <EditPerfume/>,
+            },
+            {
+                path: "notes",
+                element: <ManageNotes />,
+            },
+            {
+                path: "perfumers",
+                element: <ManagePerfumers />,
             },
             {
                 path: "quiz",

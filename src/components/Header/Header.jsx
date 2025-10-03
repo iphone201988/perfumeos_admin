@@ -56,6 +56,10 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     if (path.startsWith('/quiz')) return 'Manage Quiz';
     if (path.startsWith('/articles')) return 'Manage Articles';
     if (path.startsWith('/settings')) return 'Admin Settings';
+    if (path.startsWith('/notes')) return 'Manage Notes';
+    if (path.startsWith('/perfumers')) return 'Manage Perfumers';
+    if (path.startsWith('/badges')) return 'Manage Badges';
+    if (path.startsWith('/ranks')) return 'Manage Ranks';
 
     // Default fallback
     return 'Dashboard';
@@ -112,7 +116,7 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
         <button
           onClick={handleProfileClick}
           className="flex items-center gap-[8px] hover:bg-white/30 rounded-lg p-2 transition-colors cursor-pointer group"
-          title="Go to Profile"
+         
         >
           <img
             className='w-[50px] h-[50px] rounded-full border-4 border-[#67E9E9] object-cover group-hover:border-[#352AA4] transition-colors'

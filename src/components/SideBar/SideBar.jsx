@@ -11,6 +11,8 @@ import logout_icon from '../../assets/icons/logout-icon.svg';
 import article_icon from '../../assets/icons/article.svg';
 import badge_icon from '../../assets/icons/badge-icon.svg';
 import rank_icon from '../../assets/icons/rank-icon.svg';
+import note_icon from '../../assets/icons/note-icon.svg';
+import perfumer_icon from '../../assets/icons/perfumer-icon.svg';
 
 const SideBar = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
   const location = useLocation();
@@ -30,6 +32,8 @@ const SideBar = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     { to: '/', label: 'Dashboard', icon: dashboard_icon },
     { to: '/users', label: 'Manage Users', icon: user_icon },
     { to: '/perfumes', label: 'Manage Perfum', icon: perfume_icon },
+    { to: '/notes', label: 'Manage Notes', icon: note_icon },
+    { to: '/perfumers', label: 'Manage Perfumers', icon: perfumer_icon },
     { to: '/quiz', label: 'Manage Quiz', icon: quiz_icon },
     { to: '/articles', label: 'Manage Articles', icon: article_icon },
     { to: '/badge', label: 'Manage Badge', icon: badge_icon },

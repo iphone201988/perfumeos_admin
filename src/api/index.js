@@ -10,6 +10,8 @@ const Tags = {
   PERFUMEBYID: "PERFUMEBYID",
   BADGE: "BADGE",
   RANKS: "RANKS",
+  NOTES: "NOTES",
+  PERFUMER: "PERFUMER"
 };
 export const apis = createApi({
   reducerPath: "api",
@@ -32,6 +34,8 @@ export const apis = createApi({
     Tags.ARTICLE,
     Tags.BADGE,
     Tags.RANKS,
+    Tags.NOTES,
+    Tags.PERFUMER
 
   ],
   endpoints: (builder) => ({
@@ -274,6 +278,76 @@ export const apis = createApi({
         body: data,
       }),
     }),
+    getAllNotes: builder.query({
+      query: ({ page, limit, search, sort }) => {
+        const params = new URLSearchParams();
+        if (page) params.append("page", page.toString());
+        if (limit) params.append("limit", limit.toString());
+        if (search) params.append("search", search);
+        if (sort) params.append("sort", sort);
+        return `/admin/allNotes?${params.toString()}`;
+      },
+      providesTags: [Tags.NOTES],
+    }),
+    addNote: builder.mutation({
+      query: (formData) => ({
+        url: "/admin/addNote",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: [Tags.NOTES],
+    }),
+    updateNote: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/admin/note/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: [Tags.NOTES],
+    }),
+    deleteNote: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/admin/note/${id}`,
+        method: "DELETE",
+        body: data,
+      }),
+      invalidatesTags: [Tags.NOTES],
+    }),
+    getAllPerfumes: builder.query({
+      query: ({ page, limit, search, sort }) => {
+        const params = new URLSearchParams();
+        if (page) params.append("page", page.toString());
+        if (limit) params.append("limit", limit.toString());
+        if (search) params.append("search", search);
+        if (sort) params.append("sort", sort);
+        return `/admin/allPerfumers?${params.toString()}`;
+      },
+      providesTags: [Tags.PERFUMER],
+    }),
+    createPerfumer: builder.mutation({
+      query: (formData) => ({
+        url: "/admin/addPerfumer",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: [Tags.PERFUMER],
+    }),
+    updatePerfumer: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/admin/perfumer/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: [Tags.PERFUMER],
+    }),
+    deletePerfumer: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/admin/perfumer/${id}`,
+        method: "DELETE",
+        body: data,
+      }),
+      invalidatesTags: [Tags.PERFUMER],
+    }),
   }),
 });
 
@@ -308,4 +382,12 @@ export const {
   useCreateRankMutation,
   useUpdateRankMutation,
   useDeleteRankMutation,
+  useGetAllNotesQuery,
+  useAddNoteMutation,
+  useUpdateNoteMutation,
+  useDeleteNoteMutation,
+  useGetAllPerfumesQuery,
+  useCreatePerfumerMutation,
+  useUpdatePerfumerMutation,
+  useDeletePerfumerMutation,
 } = apis;

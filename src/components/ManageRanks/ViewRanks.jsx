@@ -107,6 +107,18 @@ const ViewRanks = ({ open, onClose, rankData = null, onEdit, onRemove }) => {
                             </div>
                         </div>
                     )}
+                    {rankData.imageWithoutLabel && (
+                        <div className="flex-1">
+                            <h6 className="text-[14px] font-medium text-[#7C7C7C] mb-2">Image Without Label</h6>
+                            <div className="border border-[#EFEFEF] rounded-2xl p-4 h-[200px] flex items-center justify-center">
+                                <img
+                                    src={getImageUrl(rankData.imageWithoutLabel)}
+                                    alt={`${rankData.name || 'Rank'} Alternative`}
+                                    className="max-h-[160px] max-w-full object-contain rounded-xl"
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Rank Information Grid */}
