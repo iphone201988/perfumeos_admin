@@ -1,16 +1,16 @@
 import React, { useRef } from "react";
 import addpic_icon from "../../assets/icons/addpic-icon.svg";
 
-const ImageUploader = ({ 
-    onImageSelect, 
-    currentImage = null, 
-    error = null, 
+const ImageUploader = ({
+    onImageSelect,
+    currentImage = null,
+    error = null,
     required = false,
     maxSizeInMB = 5,
     allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
 }) => {
     const inputRef = useRef(null);
-    
+
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -19,14 +19,14 @@ const ImageUploader = ({
                 onImageSelect(null, null, 'Please select a valid image file (JPG, PNG, GIF, WebP)');
                 return;
             }
-            
+
             // Validate file size
             const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
             if (file.size > maxSizeInBytes) {
                 onImageSelect(null, null, `Image size must be less than ${maxSizeInMB}MB`);
                 return;
             }
-            
+
             const imageUrl = URL.createObjectURL(file);
             onImageSelect(imageUrl, file, null);
         }
@@ -48,8 +48,8 @@ const ImageUploader = ({
                 className={`
                     flex justify-center items-center border bg-white rounded-2xl p-[16px] 
                     h-[170px] w-[170px] transition-colors cursor-pointer relative
-                    ${error 
-                        ? 'border-red-500 hover:border-red-400' 
+                    ${error
+                        ? 'border-red-500 hover:border-red-400'
                         : 'border-[#EFEFEF] hover:border-blue-300'
                     }
                 `}
@@ -67,11 +67,14 @@ const ImageUploader = ({
                     {currentImage ? (
                         <>
                             <img
-                                src={currentImage
-                                    ? currentImage.includes("/uploads")
-                                        ? `${import.meta.env.VITE_BASE_URL}${currentImage}`
-                                        : currentImage
-                                    : addpic_icon}
+                                src={
+                                    currentImage
+                                        ? currentImage.startsWith('http')
+                                            ? currentImage
+                                            : `${import.meta.env.VITE_BASE_URL}${currentImage}`
+                                        : addpic_icon
+                                }
+
                                 alt="Perfume"
                                 className="w-full h-full object-cover rounded"
                             />
@@ -97,11 +100,11 @@ const ImageUploader = ({
                     )}
                 </div>
             </label>
-            
+
             {error && (
                 <span className="text-red-500 text-xs mt-1">{error}</span>
             )}
-            
+
             {!error && !currentImage && (
                 <p className="text-gray-500 text-xs mt-1">
                     Click to upload an image or drag and drop

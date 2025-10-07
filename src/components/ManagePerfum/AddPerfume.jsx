@@ -490,7 +490,7 @@
                                         onBlur={handleBlur}
                                         placeholder="Enter perfume name"
                                         error={touched.name && formErrors.name}
-                                        required
+                                        
                                     />
                                     {formErrors.name && (
                                         <span className="text-red-500 text-xs mt-1">{formErrors.name}</span>
@@ -505,7 +505,7 @@
                                         onBlur={handleBlur}
                                         placeholder="Enter brand name"
                                         error={touched.brand && formErrors.brand}
-                                        required
+                                        
                                     />
                                      {formErrors.brand && (
                                 <span className="text-red-500 text-xs mt-1">{formErrors.brand}</span>
@@ -534,7 +534,7 @@
                                     placeholder="Enter perfume description"
                                     textAera="true"
                                     rows="6"
-                                    required
+                                    
                                     error={touched.description && formErrors.description}
                                 />
                                 {formErrors.description && (
@@ -554,6 +554,9 @@
                                 placeholder="e.g., Eau de Parfum, Eau de Toilette"
                                 error={touched.concentration && formErrors.concentration}
                             />
+                            {formErrors.concentration && (
+                                <span className="text-red-500 text-xs mt-1">{formErrors.concentration}</span>
+                            )}
                             </div>
                              <div className="w-full">
                             <FormField

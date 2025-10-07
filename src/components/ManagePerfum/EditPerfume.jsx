@@ -112,15 +112,15 @@ const EditPerfume = () => {
         }
         break;
 
-      case 'seasonWinter':
-      case 'seasonSummer':
-      case 'seasonAutumn':
-      case 'seasonSpring':
-        const seasonNum = parseInt(value);
-        if (value !== '' && (isNaN(seasonNum) || seasonNum < 0 || seasonNum > 100)) {
-          error = 'Value must be between 0 and 100';
-        }
-        break;
+      // case 'seasonWinter':
+      // case 'seasonSummer':
+      // case 'seasonAutumn':
+      // case 'seasonSpring':
+      //   const seasonNum = parseInt(value);
+      //   if (value !== '' && (isNaN(seasonNum) || seasonNum < 0 || seasonNum > 100)) {
+      //     error = 'Value must be between 0 and 100';
+      //   }
+      //   break;
 
       default:
         break;
@@ -167,13 +167,13 @@ const EditPerfume = () => {
     }
 
     // Validate season totals
-    const seasonTotal = parseInt(form.seasonWinter || 0) +
-      parseInt(form.seasonSummer || 0) +
-      parseInt(form.seasonAutumn || 0) +
-      parseInt(form.seasonSpring || 0);
-    if (seasonTotal > 100) {
-      errors.seasons = 'Total season percentages cannot exceed 100%';
-    }
+    // const seasonTotal = parseInt(form.seasonWinter || 0) +
+    //   parseInt(form.seasonSummer || 0) +
+    //   parseInt(form.seasonAutumn || 0) +
+    //   parseInt(form.seasonSpring || 0);
+    // if (seasonTotal > 100) {
+    //   errors.seasons = 'Total season percentages cannot exceed 100%';
+    // }
 
     // Validate occasion totals
     const occasionTotal = parseInt(form.occasionDay || 0) + parseInt(form.occasionEvening || 0);

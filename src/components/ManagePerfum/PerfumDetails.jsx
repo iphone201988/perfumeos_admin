@@ -43,9 +43,9 @@ const PerfumDetails = () => {
             <img
               src={
                 perfume.image
-                  ? perfume.image.includes("/uploads")
-                    ? `${import.meta.env.VITE_BASE_URL}${perfume.image}`
-                    : perfume.image
+                  ? perfume.image.startsWith("http")
+                    ? perfume.image
+                    : `${import.meta.env.VITE_BASE_URL}${perfume.image}`
                   : addpic_icon
               }
               alt={perfume.name}
