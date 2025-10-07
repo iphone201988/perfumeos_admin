@@ -13,7 +13,7 @@ const PerfumDetails = () => {
   const [isDeleted, setIsDeleted] = useState(false);
 
   if (isLoading) {
-     return <Loader message="Loading Perfume Details" />;
+    return <Loader message="Loading Perfume Details" />;
   };
   if (error || !perfumeData) return <div>Error loading perfume details.</div>;
   const perfume = perfumeData.data;
@@ -25,7 +25,7 @@ const PerfumDetails = () => {
   const onEdit = () => {
     navigate(`/perfumes/${params.id}/edit`);
   };
-  const handleDelete = async() => {
+  const handleDelete = async () => {
     await deletePerfume(params.id);
     setIsDeleted(false);
     navigate("/perfumes");
@@ -33,9 +33,9 @@ const PerfumDetails = () => {
   return (
     <div>
       <div className="bg-[#E1F8F8] rounded-[30px] py-[24px] px-[32px] max-lg:p-[16px]">
-        <h6 className="text-[20px] font-semibold text-[#352AA4]">
+        {/* <h6 className="text-[20px] font-semibold text-[#352AA4]">
           Perfume details
-        </h6>
+        </h6> */}
 
         {/* Main Info */}
         <div className="flex gap-[32px] items-start max-md:flex-wrap mt-[16px]">
@@ -87,18 +87,18 @@ const PerfumDetails = () => {
           <h4 className="text-[20px] font-medium mb-2">Fragrance Pyramid</h4>
           <div className="">
             {["top", "middle", "base", "note"]?.map((layer) => (
-            <div key={layer} className="py-[8px] border-b border-[#fff]">
-              <div className="text-[#352AA4] text-[16px] font-semibold capitalize mb-1 ml-[12px]">{layer} notes</div>
-              <div className="flex flex-wrap gap-4">
-                {(perfume.notes?.[layer] || []).map((note) => (
-                  <div key={note._id || note.noteId} className="flex flex-col items-center w-[80px]">
-                    <img src={note.image} alt={note.name} className="rounded-md w-12 h-12 object-cover mb-1" />
-                    <span className="text-[14px] text-center">{note.name}</span>
-                  </div>
-                ))}
+              <div key={layer} className="py-[8px] border-b border-[#fff]">
+                <div className="text-[#352AA4] text-[16px] font-semibold capitalize mb-1 ml-[12px]">{layer} notes</div>
+                <div className="flex flex-wrap gap-4">
+                  {(perfume.notes?.[layer] || []).map((note) => (
+                    <div key={note._id || note.noteId} className="flex flex-col items-center w-[80px]">
+                      <img src={note.image} alt={note.name} className="rounded-md w-12 h-12 object-cover mb-1" />
+                      <span className="text-[14px] text-center">{note.name}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
           </div>
         </div>
 
@@ -176,6 +176,24 @@ const PerfumDetails = () => {
 
       {/* Buttons */}
       <div className="flex justify-end gap-[16px] mt-[24px] flex-wrap">
+        <button
+          onClick={() => navigate('/perfumes')}
+          className={`
+    bg-gray-100 text-[#352AA4] text-sm border border-gray-200 
+    rounded-full px-4 py-2 transition-all duration-300 ease-in-out
+    hover:bg-gray-400 hover:border-[#352AA4] hover:text-[#1b1555]
+    flex items-center gap-2
+    ${isLoading
+              ? 'opacity-60 cursor-not-allowed'
+              : 'cursor-pointer hover:shadow-sm'
+            }
+  `}
+          type="button"
+          disabled={isLoading}
+        >
+          <span>←</span>
+          Back
+        </button>
         <button onClick={() => setIsDeleted(true)} className="btn-sec">Remove Perfume</button>
         <button onClick={onEdit} className="btn-pri">Edit</button>
       </div>

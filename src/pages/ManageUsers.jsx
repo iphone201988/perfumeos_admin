@@ -95,7 +95,7 @@ const ManageUsers = () => {
     setCurrentPage(page);
   };
   const handleViewRedirect = (userId) => {
-    navigate(`/user/${userId}`);
+    navigate(`/users/${userId}`);
   };
 
   // Error state

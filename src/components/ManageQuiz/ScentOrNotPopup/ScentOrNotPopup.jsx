@@ -1,11 +1,106 @@
 import React, { useEffect, useState } from 'react';
 import cross_icon from '../../../assets/icons/cross-icon.svg';
 import InputField from '../../Form/InputField';
+import { toast } from 'react-toastify';
 
 const ScentOrNotPopup = ({ open, onClose, onSubmit, initialData = null, subTab }) => {
   const [question, setQuestion] = useState('');
   const [correct, setCorrect] = useState('True');
   const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
+  // Validation rules
+  const validateField = (fieldName, value) => {
+    let error = '';
+    
+    switch (fieldName) {
+      case 'question':
+        if (!value || value.trim() === '') {
+          error = 'Question is required';
+        } else if (value.trim().length < 10) {
+          error = 'Question must be at least 10 characters';
+        } else if (value.trim().length > 500) {
+          error = 'Question must be less than 500 characters';
+        }
+        break;
+      
+      case 'correct':
+        if (!value) {
+          error = 'Please select the correct answer';
+        } else if (!['True', 'False'].includes(value)) {
+          error = 'Answer must be either True or False';
+        }
+        break;
+      
+      default:
+        break;
+    }
+    
+    return error;
+  };
+
+  // Validate entire form
+  const validateForm = () => {
+    const newErrors = {};
+    
+    newErrors.question = validateField('question', question);
+    newErrors.correct = validateField('correct', correct);
+    
+    // Remove empty errors
+    Object.keys(newErrors).forEach(key => {
+      if (!newErrors[key]) delete newErrors[key];
+    });
+    
+    return newErrors;
+  };
+
+  // Handle field changes with validation
+  const handleFieldChange = (fieldName, value) => {
+    // Update field value
+    switch (fieldName) {
+      case 'question':
+        setQuestion(value);
+        break;
+      case 'correct':
+        setCorrect(value);
+        break;
+      default:
+        break;
+    }
+    
+    // Mark as touched
+    setTouched(prev => ({ ...prev, [fieldName]: true }));
+    
+    // Validate and update errors
+    const error = validateField(fieldName, value);
+    setErrors(prev => ({ 
+      ...prev, 
+      [fieldName]: error 
+    }));
+  };
+
+  // Handle blur events
+  const handleBlur = (fieldName) => {
+    setTouched(prev => ({ ...prev, [fieldName]: true }));
+    
+    let value;
+    switch (fieldName) {
+      case 'question':
+        value = question;
+        break;
+      case 'correct':
+        value = correct;
+        break;
+      default:
+        return;
+    }
+    
+    const error = validateField(fieldName, value);
+    setErrors(prev => ({ 
+      ...prev, 
+      [fieldName]: error 
+    }));
+  };
 
   useEffect(() => {
     if (initialData) {
@@ -15,31 +110,28 @@ const ScentOrNotPopup = ({ open, onClose, onSubmit, initialData = null, subTab }
       setQuestion('');
       setCorrect('True');
     }
-    setErrors({}); // Clear errors when popup opens/closes
+    
+    // Reset validation states
+    setErrors({});
+    setTouched({});
   }, [initialData, open]);
-
-  // ✅ Enhanced validation
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!question.trim()) {
-      newErrors.question = 'Question is required';
-    } else if (question.trim().length < 10) {
-      newErrors.question = 'Question should be at least 10 characters long';
-    }
-
-    if (!correct) {
-      newErrors.correct = 'Please select the correct answer';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    // Validate entire form
+    const formErrors = validateForm();
+    setErrors(formErrors);
+    
+    // Mark all fields as touched
+    setTouched({
+      question: true,
+      correct: true
+    });
+    
+    // If there are errors, don't submit
+    if (Object.keys(formErrors).length > 0) {
+      toast.error('Please fix all validation errors before submitting');
       return;
     }
 
@@ -49,28 +141,12 @@ const ScentOrNotPopup = ({ open, onClose, onSubmit, initialData = null, subTab }
     });
   };
 
-  const handleQuestionChange = (e) => {
-    setQuestion(e.target.value);
-    // Clear error when user starts typing
-    if (errors.question) {
-      setErrors(prev => ({ ...prev, question: '' }));
-    }
-  };
-
-  const handleCorrectChange = (e) => {
-    setCorrect(e.target.value);
-    // Clear error when user selects
-    if (errors.correct) {
-      setErrors(prev => ({ ...prev, correct: '' }));
-    }
-  };
-
   if (!open) return null;
 
   return (
     <div className='w-full p-[20px] overflow-auto h-full min-h-[100vh] fixed top-0 left-0 bg-[rgba(0,0,0,0.80)] z-[9999] flex items-center justify-center max-md:p-[20px]'>
       <form
-        className="bg-white p-[32px] rounded-[24px] max-w-[600px]  w-full max-md:p-[16px] max-md:overflow-scroll max-md:max-h-[90vh]"
+        className="bg-white p-[32px] rounded-[24px] max-w-[600px] w-full max-md:p-[16px] max-md:overflow-scroll max-md:max-h-[90vh]"
         onSubmit={handleSubmit}
       >
         <div className="flex items-center justify-between">
@@ -89,15 +165,20 @@ const ScentOrNotPopup = ({ open, onClose, onSubmit, initialData = null, subTab }
               label="Enter Question"
               placeholder="Enter a true/false question about scents or perfumes"
               value={question}
-              onChange={handleQuestionChange}
-              required
+              onChange={e => handleFieldChange('question', e.target.value)}
+              onBlur={() => handleBlur('question')}
+              
+              error={touched.question && errors.question}
             />
-            {errors.question && (
-              <p className="text-red-500 text-sm mt-1">{errors.question}</p>
+            <div className='flex flex-col'>
+              
+            <span className="text-gray-500 text-xs mt-1">
+              {question.length}/500 characters - Make it clear what users need to identify as true or false
+            </span>
+            {touched.question && errors.question && (
+              <span className="text-red-500 text-xs mt-1">{errors.question}</span>
             )}
-            <p className="text-gray-500 text-xs mt-1">
-              Make it clear what users need to identify as true or false
-            </p>
+            </div>
           </div>
 
           {/* Correct Answer Field */}
@@ -108,28 +189,30 @@ const ScentOrNotPopup = ({ open, onClose, onSubmit, initialData = null, subTab }
               </span>
               <select
                 className={`border rounded-2xl py-[14px] px-[18px] transition-colors ${
-                  errors.correct ? 'border-red-500 bg-red-50' : 'border-[#EEEEEE] hover:border-gray-300'
+                  errors.correct && touched.correct ? 'border-red-500 bg-red-50' : 'border-[#EEEEEE] hover:border-gray-300'
                 }`}
                 value={correct}
-                onChange={handleCorrectChange}
-                required
+                onChange={e => handleFieldChange('correct', e.target.value)}
+                onBlur={() => handleBlur('correct')}
+                
               >
+                <option value="">Select correct answer</option>
                 <option value="True">True</option>
                 <option value="False">False</option>
               </select>
             </label>
-            {errors.correct && (
+            {errors.correct && touched.correct && (
               <p className="text-red-500 text-sm mt-1">{errors.correct}</p>
             )}
           </div>
 
           {/* Question Type Info */}
-          {/* <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <h6 className="text-blue-800 font-medium text-sm mb-1">Question Type: Scent or Not?</h6>
             <p className="text-blue-700 text-xs">
               This is a True/False question where users need to determine if something is scent-related or not.
             </p>
-          </div> */}
+          </div>
         </div>
 
         {/* Action Buttons */}
@@ -137,11 +220,14 @@ const ScentOrNotPopup = ({ open, onClose, onSubmit, initialData = null, subTab }
           <button type="button" onClick={onClose} className='btn-sec'>
             Cancel
           </button>
-          <button type="submit" className='btn-pri'>
+          <button 
+            type="submit" 
+            className='btn-pri disabled:opacity-50 disabled:cursor-not-allowed'
+            disabled={Object.keys(errors).some(key => errors[key])}
+          >
             {initialData ? 'Save Changes' : 'Add Question'}
           </button>
         </div>
-
       </form>
     </div>
   );

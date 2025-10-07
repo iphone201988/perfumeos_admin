@@ -82,9 +82,9 @@ const Table = ({ columns, data, renderActions }) => {
         <tbody className="text-[#7C7C7C] text-[14px] font-medium">
           {data.length === 0 && (
             <tr>
-              <td colSpan={columns.length + (renderActions ? 1 : 0)} className="text-center py-6">
+              {/* <td colSpan={columns.length + (renderActions ? 1 : 0)} className="text-center py-6">
                 No data found
-              </td>
+              </td> */}
             </tr>
           )}
           {data.map((row, idx) => (

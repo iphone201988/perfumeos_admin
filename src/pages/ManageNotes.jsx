@@ -121,11 +121,11 @@ const ManageNotes = () => {
     };
     const deleteNotesHandler = async (id, type) => {
         try {
+            setViewNotesPopup(false);
             await deleteNotes({ id: id, data: { type } }).unwrap();
             setSelectedNotes(null);
             setEditNotesPopup(false);
             setAddNotesPopup(false);
-            setViewNotesPopup(false);
             toast.success('Notes deleted successfully!');
             refetch();
         } catch (error) {

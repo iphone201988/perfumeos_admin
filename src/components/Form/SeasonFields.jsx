@@ -1,7 +1,13 @@
 import React from "react";
 import FormField from "./FormField";
 
-const SeasonFields = ({ form, onInputChange }) => {
+const SeasonFields = ({ 
+    form, 
+    onInputChange, 
+    onBlur, 
+    formErrors = {}, 
+    touched = {} 
+}) => {
     return (
         <div>
             <h4 className="text-[20px] font-medium mt-4 mb-4">Season</h4>
@@ -14,7 +20,9 @@ const SeasonFields = ({ form, onInputChange }) => {
                     max="100"
                     value={form.seasonWinter}
                     onChange={onInputChange}
+                    onBlur={onBlur}
                     placeholder="0-100"
+                    error={touched.seasonWinter && formErrors.seasonWinter}
                 />
                 <FormField
                     label="Summer"
@@ -24,7 +32,9 @@ const SeasonFields = ({ form, onInputChange }) => {
                     max="100"
                     value={form.seasonSummer}
                     onChange={onInputChange}
+                    onBlur={onBlur}
                     placeholder="0-100"
+                    error={touched.seasonSummer && formErrors.seasonSummer}
                 />
                 <FormField
                     label="Autumn"
@@ -34,7 +44,9 @@ const SeasonFields = ({ form, onInputChange }) => {
                     max="100"
                     value={form.seasonAutumn}
                     onChange={onInputChange}
+                    onBlur={onBlur}
                     placeholder="0-100"
+                    error={touched.seasonAutumn && formErrors.seasonAutumn}
                 />
                 <FormField
                     label="Spring"
@@ -44,7 +56,9 @@ const SeasonFields = ({ form, onInputChange }) => {
                     max="100"
                     value={form.seasonSpring}
                     onChange={onInputChange}
+                    onBlur={onBlur}
                     placeholder="0-100"
+                    error={touched.seasonSpring && formErrors.seasonSpring}
                 />
             </div>
         </div>

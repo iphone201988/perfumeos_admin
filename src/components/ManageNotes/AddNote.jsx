@@ -1,16 +1,175 @@
 import React, { useState, useEffect } from 'react'
 import cross_icon from '../../assets/icons/cross-icon.svg'
 import addpic_icon from '../../assets/icons/addpic-icon.svg'
+import { toast } from 'react-toastify'
 
 const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
-  // State for all form fields based on NotesModel
+  // State for all form fields
   const [name, setName] = useState('')
   const [odorProfile, setOdorProfile] = useState('')
   const [image, setImage] = useState(null)
   const [preview, setPreview] = useState(null)
   const [group, setGroup] = useState('')
   const [scientificName, setScientificName] = useState('')
-  const [otherNames, setOtherNames] = useState(['']) // Add this state
+  const [otherNames, setOtherNames] = useState([''])
+
+  // Validation states
+  const [errors, setErrors] = useState({})
+  const [touched, setTouched] = useState({})
+
+  // Validation rules
+  const validateField = (fieldName, value) => {
+    let error = ''
+    
+    switch (fieldName) {
+      case 'name':
+        if (!value || value.trim() === '') {
+          error = 'Note name is required'
+        } else if (value.trim().length < 2) {
+          error = 'Note name must be at least 2 characters'
+        } else if (value.trim().length > 100) {
+          error = 'Note name must be less than 100 characters'
+        }
+        break
+      
+      case 'odorProfile':
+        if (!value || value.trim() === '') {
+          error = 'Odor profile is required'
+        } else if (value.trim().length < 10) {
+          error = 'Odor profile must be at least 10 characters'
+        } else if (value.trim().length > 500) {
+          error = 'Odor profile must be less than 500 characters'
+        }
+        break
+      
+      case 'group':
+        if (!value || value.trim() === '') {
+          error = 'Group is required'
+        } else if (value.trim().length < 2) {
+          error = 'Group must be at least 2 characters'
+        } else if (value.trim().length > 50) {
+          error = 'Group must be less than 50 characters'
+        }
+        break
+      
+      case 'scientificName':
+        if (!value || value.trim() === '') {
+          error = 'Scientific name is required'
+        } else if (value.trim().length < 2) {
+          error = 'Scientific name must be at least 2 characters'
+        } else if (value.trim().length > 100) {
+          error = 'Scientific name must be less than 100 characters'
+        }
+        break
+      
+      case 'otherNames':
+        // Validate other names array
+        const validNames = value.filter(n => n && n.trim() !== '')
+        const duplicateNames = validNames.filter((name, index) => 
+          validNames.indexOf(name) !== index
+        )
+        
+        if (duplicateNames.length > 0) {
+          error = 'Other names must be unique'
+        }
+        
+        // Check individual name lengths
+        const longNames = validNames.filter(name => name.trim().length > 50)
+        if (longNames.length > 0) {
+          error = 'Each name must be less than 50 characters'
+        }
+        break
+      
+      default:
+        break
+    }
+    
+    return error
+  }
+
+  // Validate entire form
+  const validateForm = () => {
+    const newErrors = {}
+    
+    // Validate basic fields
+    newErrors.name = validateField('name', name)
+    newErrors.odorProfile = validateField('odorProfile', odorProfile)
+    newErrors.group = validateField('group', group)
+    newErrors.scientificName = validateField('scientificName', scientificName)
+    newErrors.otherNames = validateField('otherNames', otherNames)
+    
+    // Image validation (only required for new notes)
+    if (!initialData && !image) {
+      newErrors.image = 'Please select an image'
+    }
+    
+    // Remove empty errors
+    Object.keys(newErrors).forEach(key => {
+      if (!newErrors[key]) delete newErrors[key]
+    })
+    
+    return newErrors
+  }
+
+  // Handle field changes with validation
+  const handleFieldChange = (fieldName, value) => {
+    // Update the field value
+    switch (fieldName) {
+      case 'name':
+        setName(value)
+        break
+      case 'odorProfile':
+        setOdorProfile(value)
+        break
+      case 'group':
+        setGroup(value)
+        break
+      case 'scientificName':
+        setScientificName(value)
+        break
+      default:
+        break
+    }
+    
+    // Mark as touched
+    setTouched(prev => ({ ...prev, [fieldName]: true }))
+    
+    // Validate and update errors
+    const error = validateField(fieldName, value)
+    setErrors(prev => ({ 
+      ...prev, 
+      [fieldName]: error 
+    }))
+  }
+
+  // Handle blur events
+  const handleBlur = (fieldName) => {
+    setTouched(prev => ({ ...prev, [fieldName]: true }))
+    
+    let value
+    switch (fieldName) {
+      case 'name':
+        value = name
+        break
+      case 'odorProfile':
+        value = odorProfile
+        break
+      case 'group':
+        value = group
+        break
+      case 'scientificName':
+        value = scientificName
+        break
+      default:
+        return
+    }
+    
+    const error = validateField(fieldName, value)
+    setErrors(prev => ({ 
+      ...prev, 
+      [fieldName]: error 
+    }))
+  }
 
   // Handle initialData (on edit)
   useEffect(() => {
@@ -19,11 +178,8 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
       setOdorProfile(initialData.odorProfile || '')
       setGroup(initialData.group || '')
       setScientificName(initialData.scientificName || '')
-
-      // Handle otherNames array
       setOtherNames(initialData.otherNames && initialData.otherNames.length > 0 ? initialData.otherNames : [''])
 
-      // Handle existing images
       if (initialData.image) {
         const imageUrl = initialData.image.startsWith('http')
           ? initialData.image
@@ -38,8 +194,12 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
       setOdorProfile('')
       setGroup('')
       setScientificName('')
-      setOtherNames(['']) // Reset to single empty field
+      setOtherNames([''])
     }
+    
+    // Reset validation states
+    setErrors({})
+    setTouched({})
   }, [initialData, open])
 
   // Prevent body scroll when modal is open
@@ -50,7 +210,6 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
       document.body.style.overflow = 'unset'
     }
 
-    // Cleanup function to restore body scroll
     return () => {
       document.body.style.overflow = 'unset'
     }
@@ -65,11 +224,19 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
     };
   }, [preview]);
 
-  // Other Names handlers
+  // Other Names handlers with validation
   const handleOtherNameChange = (index, value) => {
     const updatedNames = [...otherNames]
     updatedNames[index] = value
     setOtherNames(updatedNames)
+    
+    // Validate other names
+    const error = validateField('otherNames', updatedNames)
+    setErrors(prev => ({ 
+      ...prev, 
+      otherNames: error 
+    }))
+    setTouched(prev => ({ ...prev, otherNames: true }))
   }
 
   const addOtherNameField = () => {
@@ -80,37 +247,71 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
     if (otherNames.length > 1) {
       const updatedNames = otherNames.filter((_, i) => i !== index)
       setOtherNames(updatedNames)
+      
+      // Re-validate other names
+      const error = validateField('otherNames', updatedNames)
+      setErrors(prev => ({ 
+        ...prev, 
+        otherNames: error 
+      }))
     }
   }
 
-  // Image Preview Handlers
+  // Image Preview Handlers with validation
   const handleImageChange = (e) => {
     const file = e.target.files[0]
     if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+      if (!allowedTypes.includes(file.type)) {
+        setErrors(prev => ({ 
+          ...prev, 
+          image: 'Please select a valid image file (JPG, PNG, GIF, WebP)' 
+        }))
+        return
+      }
+      
+      // Validate file size (5MB limit)
+      const maxSize = 5 * 1024 * 1024
+      if (file.size > maxSize) {
+        setErrors(prev => ({ 
+          ...prev, 
+          image: 'Image size must be less than 5MB' 
+        }))
+        return
+      }
+      
       setImage(file)
       setPreview(URL.createObjectURL(file))
+      setErrors(prev => ({ 
+        ...prev, 
+        image: '' 
+      }))
+      setTouched(prev => ({ ...prev, image: true }))
     }
   }
 
-  // Form Submit Handler
+  // Form Submit Handler with validation
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    // Validation
-    if (!name.trim()) {
-      alert('Please enter a Note name')
-      return
-    }
-    if (!odorProfile.trim()) {
-      alert('Please enter an odor profile')
-      return
-    }
-    if (!group.trim()) {
-      alert('Please enter a group')
-      return
-    }
-    if (!scientificName.trim()) {
-      alert('Please enter a scientific name')
+    // Validate entire form
+    const formErrors = validateForm()
+    setErrors(formErrors)
+    
+    // Mark all fields as touched
+    setTouched({
+      name: true,
+      odorProfile: true,
+      group: true,
+      scientificName: true,
+      otherNames: true,
+      image: true
+    })
+
+    // If there are errors, don't submit
+    if (Object.keys(formErrors).length > 0) {
+      toast.error('Please fix all validation errors before submitting')
       return
     }
 
@@ -130,16 +331,13 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
     if (image instanceof File) {
       formData.append('image', image)
     }
-    formData.forEach((value, key) => {
-      console.log(`${key}: ${value}`)
-    })
+
     onSubmit(formData)
     onClose()
   }
 
   // Auto-close modal if not open
   if (!open) return null
-
   return (
     <div className='w-full min-h-screen fixed top-0 left-0 bg-[rgba(0,0,0,0.80)] z-[9999] flex items-center justify-center p-4'>
       <form
@@ -162,45 +360,68 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
         </div>
 
         <div className="flex flex-col gap-4">
-          {/* Image Upload Sections */}
+          {/* Image Upload Section */}
           <div className="flex gap-3 max-md:flex-col">
-            <label className="flex justify-center items-center border border-[#EFEFEF] rounded-2xl p-4 h-[210px] cursor-pointer flex-1">
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageChange}
-              />
-              <div className="flex flex-col justify-center items-center">
-                {preview ? (
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    className="max-h-[150px] mb-[10px] rounded-xl object-contain"
-                  />
-                ) : (
-                  <img src={addpic_icon} alt="" />
-                )}
-                <p className='text-[#666666] text-center text-sm'>
-                  {preview ? 'Change Image' : 'Add Main Image'}
-                </p>
-              </div>
-            </label>
+            <div className="flex flex-col flex-1">
+              <span className='text-[#7C7C7C] text-[14px] mb-2'>
+                Note Image {!initialData && <span className="text-red-500">*</span>}
+              </span>
+              <label className={`
+                flex justify-center items-center border rounded-2xl p-4 h-[210px] cursor-pointer
+                ${errors.image && touched.image ? 'border-red-500' : 'border-[#EFEFEF]'}
+              `}>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+                <div className="flex flex-col justify-center items-center">
+                  {preview ? (
+                    <img
+                      src={preview}
+                      alt="Preview"
+                      className="max-h-[150px] mb-[10px] rounded-xl object-contain"
+                    />
+                  ) : (
+                    <img src={addpic_icon} alt="" />
+                  )}
+                  <p className='text-[#666666] text-center text-sm'>
+                    {preview ? 'Change Image' : 'Add Main Image'}
+                  </p>
+                  <p className="text-[#999999] text-center text-xs mt-1">
+                    Max 5MB • JPG, PNG, GIF, WebP
+                  </p>
+                </div>
+              </label>
+              {errors.image && touched.image && (
+                <span className="text-red-500 text-xs mt-1">{errors.image}</span>
+              )}
+            </div>
           </div>
 
           {/* Form Fields */}
           <label className='flex flex-col w-full'>
-            <span className='text-[#7C7C7C] text-[14px] mb-1'>Note Name *</span>
+            <span className='text-[#7C7C7C] text-[14px] mb-1'>
+              Note Name <span className="text-red-500">*</span>
+            </span>
             <input
-              className='border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px]'
+              className={`
+                border rounded-2xl py-[14px] px-[18px]
+                ${errors.name && touched.name ? 'border-red-500' : 'border-[#EEEEEE]'}
+              `}
               type="text"
               placeholder='Enter Note name'
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
+              onChange={(e) => handleFieldChange('name', e.target.value)}
+              onBlur={() => handleBlur('name')}
             />
+            {errors.name && touched.name && (
+              <span className="text-red-500 text-xs mt-1">{errors.name}</span>
+            )}
           </label>
-          {/* Other Names Dynamic Fields - Auto-sizing Grid */}
+
+          {/* Other Names Dynamic Fields */}
           <div className='flex flex-col w-full'>
             <div className="flex items-center justify-between mb-2">
               <span className='text-[#7C7C7C] text-[14px]'>Other Names</span>
@@ -217,7 +438,10 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
               {otherNames.map((otherName, index) => (
                 <div key={index} className="flex gap-2 items-center">
                   <input
-                    className='border border-[#EEEEEE] rounded-2xl py-[12px] px-[16px] flex-1 text-sm'
+                    className={`
+                      border rounded-2xl py-[12px] px-[16px] flex-1 text-sm
+                      ${errors.otherNames && touched.otherNames ? 'border-red-500' : 'border-[#EEEEEE]'}
+                    `}
                     type="text"
                     placeholder={`Enter name ${index + 1}`}
                     value={otherName}
@@ -236,42 +460,71 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
                 </div>
               ))}
             </div>
+            {errors.otherNames && touched.otherNames && (
+              <span className="text-red-500 text-xs mt-1">{errors.otherNames}</span>
+            )}
           </div>
 
           <label className='flex flex-col w-full'>
-            <span className='text-[#7C7C7C] text-[14px] mb-1'>Scientific Name</span>
+            <span className='text-[#7C7C7C] text-[14px] mb-1'>
+              Scientific Name <span className="text-red-500">*</span>
+            </span>
             <input
-              className='border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px]'
+              className={`
+                border rounded-2xl py-[14px] px-[18px]
+                ${errors.scientificName && touched.scientificName ? 'border-red-500' : 'border-[#EEEEEE]'}
+              `}
               type="text"
               placeholder='Enter Scientific name'
               value={scientificName}
-              onChange={(e) => setScientificName(e.target.value)}
-              required
+              onChange={(e) => handleFieldChange('scientificName', e.target.value)}
+              onBlur={() => handleBlur('scientificName')}
             />
+            {errors.scientificName && touched.scientificName && (
+              <span className="text-red-500 text-xs mt-1">{errors.scientificName}</span>
+            )}
           </label>
 
           <label className='flex flex-col w-full'>
-            <span className='text-[#7C7C7C] text-[14px] mb-1'>Group</span>
+            <span className='text-[#7C7C7C] text-[14px] mb-1'>
+              Group <span className="text-red-500">*</span>
+            </span>
             <input
-              className='border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px]'
+              className={`
+                border rounded-2xl py-[14px] px-[18px]
+                ${errors.group && touched.group ? 'border-red-500' : 'border-[#EEEEEE]'}
+              `}
               type="text"
               placeholder='Enter Group name'
               value={group}
-              onChange={(e) => setGroup(e.target.value)}
-              required
+              onChange={(e) => handleFieldChange('group', e.target.value)}
+              onBlur={() => handleBlur('group')}
             />
+            {errors.group && touched.group && (
+              <span className="text-red-500 text-xs mt-1">{errors.group}</span>
+            )}
           </label>
 
-
-
           <label className='flex flex-col w-full'>
-            <span className='text-[#7C7C7C] text-[14px] mb-1'>Odor Profile</span>
+            <span className='text-[#7C7C7C] text-[14px] mb-1'>
+              Odor Profile <span className="text-red-500">*</span>
+            </span>
             <textarea
-              className='border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px] min-h-[100px] resize-none'
-              placeholder='Enter Odor Profile'
+              className={`
+                border rounded-2xl py-[14px] px-[18px] min-h-[100px] resize-none
+                ${errors.odorProfile && touched.odorProfile ? 'border-red-500' : 'border-[#EEEEEE]'}
+              `}
+              placeholder='Enter Odor Profile (minimum 10 characters)'
               value={odorProfile}
-              onChange={(e) => setOdorProfile(e.target.value)}
+              onChange={(e) => handleFieldChange('odorProfile', e.target.value)}
+              onBlur={() => handleBlur('odorProfile')}
             />
+            {errors.odorProfile && touched.odorProfile && (
+              <span className="text-red-500 text-xs mt-1">{errors.odorProfile}</span>
+            )}
+            <span className="text-gray-500 text-xs mt-1">
+              {odorProfile.length}/500 characters
+            </span>
           </label>
         </div>
 
@@ -284,7 +537,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
             Cancel
           </button>
           <button
-            className='bg-[#352AA4] hover:bg-[#2a1f7a] text-white font-semibold py-2 px-6 rounded-full transition-colors duration-300'
+            className='bg-[#352AA4] hover:bg-[#2a1f7a] text-white font-semibold py-2 px-6 rounded-full transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed'
             type="submit"
           >
             {initialData ? 'Update Note' : 'Create Note'}

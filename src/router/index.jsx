@@ -46,7 +46,7 @@ const router = createBrowserRouter([
                 element: <ManageUsers />,
             },
             {
-                path: "user/:id",
+                path: "users/:id",
                 element: <UserDetails />,
             },
             {

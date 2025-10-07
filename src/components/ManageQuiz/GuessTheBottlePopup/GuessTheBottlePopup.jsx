@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import cross_icon from '../../../assets/icons/cross-icon.svg';
 import addpic_icon from '../../../assets/icons/addpic-icon.svg';
 import InputField from '../../Form/InputField';
+import { toast } from 'react-toastify';
 
 const GuessTheBottlePopup = ({ open, onClose, onSubmit, initialData = null, subTab }) => {
   const [image, setImage] = useState(null);
@@ -10,7 +11,167 @@ const GuessTheBottlePopup = ({ open, onClose, onSubmit, initialData = null, subT
   const [wrongs, setWrongs] = useState(['', '', '']);
   const [file, setFile] = useState(null);
   const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
   const fileInput = useRef();
+
+  // Validation rules
+  const validateField = (fieldName, value, index = null) => {
+    let error = '';
+    
+    switch (fieldName) {
+      case 'question':
+        if (!value || value.trim() === '') {
+          error = 'Question is required';
+        } else if (value.trim().length < 10) {
+          error = 'Question must be at least 10 characters';
+        } else if (value.trim().length > 500) {
+          error = 'Question must be less than 500 characters';
+        }
+        break;
+      
+      case 'correct':
+        if (!value || value.trim() === '') {
+          error = 'Correct answer is required';
+        } else if (value.trim().length < 2) {
+          error = 'Answer must be at least 2 characters';
+        } else if (value.trim().length > 100) {
+          error = 'Answer must be less than 100 characters';
+        }
+        break;
+      
+      case 'wrong':
+        if (index !== null && index < 2) { // First 2 wrong answers are required
+          if (!value || value.trim() === '') {
+            error = 'This wrong answer is required';
+          } else if (value.trim().length < 2) {
+            error = 'Answer must be at least 2 characters';
+          } else if (value.trim().length > 100) {
+            error = 'Answer must be less than 100 characters';
+          }
+        } else if (value && value.trim()) { // Optional fields still need validation if filled
+          if (value.trim().length < 2) {
+            error = 'Answer must be at least 2 characters';
+          } else if (value.trim().length > 100) {
+            error = 'Answer must be less than 100 characters';
+          }
+        }
+        break;
+      
+      default:
+        break;
+    }
+    
+    return error;
+  };
+
+  // Validate entire form
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Validate question
+    newErrors.question = validateField('question', question);
+    
+    // Validate correct answer
+    newErrors.correct = validateField('correct', correct);
+    
+    // Validate wrong answers
+    wrongs.forEach((wrong, index) => {
+      const error = validateField('wrong', wrong, index);
+      if (error) {
+        newErrors[`wrong_${index}`] = error;
+      }
+    });
+    
+    // Check for at least 2 filled wrong answers
+    const filledWrongs = wrongs.filter(w => w.trim() !== '');
+    if (filledWrongs.length < 2) {
+      newErrors.wrongs = 'At least 2 wrong answers are required';
+    }
+    
+    // Check for duplicate answers
+    const allAnswers = [correct.trim(), ...wrongs.map(w => w.trim())].filter(Boolean);
+    const uniqueAnswers = new Set(allAnswers.map(a => a.toLowerCase()));
+    if (allAnswers.length !== uniqueAnswers.size) {
+      newErrors.duplicate = 'All answers must be unique';
+    }
+    
+    // Image validation
+    if (!image && !initialData?.image) {
+      newErrors.image = 'Image is required for Guess the Bottle question';
+    }
+    
+    // Remove empty errors
+    Object.keys(newErrors).forEach(key => {
+      if (!newErrors[key]) delete newErrors[key];
+    });
+    
+    return newErrors;
+  };
+
+  // Handle field changes with validation
+  const handleFieldChange = (fieldName, value, index = null) => {
+    // Update field value
+    switch (fieldName) {
+      case 'question':
+        setQuestion(value);
+        break;
+      case 'correct':
+        setCorrect(value);
+        break;
+      case 'wrong':
+        if (index !== null) {
+          const newWrongs = [...wrongs];
+          newWrongs[index] = value;
+          setWrongs(newWrongs);
+        }
+        break;
+      default:
+        break;
+    }
+    
+    // Mark as touched
+    const touchedKey = index !== null ? `${fieldName}_${index}` : fieldName;
+    setTouched(prev => ({ ...prev, [touchedKey]: true }));
+    
+    // Validate and update errors
+    const error = validateField(fieldName, value, index);
+    const errorKey = index !== null ? `${fieldName}_${index}` : fieldName;
+    setErrors(prev => ({ 
+      ...prev, 
+      [errorKey]: error,
+      // Clear related errors
+      wrongs: '',
+      duplicate: ''
+    }));
+  };
+
+  // Handle blur events
+  const handleBlur = (fieldName, index = null) => {
+    const touchedKey = index !== null ? `${fieldName}_${index}` : fieldName;
+    setTouched(prev => ({ ...prev, [touchedKey]: true }));
+    
+    let value;
+    switch (fieldName) {
+      case 'question':
+        value = question;
+        break;
+      case 'correct':
+        value = correct;
+        break;
+      case 'wrong':
+        value = wrongs[index];
+        break;
+      default:
+        return;
+    }
+    
+    const error = validateField(fieldName, value, index);
+    const errorKey = index !== null ? `${fieldName}_${index}` : fieldName;
+    setErrors(prev => ({ 
+      ...prev, 
+      [errorKey]: error 
+    }));
+  };
 
   // To handle initial edit data
   useEffect(() => {
@@ -18,20 +179,16 @@ const GuessTheBottlePopup = ({ open, onClose, onSubmit, initialData = null, subT
       setQuestion(initialData.questionText || '');
       setCorrect(initialData.correctAnswer || '');
       
-      // Get wrong answers from options (exclude correct answer)
       const wrongOptions = (initialData.options || []).filter(opt => opt !== initialData.correctAnswer);
       
-      // Ensure at least 3 wrong options or use existing ones
       if (wrongOptions.length === 0) {
         setWrongs(['', '', '']);
       } else if (wrongOptions.length < 3) {
-        // Pad with empty strings to have at least 3
         setWrongs([...wrongOptions, ...Array(3 - wrongOptions.length).fill('')]);
       } else {
         setWrongs(wrongOptions);
       }
       
-      // For image, if value is a string URL, show directly; clear file input
       if (initialData.image && typeof initialData.image === 'string') {
         setImage(initialData?.image ? `${import.meta.env.VITE_BASE_URL}${initialData?.image}` : null);
         setFile(null);
@@ -46,34 +203,41 @@ const GuessTheBottlePopup = ({ open, onClose, onSubmit, initialData = null, subT
       setImage(null);
       setFile(null);
     }
+    
+    // Reset validation states
     setErrors({});
+    setTouched({});
   }, [initialData, open]);
 
-  // ✅ Add new wrong option
   const handleAddWrongOption = () => {
-    if (wrongs.length < 8) { // Limit to 8 wrong options max
+    if (wrongs.length < 8) {
       setWrongs([...wrongs, '']);
     }
   };
 
-  // ✅ Remove wrong option (minimum 2 required)
   const handleRemoveWrongOption = (index) => {
-    if (wrongs.length > 2) { // Keep at least 2 wrong options
+    if (wrongs.length > 2) {
       const newWrongs = wrongs.filter((_, i) => i !== index);
       setWrongs(newWrongs);
+      
+      // Remove error for removed field
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[`wrong_${index}`];
+        return newErrors;
+      });
+      
+      // Remove touched state for removed field
+      setTouched(prev => {
+        const newTouched = { ...prev };
+        delete newTouched[`wrong_${index}`];
+        return newTouched;
+      });
     }
   };
 
-  // ✅ Update specific wrong option
   const handleWrongChange = (index, value) => {
-    const newWrongs = [...wrongs];
-    newWrongs[index] = value;
-    setWrongs(newWrongs);
-    
-    // Clear error for this field
-    if (errors[`wrong_${index}`]) {
-      setErrors(prev => ({ ...prev, [`wrong_${index}`]: '' }));
-    }
+    handleFieldChange('wrong', value, index);
   };
 
   // Handle new image selection and preview
@@ -83,63 +247,44 @@ const GuessTheBottlePopup = ({ open, onClose, onSubmit, initialData = null, subT
       // Validate file type
       if (!selectedFile.type.startsWith('image/')) {
         setErrors(prev => ({ ...prev, image: 'Please select a valid image file' }));
+        setTouched(prev => ({ ...prev, image: true }));
         return;
       }
       
-      // Validate file size (e.g., max 5MB)
+      // Validate file size (max 5MB)
       if (selectedFile.size > 5 * 1024 * 1024) {
         setErrors(prev => ({ ...prev, image: 'Image size should be less than 5MB' }));
+        setTouched(prev => ({ ...prev, image: true }));
         return;
       }
       
       setImage(URL.createObjectURL(selectedFile));
       setFile(selectedFile);
       setErrors(prev => ({ ...prev, image: '' }));
+      setTouched(prev => ({ ...prev, image: true }));
     }
-  };
-
-  // ✅ Enhanced validation
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!question.trim()) {
-      newErrors.question = 'Question is required';
-    }
-
-    if (!correct.trim()) {
-      newErrors.correct = 'Correct answer is required';
-    }
-
-    // Check for at least 2 filled wrong answers
-    const filledWrongs = wrongs.filter(w => w.trim() !== '');
-    if (filledWrongs.length < 2) {
-      newErrors.wrongs = 'At least 2 wrong answers are required';
-    }
-
-    // Check for duplicate answers
-    const allAnswers = [correct.trim(), ...wrongs.map(w => w.trim())].filter(Boolean);
-    const uniqueAnswers = new Set(allAnswers);
-    if (allAnswers.length !== uniqueAnswers.size) {
-      newErrors.duplicate = 'All answers must be unique';
-    }
-
-    // Image is required for guess the bottle
-    if (!image && !initialData?.image) {
-      newErrors.image = 'Image is required for Guess the Bottle question';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    // Validate entire form
+    const formErrors = validateForm();
+    setErrors(formErrors);
+    
+    // Mark all fields as touched
+    setTouched({
+      question: true,
+      correct: true,
+      image: true,
+      ...Object.fromEntries(wrongs.map((_, index) => [`wrong_${index}`, true]))
+    });
+    
+    // If there are errors, don't submit
+    if (Object.keys(formErrors).length > 0) {
       return;
     }
 
-    // Filter out empty wrong answers
     const filteredWrongs = wrongs.filter(w => w.trim() !== '');
 
     onSubmit?.({
@@ -175,7 +320,7 @@ const GuessTheBottlePopup = ({ open, onClose, onSubmit, initialData = null, subT
             </label>
             <div
               className={`flex justify-center items-center border rounded-2xl p-[16px] h-[210px] cursor-pointer transition-colors ${
-                errors.image ? 'border-red-500 bg-red-50' : 'border-[#EFEFEF] hover:border-gray-300'
+                errors.image && touched.image ? 'border-red-500 bg-red-50' : 'border-[#EFEFEF] hover:border-gray-300'
               }`}
               onClick={() => fileInput.current.click()}
             >
@@ -211,7 +356,7 @@ const GuessTheBottlePopup = ({ open, onClose, onSubmit, initialData = null, subT
                 onChange={handleImageChange}
               />
             </div>
-            {errors.image && (
+            {errors.image && touched.image && (
               <p className="text-red-500 text-sm mt-1">{errors.image}</p>
             )}
           </div>
@@ -222,15 +367,16 @@ const GuessTheBottlePopup = ({ open, onClose, onSubmit, initialData = null, subT
               label="Enter Question"
               placeholder="Enter your question here"
               value={question}
-              onChange={e => {
-                setQuestion(e.target.value);
-                if (errors.question) setErrors(prev => ({ ...prev, question: '' }));
-              }}
-              required
+              onChange={e => handleFieldChange('question', e.target.value)}
+              onBlur={() => handleBlur('question')}
+              error={touched.question && errors.question}
             />
-            {errors.question && (
+            {errors.question && touched.question && (
               <p className="text-red-500 text-sm mt-1">{errors.question}</p>
             )}
+            <span className="text-gray-500 text-xs mt-1">
+              {question.length}/500 characters
+            </span>
           </div>
 
           {/* Correct answer */}
@@ -239,15 +385,16 @@ const GuessTheBottlePopup = ({ open, onClose, onSubmit, initialData = null, subT
               label="Enter Correct Answer"
               placeholder="Enter the correct answer"
               value={correct}
-              onChange={e => {
-                setCorrect(e.target.value);
-                if (errors.correct) setErrors(prev => ({ ...prev, correct: '' }));
-              }}
-              required
+              onChange={e => handleFieldChange('correct', e.target.value)}
+              onBlur={() => handleBlur('correct')}
+              error={touched.correct && errors.correct}
             />
-            {errors.correct && (
+            {errors.correct && touched.correct && (
               <p className="text-red-500 text-sm mt-1">{errors.correct}</p>
             )}
+            <span className="text-gray-500 text-xs mt-1">
+              {correct.length}/100 characters
+            </span>
           </div>
 
           {/* Wrong Options Section */}
@@ -270,24 +417,23 @@ const GuessTheBottlePopup = ({ open, onClose, onSubmit, initialData = null, subT
               </button>
             </div>
 
-            {/* Wrong Answer Fields */}
             <div className="space-y-3">
               {wrongs.map((wrong, index) => (
                 <div key={index} className="flex items-start gap-2">
                   <div className="flex-1">
                     <InputField
-                      label={`Wrong Answer ${index + 1}`}
+                      label={`Wrong Answer ${index + 1} ${index < 2 ? '*' : ''}`}
                       placeholder={`Enter wrong answer ${index + 1}`}
                       value={wrong}
                       onChange={e => handleWrongChange(index, e.target.value)}
-                      required={index < 2} // First 2 are required
+                      onBlur={() => handleBlur('wrong', index)}
+                      error={touched[`wrong_${index}`] && errors[`wrong_${index}`]}
                     />
-                    {errors[`wrong_${index}`] && (
-                      <p className="text-red-500 text-sm mt-1">{errors[`wrong_${index}`]}</p>
-                    )}
+                    <span className="text-gray-500 text-xs mt-1">
+                      {wrong.length}/100 characters
+                    </span>
                   </div>
                   
-                  {/* Remove button (only show if more than 2 options) */}
                   {wrongs.length > 2 && (
                     <button
                       type="button"
@@ -312,7 +458,6 @@ const GuessTheBottlePopup = ({ open, onClose, onSubmit, initialData = null, subT
               <p className="text-red-500 text-sm mt-2">{errors.duplicate}</p>
             )}
 
-            {/* Helper text */}
             <p className="text-gray-500 text-xs mt-2">
               At least 2 wrong answers are required. You can add up to 8 options total.
             </p>
@@ -324,12 +469,14 @@ const GuessTheBottlePopup = ({ open, onClose, onSubmit, initialData = null, subT
           <button type="button" onClick={onClose} className='btn-sec'>
             Cancel
           </button>
-          <button type="submit" className='btn-pri'>
+          <button 
+            type="submit" 
+            className='btn-pri disabled:opacity-50 disabled:cursor-not-allowed'
+            disabled={Object.keys(errors).some(key => errors[key])}
+          >
             {initialData ? 'Save Changes' : 'Add Question'}
           </button>
         </div>
-
-      
       </form>
     </div>
   );

@@ -43,6 +43,7 @@ const UserDetails = () => {
 
   const [formData, setFormData] = useState({
     fullname: "",
+    username: "",
     email: "",
     gender: "",
     dob: "",
@@ -59,6 +60,7 @@ const UserDetails = () => {
     if (data) {
       setFormData({
         fullname: data.fullname || "",
+        username: data.username || "",
         email: data.email || "",
         gender: capitalizeFirstLetter(data.gender) || "",
         dob: data.dob ? data.dob.slice(0, 10) : "",
@@ -80,15 +82,15 @@ const UserDetails = () => {
   // ✅ Form validation
   const validateForm = () => {
     const errors = {};
-    
+
     if (!formData.fullname.trim()) {
       errors.fullname = "Full name is required";
     }
-    
+
     if (!formData.gender) {
       errors.gender = "Gender is required";
     }
-    
+
     if (!formData.dob) {
       errors.dob = "Date of birth is required";
     }
@@ -99,7 +101,7 @@ const UserDetails = () => {
 
   const handleInputChange = (e) => {
     const { name, value, checked } = e.target;
-    
+
     // Clear error when user starts typing
     if (formErrors[name]) {
       setFormErrors(prev => ({ ...prev, [name]: "" }));
@@ -154,9 +156,9 @@ const UserDetails = () => {
   // ✅ Enhanced suspend handler with better error handling
   const handleSuspend = async (reactivate = false) => {
     try {
+      setPopup(null);
       await suspendAccount(params.id).unwrap();
       toast.success(`User ${reactivate ? 'reactivated' : 'suspended'} successfully!`);
-      setPopup(null);
       refetch();
     } catch (error) {
       console.error("Suspend error:", error);
@@ -194,8 +196,8 @@ const UserDetails = () => {
         <div className="text-red-500 text-center">
           <p className="text-lg font-semibold">Error loading user details</p>
           <p className="text-sm mt-2">{error?.data?.message || "Something went wrong"}</p>
-          <button 
-            onClick={() => refetch()} 
+          <button
+            onClick={() => refetch()}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Try Again
@@ -212,20 +214,25 @@ const UserDetails = () => {
     : data?.suspendAccount
       ? "Suspended"
       : "Active";
-
+  const getMaxDate = () => {
+    const today = new Date();
+    const maxDate = new Date(today.getFullYear() - 13, today.getMonth(), today.getDate());
+    return maxDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+  };
+  console.log(formData.dob)
   return (
     <>
       {/* ✅ Show loader during operations */}
       {(isUpdateLoading || isSuspendLoading) && (
-        <Loader 
-          message={isUpdateLoading ? "Updating user details" : "Processing request"} 
-          isVisible={true} 
+        <Loader
+          message={isUpdateLoading ? "Updating user details" : "Processing request"}
+          isVisible={true}
         />
       )}
-      
+
       <div className="">
         <div className="bg-[#E1F8F8] rounded-[30px] py-[24px] px-[32px] max-lg:p-[16px]">
-          <h6 className="text-[20px] font-semibold text-[#352AA4]">User details</h6>
+          {/* <h6 className="text-[20px] font-semibold text-[#352AA4]">User details</h6> */}
           <div className="mt-[16px] flex flex-col gap-[16px]">
             {!isEditing && (
               <div className="flex gap-[20px] max-md:flex-wrap max-md:gap-[16px]">
@@ -278,9 +285,8 @@ const UserDetails = () => {
                   <>
                     <input
                       name="fullname"
-                      className={`bg-white border rounded-2xl py-[14px] px-[18px] ${
-                        formErrors.fullname ? 'border-red-500' : 'border-[#EEEEEE]'
-                      }`}
+                      className={`bg-white border rounded-2xl py-[14px] px-[18px] ${formErrors.fullname ? 'border-red-500' : 'border-[#EEEEEE]'
+                        }`}
                       type="text"
                       value={formData.fullname}
                       onChange={handleInputChange}
@@ -293,6 +299,18 @@ const UserDetails = () => {
                 ) : (
                   <p className="py-[14px] px-[18px] capitalize bg-white border rounded-2xl border-[#EEEEEE]">{formData.fullname}</p>
                 )}
+              </label>
+              {/* Username */}
+              <label className="flex flex-col w-full">
+                <span className="text-[#7C7C7C] text-[14px]">User Name</span>
+                <input
+                  name="username"
+                  className="bg-gray-100 border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px] cursor-not-allowed"
+                  type="text"
+                  value={formData.username}
+                  readOnly
+                  title="Username cannot be edited"
+                />
               </label>
               {/* Email */}
               <label className="flex flex-col w-full">
@@ -316,9 +334,8 @@ const UserDetails = () => {
                   <>
                     <select
                       name="gender"
-                      className={`bg-white border rounded-2xl py-[14px] px-[18px] ${
-                        formErrors.gender ? 'border-red-500' : 'border-[#EEEEEE]'
-                      }`}
+                      className={`bg-white border rounded-2xl py-[14px] px-[18px] ${formErrors.gender ? 'border-red-500' : 'border-[#EEEEEE]'
+                        }`}
                       value={formData.gender}
                       onChange={handleInputChange}
                     >
@@ -344,12 +361,12 @@ const UserDetails = () => {
                   <>
                     <input
                       name="dob"
-                      className={`bg-white border rounded-2xl py-[14px] px-[18px] ${
-                        formErrors.dob ? 'border-red-500' : 'border-[#EEEEEE]'
-                      }`}
+                      className={`bg-white border rounded-2xl py-[14px] px-[18px] ${formErrors.dob ? 'border-red-500' : 'border-[#EEEEEE]'
+                        }`}
                       type="date"
                       value={formData.dob}
                       onChange={handleInputChange}
+                      max={getMaxDate()} // Add this line
                     />
                     {formErrors.dob && (
                       <span className="text-red-500 text-xs mt-1">{formErrors.dob}</span>
@@ -361,6 +378,7 @@ const UserDetails = () => {
                   </p>
                 )}
               </label>
+
             </div>
 
             {/* Enjoy Smell (multi select checkboxes) */}
@@ -498,17 +516,17 @@ const UserDetails = () => {
           <div className="flex justify-end gap-[16px] mt-[24px] flex-wrap">
             {isEditing ? (
               <>
-                <button 
-                  className="btn-sec" 
-                  type="button" 
+                <button
+                  className="btn-sec"
+                  type="button"
                   onClick={handleCancelEdit}
                   disabled={isUpdateLoading}
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   className={`btn-pri ${isUpdateLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
-                  type="button" 
+                  type="button"
                   onClick={handleSave}
                   disabled={isUpdateLoading}
                 >
@@ -517,6 +535,25 @@ const UserDetails = () => {
               </>
             ) : (
               <>
+                <button
+                  onClick={() => navigate('/users')}
+                  className={`
+    bg-gray-100 text-[#352AA4] text-sm border border-gray-200 
+    rounded-full px-4 py-2 transition-all duration-300 ease-in-out
+    hover:bg-gray-400 hover:border-[#352AA4] hover:text-[#1b1555]
+    flex items-center gap-2
+    ${isSuspendLoading
+                      ? 'opacity-60 cursor-not-allowed'
+                      : 'cursor-pointer hover:shadow-sm'
+                    }
+  `}
+                  type="button"
+                  disabled={isSuspendLoading}
+                >
+                  <span>←</span>
+                  Back
+                </button>
+
                 <button
                   onClick={() =>
                     setPopup(data?.suspendAccount ? "reactivate" : "suspend")
@@ -527,9 +564,9 @@ const UserDetails = () => {
                 >
                   {data?.suspendAccount ? "Reactivate" : "Suspend"}
                 </button>
-                <button 
-                  className="btn-pri" 
-                  type="button" 
+                <button
+                  className="btn-pri"
+                  type="button"
                   onClick={() => setIsEditing(true)}
                   disabled={isSuspendLoading}
                 >

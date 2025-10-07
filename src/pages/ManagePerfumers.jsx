@@ -120,11 +120,11 @@ const ManagePerfumers = () => {
     };
     const deletePerfumersHandler = async (id, type) => {
         try {
+            setViewPerfumersPopup(false);
             await deletePerfumers({ id: id, data: { type } }).unwrap();
             setSelectedPerfumers(null);
             setEditPerfumersPopup(false);
             setAddPerfumersPopup(false);
-            setViewPerfumersPopup(false);
             toast.success('Perfumers deleted successfully!');
             refetch();
         } catch (error) {

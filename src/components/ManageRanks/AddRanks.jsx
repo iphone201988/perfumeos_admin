@@ -120,15 +120,15 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
     
     // Validation
     if (!name.trim()) {
-      alert('Please enter a rank name')
+      toast.warning('Please enter a rank name')
       return
     }
     if (!min || !max) {
-      alert('Please enter both min and max values')
+      toast.warning('Please enter both min and max values')
       return
     }
     if (parseInt(min) >= parseInt(max)) {
-      alert('Min value must be less than max value')
+      toast.warning('Min value must be less than max value')
       return
     }
 

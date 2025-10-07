@@ -39,7 +39,7 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     }
 
     // ✅ Check for dynamic routes (matching your router structure)
-    if (path.match(/^\/user\/[^/]+$/)) {
+    if (path.match(/^\/users\/[^/]+$/)) {
       return 'User Details';
     }
     if (path.match(/^\/perfumes\/[^/]+$/) && !path.includes('/edit') && !path.includes('/add')) {
@@ -51,15 +51,15 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
 
     // Check for nested routes (fallback)
     if (path.startsWith('/users')) return 'Manage Users';
-    if (path.startsWith('/user')) return 'User Details';
+    if (path.startsWith('/users')) return 'User Details';
     if (path.startsWith('/perfumes')) return 'Manage Perfumes';
     if (path.startsWith('/quiz')) return 'Manage Quiz';
     if (path.startsWith('/articles')) return 'Manage Articles';
     if (path.startsWith('/settings')) return 'Admin Settings';
     if (path.startsWith('/notes')) return 'Manage Notes';
     if (path.startsWith('/perfumers')) return 'Manage Perfumers';
-    if (path.startsWith('/badges')) return 'Manage Badges';
-    if (path.startsWith('/ranks')) return 'Manage Ranks';
+    if (path.startsWith('/badge')) return 'Manage Badges';
+    if (path.startsWith('/rank')) return 'Manage Ranks';
 
     // Default fallback
     return 'Dashboard';
@@ -105,17 +105,17 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
             {pageTitle}
           </h4>
           {/* ✅ Updated breadcrumb condition */}
-          {(location.pathname !== '/' && location.pathname !== '/dashboard') && (
+          {/* {(location.pathname !== '/' && location.pathname !== '/dashboard') && (
             <span className="text-[#7C7C7C] text-sm hidden sm:block">
               • {location.pathname.split('/').filter(Boolean).join(' / ')}
             </span>
-          )}
+          )} */}
         </div>
 
         {/* Clickable User profile section */}
         <button
           onClick={handleProfileClick}
-          className="flex items-center gap-[8px] hover:bg-white/30 rounded-lg p-2 transition-colors cursor-pointer group"
+          className="flex items-center gap-[8px] hover:bg-white/30 rounded-lg p-2 transition-colors group"
          
         >
           <img
@@ -132,14 +132,14 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
             </p>
           </div>
           
-          <svg 
+          {/* <svg 
             className="w-4 h-4 text-[#7C7C7C] group-hover:text-[#352AA4] transition-colors max-sm:hidden" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
+          </svg> */}
         </button>
       </div>
     </div>
