@@ -10,7 +10,12 @@ import { hexToRgb, rgbToHex } from "../../Utils/function";
 import Select from 'react-select';
 import Loader from "../Loader/Loader";
 import { toast } from "react-toastify";
-
+const customFilterOption = (option, rawInput) => {
+    if (!rawInput) return true;
+    const label = option.label.toLowerCase();
+    const input = rawInput.toLowerCase();
+    return label.startsWith(input);
+};
 const EditPerfume = () => {
   const params = useParams();
   const navigate = useNavigate();
@@ -656,6 +661,7 @@ const EditPerfume = () => {
               placeholder="Select perfumers..."
               styles={getCustomStyles(formErrors.perfumers)}
               closeMenuOnSelect={false}
+              filterOption={customFilterOption}
             />
             {formErrors.perfumers && (
               <span className="text-red-500 text-xs mt-1">{formErrors.perfumers}</span>
@@ -676,6 +682,7 @@ const EditPerfume = () => {
                   placeholder="Select top notes..."
                   styles={getCustomStyles(formErrors.notes)}
                   closeMenuOnSelect={false}
+                  filterOption={customFilterOption}
                 />
               </div>
               <div className="flex flex-col w-full">
@@ -688,6 +695,7 @@ const EditPerfume = () => {
                   placeholder="Select middle notes..."
                   styles={getCustomStyles(formErrors.notes)}
                   closeMenuOnSelect={false}
+                  filterOption={customFilterOption}
                 />
               </div>
             </div>
@@ -703,6 +711,7 @@ const EditPerfume = () => {
                   placeholder="Select base notes..."
                   styles={getCustomStyles(formErrors.notes)}
                   closeMenuOnSelect={false}
+                  filterOption={customFilterOption}
                 />
               </div>
               {fragranceNotes.length > 0 && (
@@ -716,6 +725,7 @@ const EditPerfume = () => {
                     placeholder="Select other notes..."
                     styles={getCustomStyles(formErrors.notes)}
                     closeMenuOnSelect={false}
+                    filterOption={customFilterOption}
                   />
                 </div>
               )}

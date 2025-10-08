@@ -240,7 +240,7 @@ const ClassicTriviaPopup = ({ open, onClose, onSubmit, initialData = null, subTa
     
     // If there are errors, don't submit
     if (Object.keys(formErrors).length > 0) {
-      toast.error('Please fix all validation errors before submitting');
+      // toast.error('Please fix all validation errors before submitting');
       return;
     }
     

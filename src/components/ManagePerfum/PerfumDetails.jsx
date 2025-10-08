@@ -66,13 +66,13 @@ const PerfumDetails = () => {
                 {perfume.year || "—"}
               </span>
             </div>
-            <div className="text-[#888] text-sm">
+            {/* <div className="text-[#888] text-sm">
               <span>Rating: </span>
               <span className="font-bold text-[#352AA4]">
                 {perfume.rating?.score} / 5
               </span>
               {` (${perfume.rating?.votes} votes)`}
-            </div>
+            </div> */}
             <div>
               <span className="text-[#7C7C7C] text-sm">Intended for: </span>
               <span className="capitalize">
@@ -92,7 +92,12 @@ const PerfumDetails = () => {
                 <div className="flex flex-wrap gap-4">
                   {(perfume.notes?.[layer] || []).map((note) => (
                     <div key={note._id || note.noteId} className="flex flex-col items-center w-[80px]">
-                      <img src={note.image} alt={note.name} className="rounded-md w-12 h-12 object-cover mb-1" />
+                      <img src={note.image
+                      ? note.image.startsWith('blob:') || note.image.startsWith('http')
+                        ? note.image
+                        : `${import.meta.env.VITE_BASE_URL}${note.image}`
+                      : user_icon // fallback image
+                  } alt={note.name} className="rounded-md w-12 h-12 object-cover mb-1" />
                       <span className="text-[14px] text-center">{note.name}</span>
                     </div>
                   ))}
@@ -157,7 +162,13 @@ const PerfumDetails = () => {
             {(perfume.perfumers || [])?.map((p) => (
               <div key={p._id} className="flex flex-col items-center w-[120px] ">
                 <img
-                  src={p.image}
+                  src={
+                    p.image
+                      ? p.image.startsWith('blob:') || p.image.startsWith('http')
+                        ? p.image
+                        : `${import.meta.env.VITE_BASE_URL}${p.image}`
+                      : user_icon // fallback image
+                  }
                   alt={p.name}
                   className="rounded-full h-[60px] w-[60px] mb-1"
                 />
