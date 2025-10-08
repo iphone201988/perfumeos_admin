@@ -345,7 +345,7 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
 
       // Validate entire form
       if (!validateForm(formData)) {
-        toast.error('Please correct the errors before submitting')
+        // toast.error('Please correct the errors before submitting')
         return
       }
 

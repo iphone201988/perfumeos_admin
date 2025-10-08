@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useGetNotesQuery, useGetPerfumeByIdQuery, useGetPerfumersQuery, useUpdatePerfumeMutation } from "../../api";
+import { useGetNotesQuery, useGetPerfumeForEditByIdQuery, useGetPerfumersQuery, useUpdatePerfumeMutation } from "../../api";
 import ImageUploader from "../Form/ImageUploader";
 import FormField from "../Form/FormField";
 import { useNavigate, useParams } from "react-router-dom";
@@ -20,7 +20,7 @@ const EditPerfume = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  const { data: perfumeData, isLoading, error } = useGetPerfumeByIdQuery(params.id);
+  const { data: perfumeData, isLoading, error } = useGetPerfumeForEditByIdQuery(params.id);
   const { data: notesResponse, isLoading: notesLoading } = useGetNotesQuery();
   const { data: perfumersResponse, isLoading: perfumersLoading } = useGetPerfumersQuery();
   const perfume = useMemo(() => perfumeData?.data || null, [perfumeData]);

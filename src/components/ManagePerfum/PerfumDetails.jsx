@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import addpic_icon from "../../assets/icons/addpic-icon.svg";
+import user_icon from "../../assets/icons/addpic-icon.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDeletePerfumeMutation, useGetPerfumeByIdQuery } from "../../api";
 import ConfirmationModal from "../Modal/ConfirmationModal";
@@ -91,14 +92,14 @@ const PerfumDetails = () => {
                 <div className="text-[#352AA4] text-[16px] font-semibold capitalize mb-1 ml-[12px]">{layer} notes</div>
                 <div className="flex flex-wrap gap-4">
                   {(perfume.notes?.[layer] || []).map((note) => (
-                    <div key={note._id || note.noteId} className="flex flex-col items-center w-[80px]">
-                      <img src={note.image
-                      ? note.image.startsWith('blob:') || note.image.startsWith('http')
-                        ? note.image
-                        : `${import.meta.env.VITE_BASE_URL}${note.image}`
+                    <div key={note._id || note.noteId._id} className="flex flex-col items-center w-[80px]">
+                      <img src={note?.noteId?.bgUrl
+                      ? note?.noteId?.bgUrl.startsWith('blob:') || note?.noteId?.bgUrl.startsWith('http')
+                        ? note?.noteId?.bgUrl
+                        : `${import.meta.env.VITE_BASE_URL}${note?.noteId?.bgUrl}`
                       : user_icon // fallback image
                   } alt={note.name} className="rounded-md w-12 h-12 object-cover mb-1" />
-                      <span className="text-[14px] text-center">{note.name}</span>
+                      <span className="text-[14px] text-center">{note?.noteId?.name || note.name}</span>
                     </div>
                   ))}
                 </div>
@@ -163,16 +164,16 @@ const PerfumDetails = () => {
               <div key={p._id} className="flex flex-col items-center w-[120px] ">
                 <img
                   src={
-                    p.image
-                      ? p.image.startsWith('blob:') || p.image.startsWith('http')
-                        ? p.image
-                        : `${import.meta.env.VITE_BASE_URL}${p.image}`
+                    p?.perfumerId?.smallImage
+                      ? p?.perfumerId?.smallImage.startsWith('blob:') || p?.perfumerId?.smallImage.startsWith('http')
+                        ? p?.perfumerId?.smallImage
+                        : `${import.meta.env.VITE_BASE_URL}${p?.perfumerId?.smallImage}`
                       : user_icon // fallback image
                   }
                   alt={p.name}
                   className="rounded-full h-[60px] w-[60px] mb-1"
                 />
-                <span className="text-center">{p.name}</span>
+                <span className="text-center">{p?.perfumerId?.name}</span>
               </div>
             ))}
           </div>

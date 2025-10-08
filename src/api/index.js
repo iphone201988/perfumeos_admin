@@ -177,6 +177,13 @@ export const apis = createApi({
       }),
       providesTags: [Tags.PERFUMEBYID],
     }),
+    getPerfumeForEditById: builder.query({
+      query: (id) => ({
+        url: `/admin/perfumeForEdit/${id}`,
+        method: "GET",
+      }),
+      providesTags: [Tags.PERFUMEBYID],
+    }),
     updatePerfume: builder.mutation({
       query: ({ id, formData }) => ({
         url: `/admin/perfume/${id}`,
@@ -390,4 +397,5 @@ export const {
   useCreatePerfumerMutation,
   useUpdatePerfumerMutation,
   useDeletePerfumerMutation,
+  useGetPerfumeForEditByIdQuery
 } = apis;
