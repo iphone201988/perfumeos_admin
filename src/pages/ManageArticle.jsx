@@ -19,7 +19,7 @@ const columns = [
 ];
 
 const DEBOUNCE_DELAY = 500; // Reduced from 2000ms
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 20;
 
 const ManageArticle = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -66,7 +66,7 @@ const ManageArticle = () => {
     setCurrentPage(1);
   }, []);
 
-  const handleDeleteArticle = useCallback(async ( id, type ) => {
+  const handleDeleteArticle = useCallback(async (id, type) => {
     if (!selectedArticle) {
       toast.error('No article selected');
       return;
@@ -207,24 +207,23 @@ const ManageArticle = () => {
         />
       )}
 
+      {/* ✅ Enhanced add button section */}
+      <div className="mb-[24px] flex">
+        <button
+          onClick={() => setAddArticlePopup(true)}
+          className={`btn-pri ml-auto ${isOperationLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={isOperationLoading}
+        >
+          Add Article
+        </button>
+      </div>
+
       <div className='bg-[#E1F8F8] rounded-[30px] py-[24px] px-[32px] max-lg:p-[16px]'>
         <div className="flex justify-between items-center flex-wrap max-md:gap-[12px] mb-4">
           <div>
             <h6 className="text-[20px] font-semibold text-[#352AA4]">
               All Articles ({totalCount})
             </h6>
-            {/* ✅ Enhanced search indicator */}
-            {searchTerm !== debouncedSearchTerm && (
-              <p className="text-sm text-blue-500 mt-1 flex items-center">
-                <span className="animate-spin inline-block w-3 h-3 border border-blue-500 border-t-transparent rounded-full mr-2"></span>
-                Searching...
-              </p>
-            )}
-            {debouncedSearchTerm && (
-              <p className="text-sm text-gray-600 mt-1">
-                Showing results for "{debouncedSearchTerm}"
-              </p>
-            )}
           </div>
           <SearchBar
             searchTerm={searchTerm}
@@ -232,6 +231,8 @@ const ManageArticle = () => {
             sortValue={sortValue}
             onSortChange={handleSortChange}
             placeholder="Search articles..."
+            loader={searchTerm !== debouncedSearchTerm}
+
           />
         </div>
 
@@ -303,16 +304,6 @@ const ManageArticle = () => {
         )}
       </div>
 
-      {/* ✅ Enhanced add button section */}
-      <div className="mt-[24px] flex">
-        <button
-          onClick={() => setAddArticlePopup(true)}
-          className={`btn-pri ml-auto ${isOperationLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-          disabled={isOperationLoading}
-        >
-          Add Article
-        </button>
-      </div>
 
       {/* Modals */}
       {addArticlePopup && (

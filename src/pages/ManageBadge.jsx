@@ -22,7 +22,7 @@ const ManageBadge = () => {
   const [editBadgePopup, setEditBadgePopup] = useState(false);
 
   const navigate = useNavigate();
-  const itemsPerPage = 5;
+  const itemsPerPage = 20;
   const [addBadge, { isLoading: isAdding, error: addError }] = useCreateBadgeMutation();
   const [updateBadge, { isLoading: isUpdating, error: updateError }] = useUpdateBadgeMutation();
   const [deleteBadge, { isLoading: isDeleting, error: deleteError }] = useDeleteBadgeMutation();
@@ -179,16 +179,15 @@ const ManageBadge = () => {
 
   return (
     <>
+      <div className="mb-[24px] flex">
+        <button onClick={() => setAddBadgePopup(true)} className='btn-pri ml-auto'>Add Badge</button>
+      </div>
       <div className="bg-[#E1F8F8] rounded-[30px] py-[24px] px-[32px] max-lg:p-[16px]">
         <div className="flex justify-between items-center flex-wrap max-md:gap-[12px] mb-4">
           <div>
             <h6 className="text-[20px] font-semibold text-[#352AA4]">
               All Badges ({totalBadges})
             </h6>
-            {/* Show search indicator */}
-            {searchTerm !== debouncedSearchTerm && (
-              <p className="text-sm text-gray-500 mt-1">Searching...</p>
-            )}
           </div>
           <SearchBar
             searchTerm={searchTerm}
@@ -196,6 +195,8 @@ const ManageBadge = () => {
             sortValue={sortValue}
             onSortChange={handleSortChange}
             placeholder="Search badges..."
+            loader={searchTerm !== debouncedSearchTerm}
+
           />
         </div>
 
@@ -236,9 +237,6 @@ const ManageBadge = () => {
             )}
           </div>
         )}
-      </div>
-      <div className="mt-[24px] flex">
-        <button onClick={() => setAddBadgePopup(true)} className='btn-pri ml-auto'>Add Badge</button>
       </div>
       {/* Modals */}
       {addBadgePopup && (

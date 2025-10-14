@@ -27,7 +27,7 @@ const ManageNotes = () => {
     const [editNotesPopup, setEditNotesPopup] = useState(false);
 
     const navigate = useNavigate();
-    const itemsPerPage = 5;
+    const itemsPerPage = 20;
     const [addNotes, { isLoading: isAdding, error: addError }] = useAddNoteMutation();
     const [updateNotes, { isLoading: isUpdating, error: updateError }] = useUpdateNoteMutation();
     const [deleteNotes, { isLoading: isDeleting, error: deleteError }] = useDeleteNoteMutation();
@@ -161,16 +161,15 @@ const ManageNotes = () => {
     ];
     return (
         <>
+            <div className="mb-[24px] flex">
+                <button onClick={() => setAddNotesPopup(true)} className='btn-pri ml-auto'>Add Notes</button>
+            </div>
             <div className="bg-[#E1F8F8] rounded-[30px] py-[24px] px-[32px] max-lg:p-[16px]">
                 <div className="flex justify-between items-center flex-wrap max-md:gap-[12px] mb-4">
                     <div>
                         <h6 className="text-[20px] font-semibold text-[#352AA4]">
                             All Notes ({totalNotes})
                         </h6>
-                        {/* Show search indicator */}
-                        {searchTerm !== debouncedSearchTerm && (
-                            <p className="text-sm text-gray-500 mt-1">Searching...</p>
-                        )}
                     </div>
                     <SearchBar
                         searchTerm={searchTerm}
@@ -178,6 +177,7 @@ const ManageNotes = () => {
                         sortValue={sortValue}
                         onSortChange={handleSortChange}
                         placeholder="Search Notes..."
+                        loader={searchTerm !== debouncedSearchTerm}
                         options={options}
                     />
                 </div>
@@ -220,9 +220,7 @@ const ManageNotes = () => {
                     </div>
                 )}
             </div>
-            <div className="mt-[24px] flex">
-                <button onClick={() => setAddNotesPopup(true)} className='btn-pri ml-auto'>Add Notes</button>
-            </div>
+
             {/* Modals */}
             {addNotesPopup && (
                 <AddNote

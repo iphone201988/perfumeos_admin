@@ -27,7 +27,7 @@ const ManageRanks = () => {
     const [editRanksPopup, setEditRanksPopup] = useState(false);
 
     const navigate = useNavigate();
-    const itemsPerPage = 5;
+    const itemsPerPage = 20;
     const [addRanks, { isLoading: isAdding, error: addError }] = useCreateRankMutation();
     const [updateRanks, { isLoading: isUpdating, error: updateError }] = useUpdateRankMutation();
     const [deleteRanks, { isLoading: isDeleting, error: deleteError }] = useDeleteRankMutation();
@@ -112,7 +112,7 @@ const ManageRanks = () => {
 
     const handleAddRanks = async (data) => {
         try {
-           
+
             if (editRanksPopup && selectedRanks) {
                 await updateRanks({ id: selectedRanks._id, data }).unwrap();
                 toast.success('Ranks updated successfully!');
@@ -174,16 +174,16 @@ const ManageRanks = () => {
     ];
     return (
         <>
+            <div className="mb-[24px] flex">
+                <button onClick={() => setAddRanksPopup(true)} className='btn-pri ml-auto'>Add Ranks</button>
+            </div>
             <div className="bg-[#E1F8F8] rounded-[30px] py-[24px] px-[32px] max-lg:p-[16px]">
                 <div className="flex justify-between items-center flex-wrap max-md:gap-[12px] mb-4">
                     <div>
                         <h6 className="text-[20px] font-semibold text-[#352AA4]">
                             All Ranks ({totalRanks})
                         </h6>
-                        {/* Show search indicator */}
-                        {searchTerm !== debouncedSearchTerm && (
-                            <p className="text-sm text-gray-500 mt-1">Searching...</p>
-                        )}
+                        
                     </div>
                     <SearchBar
                         searchTerm={searchTerm}
@@ -192,6 +192,7 @@ const ManageRanks = () => {
                         onSortChange={handleSortChange}
                         placeholder="Search Ranks..."
                         options={options}
+                        loader={searchTerm !== debouncedSearchTerm}
                     />
                 </div>
 
@@ -233,9 +234,7 @@ const ManageRanks = () => {
                     </div>
                 )}
             </div>
-            <div className="mt-[24px] flex">
-                <button onClick={() => setAddRanksPopup(true)} className='btn-pri ml-auto'>Add Ranks</button>
-            </div>
+
             {/* Modals */}
             {addRanksPopup && (
                 <AddRanks

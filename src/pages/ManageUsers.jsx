@@ -15,7 +15,7 @@ const ManageUsers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const navigate = useNavigate();
-  const itemsPerPage = 5;
+  const itemsPerPage = 20;
 
   // Debounce search term
   useEffect(() => {
@@ -53,7 +53,8 @@ const ManageUsers = () => {
     sno: (currentPage - 1) * itemsPerPage + index + 1,
     status: user.isDeleted ? 'Suspended' : 'Active',
     joinedOn: user.createdAt ? new Date(user.createdAt).toLocaleDateString() : user.joinedOn,
-    image: user?.profileImage ? `${import.meta.env.VITE_BASE_URL}${user?.profileImage}` : user_icon
+    image: user?.profileImage ? `${import.meta.env.VITE_BASE_URL}${user?.profileImage}` : user_icon,
+    fullname:  user?.firstName && user?.lastName ? `${user?.firstName} ${user?.lastName}` : user?.fullname || ''
   }));
 
   const columns = [
@@ -126,16 +127,14 @@ const ManageUsers = () => {
           <h6 className="text-[20px] font-semibold text-[#352AA4]">
             All Users ({totalUsers})
           </h6>
-          {/* Show search indicator */}
-          {searchTerm !== debouncedSearchTerm && (
-            <p className="text-sm text-gray-500 mt-1">Searching...</p>
-          )}
+         
         </div>
         <SearchBar
           searchTerm={searchTerm}
           onSearchChange={handleSearch}
           sortValue={sortValue}
           onSortChange={handleSortChange}
+          loader={searchTerm !== debouncedSearchTerm }
         />
       </div>
 

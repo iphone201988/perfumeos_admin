@@ -34,7 +34,6 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
       
       case 'odorProfile':
         if (!value || value.trim() === '') {
-          error = 'Odor profile is required'
         } else if (value.trim().length < 10) {
           error = 'Odor profile must be at least 10 characters'
         } else if (value.trim().length > 500) {
@@ -44,7 +43,6 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
       
       case 'group':
         if (!value || value.trim() === '') {
-          error = 'Group is required'
         } else if (value.trim().length < 2) {
           error = 'Group must be at least 2 characters'
         } else if (value.trim().length > 50) {
@@ -54,7 +52,6 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
       
       case 'scientificName':
         if (!value || value.trim() === '') {
-          error = 'Scientific name is required'
         } else if (value.trim().length < 2) {
           error = 'Scientific name must be at least 2 characters'
         } else if (value.trim().length > 100) {
@@ -70,7 +67,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
         )
         
         if (duplicateNames.length > 0) {
-          error = 'Other names must be unique'
+          // error = 'Other names must be unique'
         }
         
         // Check individual name lengths
@@ -364,7 +361,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
           <div className="flex gap-3 max-md:flex-col">
             <div className="flex flex-col flex-1">
               <span className='text-[#7C7C7C] text-[14px] mb-2'>
-                Note Image {!initialData && <span className="text-red-500">*</span>}
+                Note Image {!initialData && <span className="text-red-500"></span>}
               </span>
               <label className={`
                 flex justify-center items-center border rounded-2xl p-4 h-[210px] cursor-pointer
@@ -467,7 +464,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
 
           <label className='flex flex-col w-full'>
             <span className='text-[#7C7C7C] text-[14px] mb-1'>
-              Scientific Name <span className="text-red-500">*</span>
+              Scientific Name <span className="text-red-500"></span>
             </span>
             <input
               className={`
@@ -487,7 +484,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
 
           <label className='flex flex-col w-full'>
             <span className='text-[#7C7C7C] text-[14px] mb-1'>
-              Group <span className="text-red-500">*</span>
+              Group <span className="text-red-500"></span>
             </span>
             <input
               className={`
@@ -507,7 +504,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
 
           <label className='flex flex-col w-full'>
             <span className='text-[#7C7C7C] text-[14px] mb-1'>
-              Odor Profile <span className="text-red-500">*</span>
+              Odor Profile <span className="text-red-500"></span>
             </span>
             <textarea
               className={`

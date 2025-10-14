@@ -10,12 +10,14 @@ import { hexToRgb, rgbToHex } from "../../Utils/function";
 import Select from 'react-select';
 import Loader from "../Loader/Loader";
 import { toast } from "react-toastify";
+
 const customFilterOption = (option, rawInput) => {
-    if (!rawInput) return true;
-    const label = option.label.toLowerCase();
-    const input = rawInput.toLowerCase();
-    return label.startsWith(input);
+  if (!rawInput) return true;
+  const label = option.label.toLowerCase();
+  const input = rawInput.toLowerCase();
+  return label.startsWith(input);
 };
+
 const EditPerfume = () => {
   const params = useParams();
   const navigate = useNavigate();
@@ -56,7 +58,7 @@ const EditPerfume = () => {
   const [fragranceBottom, setFragranceBottom] = useState([]);
   const [fragranceNotes, setFragranceNotes] = useState([]);
 
-  // Validation rules (same as AddPerfume)
+  // Validation rules
   const validateField = useCallback((name, value) => {
     let error = '';
 
@@ -86,22 +88,15 @@ const EditPerfume = () => {
           error = 'Description is required';
         } else if (value.trim().length < 10) {
           error = 'Description must be at least 10 characters';
-        } else if (value.trim().length > 1000) {
-          error = 'Description must be less than 1000 characters';
+        } else if (value.trim().length > 100000) {
+          error = 'Description must be less than 100000 characters';
         }
         break;
-
-      // case 'concentration':
-      //   if (!value || value.trim() === '') {
-      //     error = 'Concentration is required';
-      //   }
-      //   break;
 
       case 'yearRelease':
         const currentYear = new Date().getFullYear();
         const yearNum = parseInt(value);
         if (!value) {
-          error = 'Release year is required';
         } else if (isNaN(yearNum) || yearNum < 1900) {
           error = 'Year must be 1900 or later';
         } else if (yearNum > currentYear) {
@@ -116,16 +111,6 @@ const EditPerfume = () => {
           error = 'Value must be between 0 and 100';
         }
         break;
-
-      // case 'seasonWinter':
-      // case 'seasonSummer':
-      // case 'seasonAutumn':
-      // case 'seasonSpring':
-      //   const seasonNum = parseInt(value);
-      //   if (value !== '' && (isNaN(seasonNum) || seasonNum < 0 || seasonNum > 100)) {
-      //     error = 'Value must be between 0 and 100';
-      //   }
-      //   break;
 
       default:
         break;
@@ -151,35 +136,6 @@ const EditPerfume = () => {
       errors.intendedFor = 'Please select at least one intended audience';
     }
 
-    // Validate perfumers
-    if (!perfumerIds || perfumerIds.length === 0) {
-      errors.perfumers = 'Please select at least one perfumer';
-    }
-
-    // Validate at least one fragrance note category
-    const hasNotes = fragranceTop.length > 0 || fragranceMiddle.length > 0 ||
-      fragranceBottom.length > 0 || fragranceNotes.length > 0;
-    if (!hasNotes) {
-      errors.notes = 'Please add at least one fragrance note';
-    }
-
-    // Validate main accords
-    const validAccords = mainAccords.filter(accord =>
-      accord.name && accord.name.trim() !== '' && accord.width !== '0%'
-    );
-    if (validAccords.length === 0) {
-      errors.accords = 'Please add at least one main accord';
-    }
-
-    // Validate season totals
-    // const seasonTotal = parseInt(form.seasonWinter || 0) +
-    //   parseInt(form.seasonSummer || 0) +
-    //   parseInt(form.seasonAutumn || 0) +
-    //   parseInt(form.seasonSpring || 0);
-    // if (seasonTotal > 100) {
-    //   errors.seasons = 'Total season percentages cannot exceed 100%';
-    // }
-
     // Validate occasion totals
     const occasionTotal = parseInt(form.occasionDay || 0) + parseInt(form.occasionEvening || 0);
     if (occasionTotal > 100) {
@@ -187,7 +143,7 @@ const EditPerfume = () => {
     }
 
     return errors;
-  }, [form, perfumerIds, fragranceTop, fragranceMiddle, fragranceBottom, fragranceNotes, mainAccords, validateField]);
+  }, [form, validateField]);
 
   useEffect(() => {
     if (perfume && perfumersResponse?.data && notesResponse?.data) {
@@ -206,8 +162,8 @@ const EditPerfume = () => {
         intendedFor: perfume.intendedFor || [],
         yearRelease: perfume.year || "",
         concentration: perfume.concentration || "",
-        occasionDay: perfume.occasions?.find((o) => o.name === "day")?.width.split("%")[0] || "",
-        occasionEvening: perfume.occasions?.find((o) => o.name === "night")?.width.split("%")[0] || "",
+        occasionDay: ((perfume?.occasionVotes?.day * 100) / perfume?.occasionVotes?.total) || "",
+        occasionEvening: ((perfume?.occasionVotes?.night * 100) / perfume?.occasionVotes?.total) || "",
         seasonWinter: perfume.seasons?.find((s) => s.name === "winter")?.width.split("%")[0] || "",
         seasonSummer: perfume.seasons?.find((s) => s.name === "summer")?.width.split("%")[0] || "",
         seasonAutumn: perfume.seasons?.find((s) => s.name === "fall")?.width.split("%")[0] || "",
@@ -306,7 +262,7 @@ const EditPerfume = () => {
   const onImageSelect = useCallback((url, file, error) => {
     if (error) {
       setImageError(error);
-      setForm((prev) => ({ ...prev, image: prev.image })); // Keep existing image on error
+      setForm((prev) => ({ ...prev, image: prev.image }));
       setFile(null);
     } else {
       setForm((prev) => ({ ...prev, image: url || prev.image }));
@@ -398,6 +354,7 @@ const EditPerfume = () => {
 
     // If there are errors, don't submit
     if (Object.keys(errors).length > 0) {
+      console.log(errors);
       toast.error("Please fix all validation errors before updating");
       return;
     }
@@ -440,6 +397,10 @@ const EditPerfume = () => {
       { name: "day", width: form.occasionDay },
       { name: "night", width: form.occasionEvening }
     ]));
+    formData.append('occasionVotes', JSON.stringify({
+      day: form.occasionDay,
+      night: form.occasionEvening
+    }))
 
     formData.append('seasons', JSON.stringify([
       { name: "winter", width: form.seasonWinter },
@@ -463,32 +424,66 @@ const EditPerfume = () => {
 
   // Custom styles for react-select with error states
   const getCustomStyles = (hasError) => ({
-    control: (provided) => ({
+    control: (provided, state) => ({
       ...provided,
-      border: `1px solid ${hasError ? '#ef4444' : '#eeeeee'}`,
+      border: `2px solid ${hasError ? '#ef4444' : state.isFocused ? '#352AA4' : '#eeeeee'}`,
       borderRadius: '16px',
-      minHeight: '40px',
-      fontSize: '16px',
-      padding: '8px 6px',
+      minHeight: '48px',
+      fontSize: '15px',
+      padding: '4px 8px',
       backgroundColor: '#fff',
-      boxShadow: hasError ? '0 0 0 1px #ef4444' : provided.boxShadow,
+      boxShadow: state.isFocused 
+        ? hasError 
+          ? '0 0 0 3px rgba(239, 68, 68, 0.1)' 
+          : '0 0 0 3px rgba(53, 42, 164, 0.1)'
+        : 'none',
+      '&:hover': {
+        borderColor: hasError ? '#ef4444' : '#352AA4',
+      },
+      transition: 'all 0.2s ease'
     }),
     multiValue: (provided) => ({
       ...provided,
       backgroundColor: '#E1F8F8',
       borderRadius: '8px',
+      padding: '2px 4px',
+      border: '1px solid #67E9E9',
     }),
     multiValueLabel: (provided) => ({
       ...provided,
       color: '#0891b2',
+      fontWeight: '500',
+      fontSize: '14px',
     }),
     multiValueRemove: (provided) => ({
       ...provided,
       color: '#0891b2',
+      borderRadius: '6px',
+      transition: 'all 0.2s ease',
       ':hover': {
         backgroundColor: '#0891b2',
         color: 'white',
       },
+    }),
+    menu: (provided) => ({
+      ...provided,
+      borderRadius: '12px',
+      boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
+      border: '1px solid #E1F8F8',
+      overflow: 'hidden',
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected 
+        ? '#352AA4' 
+        : state.isFocused 
+          ? '#E1F8F8' 
+          : 'white',
+      color: state.isSelected ? 'white' : '#333',
+      padding: '10px 16px',
+      cursor: 'pointer',
+      fontSize: '14px',
+      transition: 'all 0.2s ease',
     }),
   });
 
@@ -507,265 +502,352 @@ const EditPerfume = () => {
   }
 
   return (
-    <div>
-      <div className="bg-[#E1F8F8] rounded-[30px] py-[24px] px-[32px] max-lg:p-[16px]">
-        <h6 className="text-[20px] font-semibold text-[#352AA4] mb-4">Edit Perfume</h6>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-[16px]">
-          <div className="flex gap-[20px] flex-col max-md:flex-wrap max-md:gap-[16px]">
-            <div>
-              <ImageUploader
-                onImageSelect={onImageSelect}
-                currentImage={form.image}
-                error={imageError || formErrors.image}
-                required={false} // Since existing image is acceptable
-              />
-            </div>
-            <div className="flex gap-[16px] max-md:flex-wrap">
-              <FormField
-                label="Perfume Name"
-                name="name"
-                value={form.name}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                placeholder="Enter here"
-                error={touched.name && formErrors.name}
-                required
-              />
-              <FormField
-                label="Perfume Brand Name"
-                name="brand"
-                value={form.brand}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                placeholder="Enter here"
-                error={touched.brand && formErrors.brand}
-                required
-              />
-            </div>
+    <div className="max-w-7xl mx-auto">
+      {/* Sticky Action Bar */}
+      <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm mb-6">
+        <div className="flex justify-between items-center py-4 px-6">
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-8 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></div>
+            <h1 className="text-[24px] font-bold text-[#352AA4]">Edit Perfume</h1>
           </div>
-
-          <div className="flex gap-[16px] max-md:flex-wrap">
-            <div className="w-full">
-              <IntendedForMultiSelect
-                value={form.intendedFor}
-                onChange={handleIntendedForChange}
-              />
-              {formErrors.intendedFor && (
-                <span className="text-red-500 text-xs mt-1">{formErrors.intendedFor}</span>
-              )}
-            </div>
-            <div className="w-full">
-              <FormField
-                label="Description"
-                name="description"
-                value={form.description}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                placeholder="Enter here"
-                textAera="true"
-                rows="6"
-                error={touched.description && formErrors.description}
-              />
-              {formErrors.description && (
-                <span className="text-red-500 text-xs mt-1">{formErrors.description}</span>
-              )}
-            </div>
-          </div>
-
-          <div className="flex gap-[16px] max-md:flex-wrap">
-            <div className="w-full">
-              <FormField
-                label="Concentration"
-                name="concentration"
-                value={form.concentration}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                placeholder="Enter here"
-                error={touched.concentration && formErrors.concentration}
-              />
-              {formErrors.concentration && (
-                <span className="text-red-500 text-xs mt-1">{formErrors.concentration}</span>
-              )}
-            </div>
-            <div className="w-full">
-              <FormField
-                label="Year Release"
-                name="yearRelease"
-                type="number"
-                value={form.yearRelease}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                min="1900"
-                max={new Date().getFullYear()}
-                placeholder="Enter here"
-                error={touched.yearRelease && formErrors.yearRelease}
-              />
-              {formErrors.yearRelease && (
-                <span className="text-red-500 text-xs mt-1">{formErrors.yearRelease}</span>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-[20px] font-medium mt-4 mb-4">Occasion</h4>
-            <div className="flex gap-[16px] max-md:flex-wrap">
-              <FormField
-                label="Occasion (Day Time)"
-                name="occasionDay"
-                type="number"
-                min="0"
-                max="100"
-                value={form.occasionDay}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                placeholder="0-100"
-                error={touched.occasionDay && formErrors.occasionDay}
-              />
-              <FormField
-                label="Occasion (Evening)"
-                name="occasionEvening"
-                type="number"
-                min="0"
-                max="100"
-                value={form.occasionEvening}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                placeholder="0-100"
-                error={touched.occasionEvening && formErrors.occasionEvening}
-              />
-            </div>
-            {formErrors.occasions && (
-              <span className="text-red-500 text-xs mt-1">{formErrors.occasions}</span>
-            )}
-          </div>
-
-          <SeasonFields
-            form={form}
-            onInputChange={handleInputChange}
-            onBlur={handleBlur}
-            formErrors={formErrors}
-            touched={touched}
-          />
-          {formErrors.seasons && (
-            <span className="text-red-500 text-xs mt-1">{formErrors.seasons}</span>
-          )}
-
-          {/* Perfumer Multi-Select */}
-          <div className="flex flex-col">
-            <label className="text-[#7C7C7C] text-[14px] mb-1">Perfumer</label>
-            <Select
-              isMulti
-              options={perfumerOptions}
-              value={perfumerIds}
-              onChange={onPerfumerChange}
-              placeholder="Select perfumers..."
-              styles={getCustomStyles(formErrors.perfumers)}
-              closeMenuOnSelect={false}
-              filterOption={customFilterOption}
-            />
-            {formErrors.perfumers && (
-              <span className="text-red-500 text-xs mt-1">{formErrors.perfumers}</span>
-            )}
-          </div>
-
-          {/* Fragrance Notes Multi-Selects */}
-          <div>
-            <h4 className="text-[20px] font-medium mt-4 mb-4">Fragrance Notes</h4>
-            <div className="flex gap-[16px] max-md:flex-wrap max-lg:flex-wrap">
-              <div className="flex flex-col w-full">
-                <label className="text-[#7C7C7C] text-[14px] mb-1">Top Notes</label>
-                <Select
-                  isMulti
-                  options={noteOptions}
-                  value={fragranceTop}
-                  onChange={onTopNotesChange}
-                  placeholder="Select top notes..."
-                  styles={getCustomStyles(formErrors.notes)}
-                  closeMenuOnSelect={false}
-                  filterOption={customFilterOption}
-                />
-              </div>
-              <div className="flex flex-col w-full">
-                <label className="text-[#7C7C7C] text-[14px] mb-1">Middle Notes</label>
-                <Select
-                  isMulti
-                  options={noteOptions}
-                  value={fragranceMiddle}
-                  onChange={onMiddleNotesChange}
-                  placeholder="Select middle notes..."
-                  styles={getCustomStyles(formErrors.notes)}
-                  closeMenuOnSelect={false}
-                  filterOption={customFilterOption}
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-[16px] max-md:flex-wrap max-lg:flex-wrap">
-              <div className="flex flex-col w-full">
-                <label className="text-[#7C7C7C] text-[14px] mb-1 mt-[12px]">Base Notes</label>
-                <Select
-                  isMulti
-                  options={noteOptions}
-                  value={fragranceBottom}
-                  onChange={onBottomNotesChange}
-                  placeholder="Select base notes..."
-                  styles={getCustomStyles(formErrors.notes)}
-                  closeMenuOnSelect={false}
-                  filterOption={customFilterOption}
-                />
-              </div>
-              {fragranceNotes.length > 0 && (
-                <div className="flex flex-col w-full">
-                  <label className="text-[#7C7C7C] text-[14px] mb-1">Other Notes</label>
-                  <Select
-                    isMulti
-                    options={noteOptions}
-                    value={fragranceNotes}
-                    onChange={onNoteNotesChange}
-                    placeholder="Select other notes..."
-                    styles={getCustomStyles(formErrors.notes)}
-                    closeMenuOnSelect={false}
-                    filterOption={customFilterOption}
-                  />
-                </div>
-              )}
-            </div>
-            {formErrors.notes && (
-              <span className="text-red-500 text-xs mt-1">{formErrors.notes}</span>
-            )}
-          </div>
-
-          <div>
-            <AccordsList
-              accords={mainAccords}
-              onUpdate={handleAccordUpdate}
-              onAdd={handleAddAccord}
-              onRemove={handleRemoveAccord}
-            />
-            {formErrors.accords && (
-              <span className="text-red-500 text-xs mt-1">{formErrors.accords}</span>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex justify-end gap-[16px] mt-[24px] pt-4 border-t">
+          <div className="flex gap-[16px]">
             <button
               type="button"
-              className="btn-sec px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="bg-white text-[#352AA4] text-sm border-2 border-[#352AA4]/20 rounded-full px-6 py-2.5 transition-all duration-300 hover:bg-gray-50 hover:border-[#352AA4] hover:shadow-md font-medium flex items-center gap-2"
               onClick={() => navigate(-1)}
             >
+              <span className="text-lg">←</span>
               Back
             </button>
             <button
               type="submit"
-              className="btn-pri px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              onClick={handleSubmit}
+              className="bg-[#352AA4] text-white text-sm border-2 border-[#352AA4] rounded-full px-6 py-2.5 transition-all duration-300 hover:bg-[#2a2183] hover:shadow-md font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               disabled={updating}
             >
-              {updating ? "Saving..." : "Save Changes"}
+              {updating ? (
+                <>
+                  <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <span className="text-lg">✓</span>
+                  Save Changes
+                </>
+              )}
             </button>
           </div>
-        </form>
+        </div>
       </div>
+
+      {/* Main Form Container */}
+      <div className="bg-gradient-to-br from-[#E1F8F8] to-[#D4E8F8] rounded-[30px] shadow-lg overflow-hidden">
+        <div className="bg-white/60 backdrop-blur-sm rounded-[30px] p-[32px] max-lg:p-[20px] m-[2px]">
+          <form onSubmit={handleSubmit} className="space-y-[32px]">
+            
+            {/* Basic Information Section */}
+            <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
+              <div className="flex items-center gap-2 mb-[24px]">
+                <div className="w-2 h-8 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></div>
+                <h3 className="text-[20px] font-bold text-[#352AA4]">Basic Information</h3>
+              </div>
+
+              <div className="space-y-[20px]">
+                {/* Image Uploader */}
+                <div>
+                  <ImageUploader
+                    onImageSelect={onImageSelect}
+                    currentImage={form.image}
+                    error={imageError || formErrors.image}
+                    required={false}
+                  />
+                  {imageError && (
+                    <span className="text-red-500 text-xs mt-1 font-medium flex items-center gap-1">
+                      <span>⚠</span> {imageError}
+                    </span>
+                  )}
+                </div>
+
+                {/* Name and Brand */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
+                  <div>
+
+                  <FormField
+                    label="Perfume Name"
+                    name="name"
+                    value={form.name}
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                    placeholder="Enter perfume name"
+                    error={touched.name && formErrors.name}
+                    required
+                    />
+                    {formErrors.name && (
+                      <span className="text-red-500 text-xs mt-1 font-medium flex items-center gap-1">
+                        <span>⚠</span> {formErrors.name}
+                      </span>
+                    )}
+                    </div>
+
+                  <FormField
+                    label="Perfume Brand Name"
+                    name="brand"
+                    value={form.brand}
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                    placeholder="Enter brand name"
+                    error={touched.brand && formErrors.brand}
+                    required
+                  />
+                </div>
+
+                {/* Intended For and Description */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
+                  <div className="w-full">
+                    <IntendedForMultiSelect
+                      value={form.intendedFor}
+                      onChange={handleIntendedForChange}
+                    />
+                    {formErrors.intendedFor && (
+                      <span className="text-red-500 text-xs mt-1 font-medium flex items-center gap-1">
+                        <span>⚠</span> {formErrors.intendedFor}
+                      </span>
+                    )}
+                  </div>
+                  <div className="w-full">
+                    <FormField
+                      label="Description"
+                      name="description"
+                      value={form.description}
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      placeholder="Enter perfume description"
+                      textAera="true"
+                      rows="6"
+                      error={touched.description && formErrors.description}
+                    />
+                  </div>
+                </div>
+
+                {/* Concentration and Year */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
+                  <FormField
+                    label="Concentration"
+                    name="concentration"
+                    value={form.concentration}
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                    placeholder="e.g., Eau de Parfum"
+                    error={touched.concentration && formErrors.concentration}
+                  />
+                  <FormField
+                    label="Year Release"
+                    name="yearRelease"
+                    type="number"
+                    value={form.yearRelease}
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                    min="1900"
+                    max={new Date().getFullYear()}
+                    placeholder="Enter release year"
+                    error={touched.yearRelease && formErrors.yearRelease}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Occasion Section */}
+            <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
+              <div className="flex items-center gap-2 mb-[20px]">
+                <div className="w-2 h-8 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></div>
+                <h3 className="text-[20px] font-bold text-[#352AA4]">Occasion Settings</h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
+                <FormField
+                  label="Day Time (%)"
+                  name="occasionDay"
+                  type="number"
+                  value={form.occasionDay}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  placeholder="0-100"
+                  error={touched.occasionDay && formErrors.occasionDay}
+                />
+                <FormField
+                  label="Evening (%)"
+                  name="occasionEvening"
+                  type="number"
+                  value={form.occasionEvening}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  placeholder="0-100"
+                  error={touched.occasionEvening && formErrors.occasionEvening}
+                />
+              </div>
+              {formErrors.occasions && (
+                <span className="text-red-500 text-xs mt-2 font-medium flex items-center gap-1">
+                  <span>⚠</span> {formErrors.occasions}
+                </span>
+              )}
+            </div>
+
+            {/* Season Section */}
+            <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
+              <div className="flex items-center gap-2 mb-[20px]">
+                <div className="w-2 h-8 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></div>
+                <h3 className="text-[20px] font-bold text-[#352AA4]">Season Settings</h3>
+              </div>
+
+              <SeasonFields
+                form={form}
+                onInputChange={handleInputChange}
+                onBlur={handleBlur}
+                formErrors={formErrors}
+                touched={touched}
+              />
+              {formErrors.seasons && (
+                <span className="text-red-500 text-xs mt-2 font-medium flex items-center gap-1">
+                  <span>⚠</span> {formErrors.seasons}
+                </span>
+              )}
+            </div>
+
+            {/* Perfumer Section */}
+            <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
+              <div className="flex items-center gap-2 mb-[20px]">
+                <div className="w-2 h-8 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></div>
+                <h3 className="text-[20px] font-bold text-[#352AA4]">Perfumer</h3>
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-[#7C7C7C] text-[14px] font-medium mb-2">Select Perfumer(s)</label>
+                <Select
+                  isMulti
+                  options={perfumerOptions}
+                  value={perfumerIds}
+                  onChange={onPerfumerChange}
+                  placeholder="Search and select perfumers..."
+                  styles={getCustomStyles(formErrors.perfumers)}
+                  closeMenuOnSelect={false}
+                  filterOption={customFilterOption}
+                />
+                {formErrors.perfumers && (
+                  <span className="text-red-500 text-xs mt-2 font-medium flex items-center gap-1">
+                    <span>⚠</span> {formErrors.perfumers}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Fragrance Notes Section */}
+            <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
+              <div className="flex items-center gap-2 mb-[20px]">
+                <div className="w-2 h-8 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></div>
+                <h3 className="text-[20px] font-bold text-[#352AA4]">Fragrance Notes</h3>
+              </div>
+
+              <div className="space-y-[16px]">
+                {/* Top and Middle Notes */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
+                  <div className="flex flex-col">
+                    <label className="text-[#7C7C7C] text-[14px] font-medium mb-2">Top Notes</label>
+                    <Select
+                      isMulti
+                      options={noteOptions}
+                      value={fragranceTop}
+                      onChange={onTopNotesChange}
+                      placeholder="Select top notes..."
+                      styles={getCustomStyles(formErrors.notes)}
+                      closeMenuOnSelect={false}
+                      filterOption={customFilterOption}
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="text-[#7C7C7C] text-[14px] font-medium mb-2">Middle Notes</label>
+                    <Select
+                      isMulti
+                      options={noteOptions}
+                      value={fragranceMiddle}
+                      onChange={onMiddleNotesChange}
+                      placeholder="Select middle notes..."
+                      styles={getCustomStyles(formErrors.notes)}
+                      closeMenuOnSelect={false}
+                      filterOption={customFilterOption}
+                    />
+                  </div>
+                </div>
+
+                {/* Base and Other Notes */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
+                  <div className="flex flex-col">
+                    <label className="text-[#7C7C7C] text-[14px] font-medium mb-2">Base Notes</label>
+                    <Select
+                      isMulti
+                      options={noteOptions}
+                      value={fragranceBottom}
+                      onChange={onBottomNotesChange}
+                      placeholder="Select base notes..."
+                      styles={getCustomStyles(formErrors.notes)}
+                      closeMenuOnSelect={false}
+                      filterOption={customFilterOption}
+                    />
+                  </div>
+                  {fragranceNotes.length > 0 && (
+                    <div className="flex flex-col">
+                      <label className="text-[#7C7C7C] text-[14px] font-medium mb-2">Other Notes</label>
+                      <Select
+                        isMulti
+                        options={noteOptions}
+                        value={fragranceNotes}
+                        onChange={onNoteNotesChange}
+                        placeholder="Select other notes..."
+                        styles={getCustomStyles(formErrors.notes)}
+                        closeMenuOnSelect={false}
+                        filterOption={customFilterOption}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {formErrors.notes && (
+                  <span className="text-red-500 text-xs mt-1 font-medium flex items-center gap-1">
+                    <span>⚠</span> {formErrors.notes}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Main Accords Section */}
+            <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
+              <div className="flex items-center gap-2 mb-[20px]">
+                <div className="w-2 h-8 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></div>
+                <h3 className="text-[20px] font-bold text-[#352AA4]">Main Accords</h3>
+              </div>
+
+              <AccordsList
+                accords={mainAccords}
+                onUpdate={handleAccordUpdate}
+                onAdd={handleAddAccord}
+                onRemove={handleRemoveAccord}
+              />
+              {formErrors.accords && (
+                <span className="text-red-500 text-xs mt-2 font-medium flex items-center gap-1">
+                  <span>⚠</span> {formErrors.accords}
+                </span>
+              )}
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+      {/* Bottom spacing */}
+      <div className="h-8"></div>
     </div>
   );
 };

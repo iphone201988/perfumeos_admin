@@ -37,9 +37,7 @@ const AddBadge = ({ open, onClose, onSubmit, initialData = null }) => {
           error = 'Badge name must be at least 2 characters'
         } else if (value.trim().length > 100) {
           error = 'Badge name must be less than 100 characters'
-        } else if (!/^[a-zA-Z0-9\s\-_\.]+$/.test(value.trim())) {
-          error = 'Badge name can only contain letters, numbers, spaces, hyphens, underscores, and dots'
-        }
+        } 
         break
       
       case 'category':

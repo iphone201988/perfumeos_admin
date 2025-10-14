@@ -27,7 +27,7 @@ const ManagePerfumers = () => {
     const [editPerfumersPopup, setEditPerfumersPopup] = useState(false);
 
     const navigate = useNavigate();
-    const itemsPerPage = 5;
+    const itemsPerPage = 20;
     const [addPerfumers, { isLoading: isAdding, error: addError }] = useCreatePerfumerMutation();
     const [updatePerfumers, { isLoading: isUpdating, error: updateError }] = useUpdatePerfumerMutation();
     const [deletePerfumers, { isLoading: isDeleting, error: deleteError }] = useDeletePerfumerMutation();
@@ -160,16 +160,16 @@ const ManagePerfumers = () => {
     ];
     return (
         <>
+            <div className="mb-[24px] flex">
+                <button onClick={() => setAddPerfumersPopup(true)} className='btn-pri ml-auto'>Add Perfumers</button>
+            </div>
             <div className="bg-[#E1F8F8] rounded-[30px] py-[24px] px-[32px] max-lg:p-[16px]">
                 <div className="flex justify-between items-center flex-wrap max-md:gap-[12px] mb-4">
                     <div>
                         <h6 className="text-[20px] font-semibold text-[#352AA4]">
                             All Perfumers ({totalPerfumers})
                         </h6>
-                        {/* Show search indicator */}
-                        {searchTerm !== debouncedSearchTerm && (
-                            <p className="text-sm text-gray-500 mt-1">Searching...</p>
-                        )}
+
                     </div>
                     <SearchBar
                         searchTerm={searchTerm}
@@ -177,6 +177,7 @@ const ManagePerfumers = () => {
                         sortValue={sortValue}
                         onSortChange={handleSortChange}
                         placeholder="Search Perfumers..."
+                        loader={searchTerm !== debouncedSearchTerm}
                         options={options}
                     />
                 </div>
@@ -218,9 +219,6 @@ const ManagePerfumers = () => {
                         )}
                     </div>
                 )}
-            </div>
-            <div className="mt-[24px] flex">
-                <button onClick={() => setAddPerfumersPopup(true)} className='btn-pri ml-auto'>Add Perfumers</button>
             </div>
             {/* Modals */}
             {addPerfumersPopup && (

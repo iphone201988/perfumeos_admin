@@ -18,14 +18,12 @@ const useValidation = () => {
           error = 'Rank name must be at least 2 characters'
         } else if (value.trim().length > 50) {
           error = 'Rank name cannot exceed 50 characters'
-        } else if (!/^[a-zA-Z0-9\s-_]+$/.test(value.trim())) {
-          error = 'Rank name can only contain letters, numbers, spaces, hyphens, and underscores'
-        }
+        } 
         break
 
       case 'description':
-        if (value && value.length > 500) {
-          error = 'Description cannot exceed 500 characters'
+        if (value && value.length > 50000) {
+          error = 'Description cannot exceed 50000 characters'
         }
         break
 
@@ -537,7 +535,7 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
             <span className='text-[#7C7C7C] text-[14px] mb-1'>
               Description 
               <span className="text-xs text-gray-400 ml-1">
-                ({description.length}/500)
+                ({description.length}/50000)
               </span>
             </span>
             <textarea
@@ -548,7 +546,7 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
               value={description}
               onChange={handleDescriptionChange}
               disabled={isSubmitting}
-              maxLength={500}
+              maxLength={50000}
             />
             <ErrorMessage error={errors.description} />
           </label>

@@ -26,18 +26,16 @@ const AddPerfumer = ({ open, onClose, onSubmit, initialData = null }) => {
           error = 'Perfumer name must be at least 2 characters'
         } else if (value.trim().length > 100) {
           error = 'Perfumer name must be less than 100 characters'
-        } else if (!/^[a-zA-Z\s\-'\.]+$/.test(value.trim())) {
-          error = 'Perfumer name can only contain letters, spaces, hyphens, apostrophes, and dots'
-        }
+        } 
         break
       
       case 'description':
         if (!value || value.trim() === '') {
-          error = 'Description is required'
+          // error = 'Description is required'
         } else if (value.trim().length < 10) {
           error = 'Description must be at least 10 characters'
-        } else if (value.trim().length > 1000) {
-          error = 'Description must be less than 1000 characters'
+        } else if (value.trim().length > 100000) {
+          error = 'Description must be less than 100000 characters'
         }
         break
       
@@ -327,7 +325,7 @@ const AddPerfumer = ({ open, onClose, onSubmit, initialData = null }) => {
 
           <label className='flex flex-col w-full'>
             <span className='text-[#7C7C7C] text-[14px] mb-1'>
-              Description <span className="text-red-500">*</span>
+              Description <span className="text-red-500"></span>
             </span>
             <textarea
               className={`
@@ -343,7 +341,7 @@ const AddPerfumer = ({ open, onClose, onSubmit, initialData = null }) => {
               <span className="text-red-500 text-xs mt-1">{errors.description}</span>
             )}
             <span className="text-gray-500 text-xs mt-1">
-              {description.length}/1000 characters
+              {description.length}/100000 characters
             </span>
           </label>
         </div>

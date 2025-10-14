@@ -43,6 +43,8 @@ const UserDetails = () => {
 
   const [formData, setFormData] = useState({
     fullname: "",
+    firstName: "",
+    lastName: "",
     username: "",
     email: "",
     gender: "",
@@ -60,6 +62,8 @@ const UserDetails = () => {
     if (data) {
       setFormData({
         fullname: data.fullname || "",
+        firstName: data.firstName || "",
+        lastName: data.lastName || "",
         username: data.username || "",
         email: data.email || "",
         gender: capitalizeFirstLetter(data.gender) || "",
@@ -83,8 +87,11 @@ const UserDetails = () => {
   const validateForm = () => {
     const errors = {};
 
-    if (!formData.fullname.trim()) {
-      errors.fullname = "Full name is required";
+    if (!formData.firstName.trim()) {
+      errors.firstName = "First name is required";
+    }
+    if (!formData.lastName.trim()) {
+      errors.lastName = "Last name is required";
     }
 
     if (!formData.gender) {
@@ -125,12 +132,12 @@ const UserDetails = () => {
   // ✅ Enhanced save handler with validation and error handling
   const handleSave = async () => {
     if (!validateForm()) {
-      toast.error("Please fix the form errors before saving");
       return;
     }
 
     const submitData = {
-      fullname: formData.fullname.trim(),
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName.trim(),
       enjoySmell: formData.enjoySmell,
       gender: formData.gender,
       dob: formData.dob,
@@ -173,6 +180,8 @@ const UserDetails = () => {
     if (data) {
       setFormData({
         fullname: data.fullname || "",
+        firstName: data.firstName || "",
+        lastName: data.lastName || "",
         email: data.email || "",
         gender: capitalizeFirstLetter(data.gender) || "",
         dob: data.dob ? data.dob.slice(0, 10) : "",
@@ -214,12 +223,13 @@ const UserDetails = () => {
     : data?.suspendAccount
       ? "Suspended"
       : "Active";
+
   const getMaxDate = () => {
     const today = new Date();
     const maxDate = new Date(today.getFullYear() - 13, today.getMonth(), today.getDate());
-    return maxDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    return maxDate.toISOString().split('T')[0];
   };
-  console.log(formData.dob)
+
   return (
     <>
       {/* ✅ Show loader during operations */}
@@ -230,352 +240,474 @@ const UserDetails = () => {
         />
       )}
 
-      <div className="">
-        <div className="bg-[#E1F8F8] rounded-[30px] py-[24px] px-[32px] max-lg:p-[16px]">
-          {/* <h6 className="text-[20px] font-semibold text-[#352AA4]">User details</h6> */}
-          <div className="mt-[16px] flex flex-col gap-[16px]">
+      <div className="max-w-7xl mx-auto">
+        {/* Action Buttons */}
+        <div className="flex justify-end gap-[16px] mb-[32px] flex-wrap">
+          {isEditing ? (
+            <>
+              <button
+                className="bg-white text-[#352AA4] text-sm border-2 border-[#352AA4]/20 rounded-full px-6 py-3 transition-all duration-300 hover:bg-gray-50 hover:border-[#352AA4] hover:shadow-md font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+                type="button"
+                onClick={handleCancelEdit}
+                disabled={isUpdateLoading}
+              >
+                Cancel
+              </button>
+              <button
+                className={`bg-[#352AA4] text-white text-sm border-2 border-[#352AA4] rounded-full px-6 py-3 transition-all duration-300 hover:bg-[#2a2183] hover:shadow-md font-medium ${isUpdateLoading ? 'opacity-60 cursor-not-allowed' : ''
+                  }`}
+                type="button"
+                onClick={handleSave}
+                disabled={isUpdateLoading}
+              >
+                {isUpdateLoading ? 'Saving...' : 'Save Changes'}
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => navigate('/users')}
+                className="bg-white text-[#352AA4] text-sm border-2 border-[#352AA4]/20 rounded-full px-6 py-3 transition-all duration-300 hover:bg-gray-50 hover:border-[#352AA4] hover:shadow-md flex items-center gap-2 font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+                type="button"
+                disabled={isSuspendLoading}
+              >
+                <span className="text-lg">←</span>
+                Back
+              </button>
+
+              <button
+                onClick={() =>
+                  setPopup(data?.suspendAccount ? "reactivate" : "suspend")
+                }
+                className={`text-sm border-2 rounded-full px-6 py-3 transition-all duration-300 hover:shadow-md font-medium ${data?.suspendAccount
+                    ? 'bg-green-500 text-white border-green-500 hover:bg-green-600'
+                    : 'bg-yellow-500 text-white border-yellow-500 hover:bg-yellow-600'
+                  }`}
+                type="button"
+                disabled={isSuspendLoading}
+              >
+                {data?.suspendAccount ? "Reactivate Account" : "Suspend Account"}
+              </button>
+
+              <button
+                className="bg-[#352AA4] text-white text-sm border-2 border-[#352AA4] rounded-full px-6 py-3 transition-all duration-300 hover:bg-[#2a2183] hover:shadow-md font-medium"
+                type="button"
+                onClick={() => setIsEditing(true)}
+                disabled={isSuspendLoading}
+              >
+                Edit Details
+              </button>
+            </>
+          )}
+        </div>
+        {/* Main Container with Gradient Background */}
+        <div className="bg-gradient-to-br from-[#E1F8F8] to-[#D4E8F8] rounded-[30px] shadow-lg overflow-hidden">
+          <div className="bg-white/60 backdrop-blur-sm rounded-[30px] p-[32px] max-lg:p-[20px] m-[2px]">
+
+            {/* Profile Header Section */}
             {!isEditing && (
-              <div className="flex gap-[20px] max-md:flex-wrap max-md:gap-[16px]">
-                <div className="flex justify-center items-center border bg-white border-[#EFEFEF] rounded-2xl p-[16px] h-[170px] w-[170px] overflow-hidden">
-                  <img
-                    src={
-                      data?.profileImage
-                        ? `${import.meta.env.VITE_BASE_URL}${data.profileImage}`
-                        : user_icon
-                    }
-                    alt="Profile"
-                    className="object-cover w-full h-full"
-                  />
+              <div className="flex gap-[32px] items-start mb-[32px] max-md:flex-col">
+                {/* Profile Image Card */}
+                <div className="relative group flex-shrink-0">
+                  <div className="flex justify-center items-center bg-gradient-to-br from-white to-gray-50 border-2 border-[#352AA4]/10 rounded-3xl p-[16px] h-[200px] w-[200px] overflow-hidden shadow-md transition-all duration-300 group-hover:shadow-xl group-hover:scale-[1.02]">
+                    <img
+                      src={
+                        data?.profileImage
+                          ? `${import.meta.env.VITE_BASE_URL}${data.profileImage}`
+                          : user_icon
+                      }
+                      alt="Profile"
+                      className="object-cover w-full h-full rounded-2xl"
+                    />
+                  </div>
+                  {/* Decorative corner */}
+                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-[#352AA4] rounded-full opacity-20"></div>
                 </div>
-                <div className="flex flex-col gap-[10px] bg-white border-[#EFEFEF] border p-[20px] rounded-2xl w-full max-w-[300px] max-md:max-w-full">
-                  <div className="flex justify-between">
-                    <p className="text-[#7C7C7C]">Status</p>
-                    <span
-                      className={`font-medium rounded-lg px-3 py-1
-                      ${status === "Active" && "bg-green-100 text-green-800"}
-                      ${status === "Inactive" && "bg-red-100 text-red-800"}
-                      ${status === "Suspended" && "bg-yellow-50 text-yellow-800"}
-                    `}
-                    >
-                      {status}
-                    </span>
+
+                {/* Stats Card */}
+                <div className="flex-1 bg-white rounded-3xl p-[24px] shadow-md border border-[#352AA4]/10 max-w-[400px] max-md:max-w-full">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-1 h-6 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></div>
+                    <h3 className="text-[20px] font-bold text-[#352AA4]">Account Overview</h3>
                   </div>
-                  <div className="flex justify-between">
-                    <p className="text-[#7C7C7C]">Following</p>
-                    <p className="text-[#352AA4] font-medium ">{data?.following || 0}</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p className="text-[#7C7C7C]">Followers</p>
-                    <p className="text-[#352AA4] font-medium ">{data?.followers || 0}</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p className="text-[#7C7C7C]">Rank points</p>
-                    <p className="text-[#352AA4] font-medium ">{data?.rankPoints || 0}</p>
+
+                  <div className="space-y-[12px]">
+                    {/* Status */}
+                    <div className="flex justify-between items-center bg-gray-50 rounded-xl px-[16px] py-[12px]">
+                      <span className="text-[#7C7C7C] font-medium">Status</span>
+                      <span
+                        className={`font-semibold rounded-full px-4 py-1.5 text-sm
+                          ${status === "Active" && "bg-green-100 text-green-700 border border-green-300"}
+                          ${status === "Inactive" && "bg-red-100 text-red-700 border border-red-300"}
+                          ${status === "Suspended" && "bg-yellow-100 text-yellow-700 border border-yellow-300"}
+                        `}
+                      >
+                        {status}
+                      </span>
+                    </div>
+
+                    {/* Following */}
+                    <div className="flex justify-between items-center bg-gray-50 rounded-xl px-[16px] py-[12px] hover:bg-gray-100 transition-colors">
+                      <span className="text-[#7C7C7C] font-medium">Following</span>
+                      <span className="text-[#352AA4] font-bold text-lg">{data?.following || 0}</span>
+                    </div>
+
+                    {/* Followers */}
+                    <div className="flex justify-between items-center bg-gray-50 rounded-xl px-[16px] py-[12px] hover:bg-gray-100 transition-colors">
+                      <span className="text-[#7C7C7C] font-medium">Followers</span>
+                      <span className="text-[#352AA4] font-bold text-lg">{data?.followers || 0}</span>
+                    </div>
+
+                    {/* Rank Points */}
+                    <div className="flex justify-between items-center bg-gradient-to-r from-[#352AA4]/10 to-[#5c4ec9]/10 rounded-xl px-[16px] py-[12px] border border-[#352AA4]/20">
+                      <span className="text-[#7C7C7C] font-medium">Rank Points</span>
+                      <span className="text-[#352AA4] font-bold text-lg">{data?.rankPoints || 0}</span>
+                    </div>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* User info fields */}
-            <div className="flex gap-[16px] max-md:flex-wrap">
-              {/* full name */}
-              <label className="flex flex-col w-full">
-                <span className="text-[#7C7C7C] text-[14px]">Full Name</span>
-                {isEditing ? (
-                  <>
-                    <input
-                      name="fullname"
-                      className={`bg-white border rounded-2xl py-[14px] px-[18px] ${formErrors.fullname ? 'border-red-500' : 'border-[#EEEEEE]'
-                        }`}
-                      type="text"
-                      value={formData.fullname}
-                      onChange={handleInputChange}
-                      placeholder="Enter full name"
-                    />
-                    {formErrors.fullname && (
-                      <span className="text-red-500 text-xs mt-1">{formErrors.fullname}</span>
-                    )}
-                  </>
-                ) : (
-                  <p className="py-[14px] px-[18px] capitalize bg-white border rounded-2xl border-[#EEEEEE]">{formData.fullname}</p>
-                )}
-              </label>
-              {/* Username */}
-              <label className="flex flex-col w-full">
-                <span className="text-[#7C7C7C] text-[14px]">User Name</span>
-                <input
-                  name="username"
-                  className="bg-gray-100 border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px] cursor-not-allowed"
-                  type="text"
-                  value={formData.username}
-                  readOnly
-                  title="Username cannot be edited"
-                />
-              </label>
-              {/* Email */}
-              <label className="flex flex-col w-full">
-                <span className="text-[#7C7C7C] text-[14px]">Email</span>
-                <input
-                  name="email"
-                  className="bg-gray-100 border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px] cursor-not-allowed"
-                  type="email"
-                  value={formData.email}
-                  readOnly
-                  title="Email cannot be edited"
-                />
-              </label>
-            </div>
+            {/* Personal Information Section */}
+            <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10 mb-[24px]">
+              <div className="flex items-center gap-2 mb-[24px]">
+                <div className="w-2 h-8 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></div>
+                <h3 className="text-[22px] font-bold text-[#352AA4]">Personal Information</h3>
+              </div>
 
-            <div className="flex gap-[16px] max-md:flex-wrap">
-              {/* Gender */}
-              <label className="flex flex-col w-full">
-                <span className="text-[#7C7C7C] text-[14px]">Gender</span>
-                {isEditing ? (
-                  <>
-                    <select
-                      name="gender"
-                      className={`bg-white border rounded-2xl py-[14px] px-[18px] ${formErrors.gender ? 'border-red-500' : 'border-[#EEEEEE]'
-                        }`}
-                      value={formData.gender}
-                      onChange={handleInputChange}
-                    >
-                      <option value="">Select gender</option>
-                      {GENDER_OPTIONS.map((g) => (
-                        <option key={g} value={g}>
-                          {g}
-                        </option>
-                      ))}
-                    </select>
-                    {formErrors.gender && (
-                      <span className="text-red-500 text-xs mt-1">{formErrors.gender}</span>
+              <div className="space-y-[20px]">
+                {/* Name Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
+                  {/* First Name */}
+                  <label className="flex flex-col">
+                    <span className="text-[#7C7C7C] text-[14px] font-medium mb-2">First Name</span>
+                    {isEditing ? (
+                      <>
+                        <input
+                          name="firstName"
+                          className={`bg-white border-2 rounded-xl py-[14px] px-[18px] focus:outline-none focus:ring-2 focus:ring-[#352AA4]/30 transition-all ${formErrors.firstName ? 'border-red-500' : 'border-[#EEEEEE] focus:border-[#352AA4]'
+                            }`}
+                          type="text"
+                          value={formData.firstName}
+                          onChange={handleInputChange}
+                          placeholder="Enter first name"
+                        />
+                        {formErrors.firstName && (
+                          <span className="text-red-500 text-xs mt-1 font-medium">{formErrors.firstName}</span>
+                        )}
+                      </>
+                    ) : (
+                      <p className="py-[14px] px-[18px] capitalize bg-gray-50 border border-[#EEEEEE] rounded-xl font-medium">
+                        {formData.firstName || "—"}
+                      </p>
                     )}
-                  </>
-                ) : (
-                  <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">{formData.gender}</p>
-                )}
-              </label>
-              {/* Date of birth */}
-              <label className="flex flex-col w-full">
-                <span className="text-[#7C7C7C] text-[14px]">Date of birth</span>
-                {isEditing ? (
-                  <>
-                    <input
-                      name="dob"
-                      className={`bg-white border rounded-2xl py-[14px] px-[18px] ${formErrors.dob ? 'border-red-500' : 'border-[#EEEEEE]'
-                        }`}
-                      type="date"
-                      value={formData.dob}
-                      onChange={handleInputChange}
-                      max={getMaxDate()} // Add this line
-                    />
-                    {formErrors.dob && (
-                      <span className="text-red-500 text-xs mt-1">{formErrors.dob}</span>
+                  </label>
+
+                  {/* Last Name */}
+                  <label className="flex flex-col">
+                    <span className="text-[#7C7C7C] text-[14px] font-medium mb-2">Last Name</span>
+                    {isEditing ? (
+                      <>
+                        <input
+                          name="lastName"
+                          className={`bg-white border-2 rounded-xl py-[14px] px-[18px] focus:outline-none focus:ring-2 focus:ring-[#352AA4]/30 transition-all ${formErrors.lastName ? 'border-red-500' : 'border-[#EEEEEE] focus:border-[#352AA4]'
+                            }`}
+                          type="text"
+                          value={formData.lastName}
+                          onChange={handleInputChange}
+                          placeholder="Enter last name"
+                        />
+                        {formErrors.lastName && (
+                          <span className="text-red-500 text-xs mt-1 font-medium">{formErrors.lastName}</span>
+                        )}
+                      </>
+                    ) : (
+                      <p className="py-[14px] px-[18px] capitalize bg-gray-50 border border-[#EEEEEE] rounded-xl font-medium">
+                        {formData.lastName || "—"}
+                      </p>
                     )}
-                  </>
-                ) : (
-                  <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">
-                    {data.dob ? `${calculateAge(data.dob)} Years` : "Not provided"}
-                  </p>
-                )}
-              </label>
+                  </label>
+                </div>
 
-            </div>
-
-            {/* Enjoy Smell (multi select checkboxes) */}
-            <div className="flex flex-col gap-[8px] max-md:flex-wrap">
-              <span className="text-[#7C7C7C] text-[14px]">
-                Which smells user enjoy the most
-              </span>
-              {isEditing ? (
-                <div className="flex gap-[12px] flex-wrap">
-                  {SCENT_PREFERENCES.map((smell) => (
-                    <label key={smell} className="flex items-center gap-2 cursor-pointer">
+                {/* Username and Email */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
+                  {/* Username */}
+                  <label className="flex flex-col">
+                    <span className="text-[#7C7C7C] text-[14px] font-medium mb-2">Username</span>
+                    <div className="relative">
                       <input
-                        type="checkbox"
-                        name="enjoySmell"
-                        value={smell}
-                        checked={formData.enjoySmell.includes(smell)}
-                        onChange={handleInputChange}
+                        name="username"
+                        className="bg-gray-100 border border-[#EEEEEE] rounded-xl py-[14px] px-[18px] pr-[40px] cursor-not-allowed w-full font-medium"
+                        type="text"
+                        value={formData.username}
+                        readOnly
+                        title="Username cannot be edited"
                       />
-                      <span>{smell}</span>
-                    </label>
-                  ))}
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">🔒</span>
+                    </div>
+                  </label>
+
+                  {/* Email */}
+                  <label className="flex flex-col">
+                    <span className="text-[#7C7C7C] text-[14px] font-medium mb-2">Email</span>
+                    <div className="relative">
+                      <input
+                        name="email"
+                        className="bg-gray-100 border border-[#EEEEEE] rounded-xl py-[14px] px-[18px] pr-[40px] cursor-not-allowed w-full font-medium"
+                        type="email"
+                        value={formData.email}
+                        readOnly
+                        title="Email cannot be edited"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">🔒</span>
+                    </div>
+                  </label>
                 </div>
-              ) : (
-                <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">
-                  {formData.enjoySmell.length > 0 ? formData.enjoySmell.join(", ") : "Not specified"}
-                </p>
-              )}
-            </div>
 
-            <div className="flex gap-[16px] max-md:flex-wrap">
-              {/* Reason for wear perfume */}
-              <label className="flex flex-col w-full">
-                <span className="text-[#7C7C7C] text-[14px]">Main reason user wear perfume</span>
-                {isEditing ? (
-                  <select
-                    name="reasonForWearPerfume"
-                    className="bg-white border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px]"
-                    value={formData.reasonForWearPerfume}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">Select</option>
-                    {REASON_FOR_WEAR_PERFUME_OPTIONS.map((opt) => (
-                      <option key={opt} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">{formData.reasonForWearPerfume || "Not specified"}</p>
-                )}
-              </label>
-              {/* Perfume Budget */}
-              <label className="flex flex-col w-full">
-                <span className="text-[#7C7C7C] text-[14px]">User usually spends on a bottle of perfume</span>
-                {isEditing ? (
-                  <select
-                    name="perfumeBudget"
-                    className="bg-white border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px]"
-                    value={formData.perfumeBudget}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">Select</option>
-                    {PERFUME_BUDGET_OPTIONS.map((opt) => (
-                      <option key={opt} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">{formData.perfumeBudget || "Not specified"}</p>
-                )}
-              </label>
-            </div>
+                {/* Gender and DOB */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
+                  {/* Gender */}
+                  <label className="flex flex-col">
+                    <span className="text-[#7C7C7C] text-[14px] font-medium mb-2">Gender</span>
+                    {isEditing ? (
+                      <>
+                        <select
+                          name="gender"
+                          className={`bg-white border-2 rounded-xl py-[14px] px-[18px] focus:outline-none focus:ring-2 focus:ring-[#352AA4]/30 transition-all ${formErrors.gender ? 'border-red-500' : 'border-[#EEEEEE] focus:border-[#352AA4]'
+                            }`}
+                          value={formData.gender}
+                          onChange={handleInputChange}
+                        >
+                          <option value="">Select gender</option>
+                          {GENDER_OPTIONS.map((g) => (
+                            <option key={g} value={g}>
+                              {g}
+                            </option>
+                          ))}
+                        </select>
+                        {formErrors.gender && (
+                          <span className="text-red-500 text-xs mt-1 font-medium">{formErrors.gender}</span>
+                        )}
+                      </>
+                    ) : (
+                      <p className="py-[14px] px-[18px] bg-gray-50 border border-[#EEEEEE] rounded-xl font-medium">
+                        {formData.gender || "—"}
+                      </p>
+                    )}
+                  </label>
 
-            <div className="flex gap-[16px] max-md:flex-wrap">
-              {/* Perfume Strength slider */}
-              <label className="flex flex-col w-full">
-                <span className="text-[#7C7C7C] text-[14px]">
-                  Perfume strength (0 to 1)
-                </span>
-                {isEditing ? (
-                  <>
-                    <input
-                      name="perfumeStrength"
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.01"
-                      value={formData.perfumeStrength || 0}
-                      onChange={handleInputChange}
-                      className="w-full"
-                    />
-                    <span className="text-[#352AA4] font-medium">{(formData.perfumeStrength || 0).toFixed(2)}</span>
-                  </>
-                ) : (
-                  <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">{(formData.perfumeStrength || 0).toFixed(2)}</p>
-                )}
-              </label>
-              {/* Referral Source */}
-              <label className="flex flex-col w-full">
-                <span className="text-[#7C7C7C] text-[14px]">
-                  Where did you hear about us?
-                </span>
-                {isEditing ? (
-                  <select
-                    name="referralSource"
-                    className="bg-white border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px]"
-                    value={formData.referralSource}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">Select</option>
-                    {DISCOVERY_SOURCES.map((opt) => (
-                      <option key={opt} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">{formData.referralSource || "Not specified"}</p>
-                )}
-              </label>
-            </div>
-
-            {!isEditing && (
-              <div className="flex gap-[16px] max-md:flex-wrap">
-                <label className="flex flex-col w-full">
-                  <span className="text-[#7C7C7C] text-[14px]">Joined</span>
-                  <p className="py-[14px] px-[18px] bg-white border rounded-2xl border-[#EEEEEE]">{formData.joined}</p>
-                </label>
+                  {/* Date of Birth */}
+                  <label className="flex flex-col">
+                    <span className="text-[#7C7C7C] text-[14px] font-medium mb-2">Date of Birth</span>
+                    {isEditing ? (
+                      <>
+                        <input
+                          name="dob"
+                          className={`bg-white border-2 rounded-xl py-[14px] px-[18px] focus:outline-none focus:ring-2 focus:ring-[#352AA4]/30 transition-all ${formErrors.dob ? 'border-red-500' : 'border-[#EEEEEE] focus:border-[#352AA4]'
+                            }`}
+                          type="date"
+                          value={formData.dob}
+                          onChange={handleInputChange}
+                          max={getMaxDate()}
+                        />
+                        {formErrors.dob && (
+                          <span className="text-red-500 text-xs mt-1 font-medium">{formErrors.dob}</span>
+                        )}
+                      </>
+                    ) : (
+                      <p className="py-[14px] px-[18px] bg-gray-50 border border-[#EEEEEE] rounded-xl font-medium">
+                        {data.dob ? `${calculateAge(data.dob)} Years` : "Not provided"}
+                      </p>
+                    )}
+                  </label>
+                </div>
               </div>
-            )}
-          </div>
+            </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-end gap-[16px] mt-[24px] flex-wrap">
-            {isEditing ? (
-              <>
-                <button
-                  className="btn-sec"
-                  type="button"
-                  onClick={handleCancelEdit}
-                  disabled={isUpdateLoading}
-                >
-                  Cancel
-                </button>
-                <button
-                  className={`btn-pri ${isUpdateLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
-                  type="button"
-                  onClick={handleSave}
-                  disabled={isUpdateLoading}
-                >
-                  {isUpdateLoading ? 'Saving...' : 'Save'}
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => navigate('/users')}
-                  className={`
-    bg-gray-100 text-[#352AA4] text-sm border border-gray-200 
-    rounded-full px-4 py-2 transition-all duration-300 ease-in-out
-    hover:bg-gray-400 hover:border-[#352AA4] hover:text-[#1b1555]
-    flex items-center gap-2
-    ${isSuspendLoading
-                      ? 'opacity-60 cursor-not-allowed'
-                      : 'cursor-pointer hover:shadow-sm'
-                    }
-  `}
-                  type="button"
-                  disabled={isSuspendLoading}
-                >
-                  <span>←</span>
-                  Back
-                </button>
+            {/* Preferences Section */}
+            <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10 mb-[24px]">
+              <div className="flex items-center gap-2 mb-[24px]">
+                <div className="w-2 h-8 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></div>
+                <h3 className="text-[22px] font-bold text-[#352AA4]">Perfume Preferences</h3>
+              </div>
 
-                <button
-                  onClick={() =>
-                    setPopup(data?.suspendAccount ? "reactivate" : "suspend")
-                  }
-                  className="btn-sec"
-                  type="button"
-                  disabled={isSuspendLoading}
-                >
-                  {data?.suspendAccount ? "Reactivate" : "Suspend"}
-                </button>
-                <button
-                  className="btn-pri"
-                  type="button"
-                  onClick={() => setIsEditing(true)}
-                  disabled={isSuspendLoading}
-                >
-                  Edit
-                </button>
-              </>
-            )}
+              <div className="space-y-[20px]">
+                {/* Enjoy Smell */}
+                <div className="flex flex-col">
+                  <span className="text-[#7C7C7C] text-[14px] font-medium mb-3">Favorite Scents</span>
+                  {isEditing ? (
+                    <div className="flex gap-[12px] flex-wrap">
+                      {SCENT_PREFERENCES.map((smell) => (
+                        <label
+                          key={smell}
+                          className={`flex items-center gap-2 cursor-pointer px-4 py-2.5 rounded-xl border-2 transition-all ${formData.enjoySmell.includes(smell)
+                              ? 'bg-[#352AA4] text-white border-[#352AA4]'
+                              : 'bg-white text-gray-700 border-gray-200 hover:border-[#352AA4]/50'
+                            }`}
+                        >
+                          <input
+                            type="checkbox"
+                            name="enjoySmell"
+                            value={smell}
+                            checked={formData.enjoySmell.includes(smell)}
+                            onChange={handleInputChange}
+                            className="hidden"
+                          />
+                          <span className="font-medium">{smell}</span>
+                        </label>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 flex-wrap">
+                      {formData.enjoySmell.length > 0 ? (
+                        formData.enjoySmell.map((smell) => (
+                          <span
+                            key={smell}
+                            className="bg-[#352AA4]/10 text-[#352AA4] px-4 py-2 rounded-full text-sm font-medium border border-[#352AA4]/20"
+                          >
+                            {smell}
+                          </span>
+                        ))
+                      ) : (
+                        <p className="py-[14px] px-[18px] bg-gray-50 border border-[#EEEEEE] rounded-xl font-medium text-gray-500">
+                          Not specified
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Reason and Budget */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
+                  {/* Reason for Wear */}
+                  <label className="flex flex-col">
+                    <span className="text-[#7C7C7C] text-[14px] font-medium mb-2">Main Reason to Wear</span>
+                    {isEditing ? (
+                      <select
+                        name="reasonForWearPerfume"
+                        className="bg-white border-2 border-[#EEEEEE] rounded-xl py-[14px] px-[18px] focus:outline-none focus:ring-2 focus:ring-[#352AA4]/30 focus:border-[#352AA4] transition-all"
+                        value={formData.reasonForWearPerfume}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">Select reason</option>
+                        {REASON_FOR_WEAR_PERFUME_OPTIONS.map((opt) => (
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <p className="py-[14px] px-[18px] bg-gray-50 border border-[#EEEEEE] rounded-xl font-medium">
+                        {formData.reasonForWearPerfume || "Not specified"}
+                      </p>
+                    )}
+                  </label>
+
+                  {/* Budget */}
+                  <label className="flex flex-col">
+                    <span className="text-[#7C7C7C] text-[14px] font-medium mb-2">Typical Budget</span>
+                    {isEditing ? (
+                      <select
+                        name="perfumeBudget"
+                        className="bg-white border-2 border-[#EEEEEE] rounded-xl py-[14px] px-[18px] focus:outline-none focus:ring-2 focus:ring-[#352AA4]/30 focus:border-[#352AA4] transition-all"
+                        value={formData.perfumeBudget}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">Select budget</option>
+                        {PERFUME_BUDGET_OPTIONS.map((opt) => (
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <p className="py-[14px] px-[18px] bg-gray-50 border border-[#EEEEEE] rounded-xl font-medium">
+                        {formData.perfumeBudget || "Not specified"}
+                      </p>
+                    )}
+                  </label>
+                </div>
+
+                {/* Strength and Referral */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
+                  {/* Perfume Strength */}
+                  <label className="flex flex-col">
+                    <span className="text-[#7C7C7C] text-[14px] font-medium mb-2">Preferred Strength</span>
+                    {isEditing ? (
+                      <div className="bg-white border-2 border-[#EEEEEE] rounded-xl p-[16px]">
+                        <input
+                          name="perfumeStrength"
+                          type="range"
+                          min="0"
+                          max="1"
+                          step="0.01"
+                          value={formData.perfumeStrength || 0}
+                          onChange={handleInputChange}
+                          className="w-full accent-[#352AA4]"
+                        />
+                        <div className="flex justify-between mt-2">
+                          <span className="text-xs text-gray-500">Light</span>
+                          <span className="text-[#352AA4] font-bold text-lg">
+                            {(formData.perfumeStrength || 0).toFixed(2)}
+                          </span>
+                          <span className="text-xs text-gray-500">Strong</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="py-[14px] px-[18px] bg-gray-50 border border-[#EEEEEE] rounded-xl">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="font-medium">{(formData.perfumeStrength || 0).toFixed(2)}</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-gradient-to-r from-[#352AA4] to-[#5c4ec9] h-2 rounded-full transition-all"
+                            style={{ width: `${(formData.perfumeStrength || 0) * 100}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    )}
+                  </label>
+
+                  {/* Referral Source */}
+                  <label className="flex flex-col">
+                    <span className="text-[#7C7C7C] text-[14px] font-medium mb-2">Discovery Source</span>
+                    {isEditing ? (
+                      <select
+                        name="referralSource"
+                        className="bg-white border-2 border-[#EEEEEE] rounded-xl py-[14px] px-[18px] focus:outline-none focus:ring-2 focus:ring-[#352AA4]/30 focus:border-[#352AA4] transition-all"
+                        value={formData.referralSource}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">Select source</option>
+                        {DISCOVERY_SOURCES.map((opt) => (
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <p className="py-[14px] px-[18px] bg-gray-50 border border-[#EEEEEE] rounded-xl font-medium">
+                        {formData.referralSource || "Not specified"}
+                      </p>
+                    )}
+                  </label>
+                </div>
+
+                {/* Joined Date - Only show when not editing */}
+                {!isEditing && (
+                  <label className="flex flex-col">
+                    <span className="text-[#7C7C7C] text-[14px] font-medium mb-2">Member Since</span>
+                    <p className="py-[14px] px-[18px] bg-gradient-to-r from-[#352AA4]/10 to-[#5c4ec9]/10 border border-[#352AA4]/20 rounded-xl font-medium text-[#352AA4]">
+                      {formData.joined}
+                    </p>
+                  </label>
+                )}
+              </div>
+            </div>
           </div>
         </div>
+
+
 
         <ConfirmationModal
           isOpen={popup === "suspend"}
