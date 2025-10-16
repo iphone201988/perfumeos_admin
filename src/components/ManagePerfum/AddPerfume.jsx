@@ -10,6 +10,7 @@ import { hexToRgb, rgbToHex } from "../../Utils/function";
 import Select from 'react-select';
 import Loader from "../Loader/Loader";
 import { toast } from "react-toastify";
+import MultipleImageUploader from "../Form/MultipleImageUploader";
 
 const customFilterOption = (option, rawInput) => {
     if (!rawInput) return true;
@@ -20,7 +21,6 @@ const customFilterOption = (option, rawInput) => {
 
 const AddPerfume = () => {
     const navigate = useNavigate();
-
     const { data: notesResponse, isLoading: notesLoading } = useGetNotesQuery();
     const { data: perfumersResponse, isLoading: perfumersLoading } = useGetPerfumersQuery();
     const [createPerfume] = useCreatePerFumeMutation();
@@ -53,6 +53,19 @@ const AddPerfume = () => {
     const [fragranceMiddle, setFragranceMiddle] = useState([]);
     const [fragranceBottom, setFragranceBottom] = useState([]);
     const [fragranceNotes, setFragranceNotes] = useState([]);
+
+    const [images, setImages] = useState([]);
+    const [imageFiles, setImageFiles] = useState([]);
+   console.log("imageFiles", imageFiles);
+   console.log("images", images);
+    const handleImagesChange = (imageArray, files, error) => {
+        if (error) {
+            console.error(error);
+            return;
+        }
+        setImages(imageArray);
+        setImageFiles(files);
+    };
 
     // Validation rules
     const validateField = useCallback((name, value) => {
@@ -359,6 +372,12 @@ const AddPerfume = () => {
         if (file) {
             formData.append('file', file);
         }
+        if (imageFiles && imageFiles.length > 0) {
+        imageFiles.forEach((imgFile) => {
+            console.log(imgFile);
+            formData.append('images', imgFile); // Use 'images' as the field name
+        });
+    }
 
         // Complex objects as JSON strings
         formData.append('intendedFor', JSON.stringify(form.intendedFor));
@@ -545,7 +564,7 @@ const AddPerfume = () => {
                             <div className="space-y-[20px]">
                                 {/* Image Uploader */}
                                 <div>
-                                    <ImageUploader
+                                    {/* <ImageUploader
                                         onImageSelect={onImageSelect}
                                         currentImage={form.image}
                                         error={imageError || formErrors.image}
@@ -557,7 +576,15 @@ const AddPerfume = () => {
                                         <span className="text-red-500 text-xs mt-2 font-medium flex items-center gap-1">
                                             <span>⚠</span> {imageError || formErrors.image}
                                         </span>
-                                    )}
+                                    )} */}
+
+                                    <MultipleImageUploader
+                                        onImagesChange={handleImagesChange}
+                                        currentImages={images}
+                                        maxImages={10}
+                                        maxSizeInMB={5}
+                                        required={true}
+                                    />
                                 </div>
 
                                 {/* Name and Brand */}

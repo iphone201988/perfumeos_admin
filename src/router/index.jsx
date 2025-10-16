@@ -17,6 +17,7 @@ import ManageBadge from "../pages/ManageBadge";
 import ManageRanks from "../pages/ManageRanks";
 import ManageNotes from "../pages/ManageNotes";
 import ManagePerfumers from "../pages/ManagePerfumers";
+import Settings from "../pages/Settings";
 const hasToken = () => !!localStorage.getItem("token");
 const router = createBrowserRouter([
     {
@@ -88,6 +89,10 @@ const router = createBrowserRouter([
             {
                 path: "rank",
                 element: <ManageRanks />,
+            },
+            {
+                path: "setting",
+                element: <Settings />,
             },
         ],
     },

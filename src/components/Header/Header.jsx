@@ -60,6 +60,7 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     if (path.startsWith('/perfumers')) return 'Manage Perfumers';
     if (path.startsWith('/badge')) return 'Manage Badges';
     if (path.startsWith('/rank')) return 'Manage Ranks';
+    if (path.startsWith('/setting')) return 'Settings';
 
     // Default fallback
     return 'Dashboard';

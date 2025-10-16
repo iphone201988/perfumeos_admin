@@ -11,7 +11,7 @@ const Tags = {
   BADGE: "BADGE",
   RANKS: "RANKS",
   NOTES: "NOTES",
-  PERFUMER: "PERFUMER"
+  PERFUMER: "PERFUMER",
 };
 export const apis = createApi({
   reducerPath: "api",
@@ -35,8 +35,7 @@ export const apis = createApi({
     Tags.BADGE,
     Tags.RANKS,
     Tags.NOTES,
-    Tags.PERFUMER
-
+    Tags.PERFUMER,
   ],
   endpoints: (builder) => ({
     adminLogin: builder.mutation({
@@ -101,7 +100,7 @@ export const apis = createApi({
       }),
     }),
     questions: builder.query({
-      query: ({ page, limit, type,questionType }) => {
+      query: ({ page, limit, type, questionType }) => {
         const params = new URLSearchParams();
         if (type) params.append("type", type);
         if (questionType) params.append("questionType", questionType);
@@ -152,7 +151,7 @@ export const apis = createApi({
       invalidatesTags: [Tags.ARTICLE],
     }),
     deleteArticle: builder.mutation({
-      query: ({ id ,data}) => ({
+      query: ({ id, data }) => ({
         url: `/admin/article/${id}`,
         method: "DELETE",
         body: data,
@@ -355,6 +354,58 @@ export const apis = createApi({
       }),
       invalidatesTags: [Tags.PERFUMER],
     }),
+     getPerfumeStats: builder.query({
+      query: () => '/admin/perfume/stats',
+    }),
+    
+    exportPerfumesBatch: builder.mutation({
+      query: ({ page, limit }) => ({
+        url: `/admin/perfume/export?page=${page}&limit=${limit}`,
+        method: 'GET',
+      }),
+    }),
+    
+    importPerfumes: builder.mutation({
+      query: (data) => ({
+        url: '/admin/perfume/import',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+     getNotesStats: builder.query({
+      query: () => '/admin/notes/stats',
+    }),
+    exportNotesBatch: builder.mutation({
+      query: ({ page, limit }) => ({
+        url: `/admin/notes/export?page=${page}&limit=${limit}`,
+        method: 'GET',
+      }),
+    }),
+    importNotes: builder.mutation({
+      query: (data) => ({
+        url: '/admin/notes/import',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+
+    // Perfumers endpoints
+    getPerfumersStats: builder.query({
+      query: () => '/admin/perfumers/stats',
+    }),
+    exportPerfumersBatch: builder.mutation({
+      query: ({ page, limit }) => ({
+        url: `/admin/perfumers/export?page=${page}&limit=${limit}`,
+        method: 'GET',
+      }),
+    }),
+    importPerfumers: builder.mutation({
+      query: (data) => ({
+        url: '/admin/perfumers/import',
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -397,5 +448,14 @@ export const {
   useCreatePerfumerMutation,
   useUpdatePerfumerMutation,
   useDeletePerfumerMutation,
-  useGetPerfumeForEditByIdQuery
+  useGetPerfumeForEditByIdQuery,
+  useGetPerfumeStatsQuery,
+  useExportPerfumesBatchMutation,
+  useImportPerfumesMutation,
+   useGetNotesStatsQuery,
+  useExportNotesBatchMutation,
+  useImportNotesMutation,
+  useGetPerfumersStatsQuery,
+  useExportPerfumersBatchMutation,
+  useImportPerfumersMutation,
 } = apis;

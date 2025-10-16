@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useGetNotesQuery, useGetPerfumeForEditByIdQuery, useGetPerfumersQuery, useUpdatePerfumeMutation } from "../../api";
-import ImageUploader from "../Form/ImageUploader";
+import MultipleImageUploader from "../Form/MultipleImageUploader";
 import FormField from "../Form/FormField";
 import { useNavigate, useParams } from "react-router-dom";
 import IntendedForMultiSelect from "../Form/IntendedForMultiSelect";
@@ -28,17 +28,19 @@ const EditPerfume = () => {
   const perfume = useMemo(() => perfumeData?.data || null, [perfumeData]);
   const [updating, setUpdating] = useState(false);
   const [updatePerfume, { isLoading: updateLoading }] = useUpdatePerfumeMutation();
-  const [file, setFile] = useState(null);
+
+  // Multiple images state
+  const [images, setImages] = useState([]);
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imageError, setImageError] = useState('');
 
   // Add validation states
   const [formErrors, setFormErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [imageError, setImageError] = useState('');
 
   const [form, setForm] = useState({
     name: "",
     brand: "",
-    image: "",
     intendedFor: [],
     description: "",
     yearRelease: "",
@@ -125,7 +127,7 @@ const EditPerfume = () => {
 
     // Validate basic fields
     Object.keys(form).forEach(field => {
-      if (field !== 'image' && field !== 'intendedFor') {
+      if (field !== 'intendedFor') {
         const error = validateField(field, form[field]);
         if (error) errors[field] = error;
       }
@@ -142,8 +144,13 @@ const EditPerfume = () => {
       errors.occasions = 'Total occasion percentages cannot exceed 100%';
     }
 
+    // Validate images
+    if (images.length === 0) {
+      errors.images = 'At least one image is required';
+    }
+
     return errors;
-  }, [form, validateField]);
+  }, [form, validateField, images]);
 
   useEffect(() => {
     if (perfume && perfumersResponse?.data && notesResponse?.data) {
@@ -157,7 +164,6 @@ const EditPerfume = () => {
       const formData = {
         name: perfume.name || "",
         brand: perfume.brand || "",
-        image: perfume.image || "",
         description: perfume.description || "",
         intendedFor: perfume.intendedFor || [],
         yearRelease: perfume.year || "",
@@ -171,6 +177,35 @@ const EditPerfume = () => {
       };
 
       setForm(formData);
+
+      // Load existing images
+      const existingImages = [];
+
+      // Add primary image if exists
+      if (perfume.image) {
+        existingImages.push({
+          url: perfume.image,
+          file: null,
+          id: `existing-${Date.now()}-0`,
+          isExisting: true
+        });
+      }
+
+      // Add additional images if exist
+      if (perfume.images && perfume.images.length > 0) {
+        perfume.images
+          .filter(img => img !== perfume.image) // Avoid adding the primary image again
+          .forEach((img, idx) => {
+            existingImages.push({
+              url: img,
+              file: null,
+              id: `existing-${idx + 1}`,  // Use timestamp and index
+              isExisting: true
+            });
+          });
+      }
+
+      setImages(existingImages);
 
       // Convert perfumer IDs to react-select format
       const perfumerIdList = Array.isArray(perfume.perfumers)
@@ -259,17 +294,24 @@ const EditPerfume = () => {
     }));
   }, [validateField, form]);
 
-  const onImageSelect = useCallback((url, file, error) => {
+  // Handle multiple images change
+  const handleImagesChange = useCallback((imageArray, files, error) => {
     if (error) {
       setImageError(error);
-      setForm((prev) => ({ ...prev, image: prev.image }));
-      setFile(null);
-    } else {
-      setForm((prev) => ({ ...prev, image: url || prev.image }));
-      setFile(file);
-      setImageError('');
-      setFormErrors(prev => ({ ...prev, image: '' }));
+      setFormErrors(prev => ({ ...prev, images: error }));
+      return;
     }
+
+    setImages(imageArray);
+
+    // Filter only new files (not existing images)
+    const newFiles = imageArray
+      .filter(img => img.file !== null)
+      .map(img => img.file);
+
+    setImageFiles(newFiles);
+    setImageError('');
+    setFormErrors(prev => ({ ...prev, images: '' }));
   }, []);
 
   const handleIntendedForChange = useCallback((newValues) => {
@@ -368,10 +410,19 @@ const EditPerfume = () => {
     formData.append('year', form.yearRelease);
     formData.append('concentration', form.concentration);
 
-    // Handle image file upload
-    if (file) {
-      formData.append('file', file);
+    // Handle multiple image files upload (only new files)
+    if (imageFiles && imageFiles.length > 0) {
+      imageFiles.forEach((imgFile) => {
+        formData.append('images', imgFile);
+      });
     }
+
+    // Send existing image URLs to preserve them
+    const existingImageUrls = images
+      .filter(img => img.isExisting)
+      .map(img => img.url);
+
+    formData.append('existingImages', JSON.stringify(existingImageUrls));
 
     // Complex objects as JSON strings
     formData.append('intendedFor', JSON.stringify(form.intendedFor));
@@ -400,7 +451,7 @@ const EditPerfume = () => {
     formData.append('occasionVotes', JSON.stringify({
       day: form.occasionDay,
       night: form.occasionEvening
-    }))
+    }));
 
     formData.append('seasons', JSON.stringify([
       { name: "winter", width: form.seasonWinter },
@@ -420,7 +471,7 @@ const EditPerfume = () => {
     } finally {
       setUpdating(false);
     }
-  }, [form, file, perfumerIds, fragranceTop, fragranceMiddle, fragranceBottom, fragranceNotes, mainAccords, params.id, updatePerfume, navigate, validateForm]);
+  }, [form, imageFiles, images, perfumerIds, fragranceTop, fragranceMiddle, fragranceBottom, fragranceNotes, mainAccords, params.id, updatePerfume, navigate, validateForm]);
 
   // Custom styles for react-select with error states
   const getCustomStyles = (hasError) => ({
@@ -432,9 +483,9 @@ const EditPerfume = () => {
       fontSize: '15px',
       padding: '4px 8px',
       backgroundColor: '#fff',
-      boxShadow: state.isFocused 
-        ? hasError 
-          ? '0 0 0 3px rgba(239, 68, 68, 0.1)' 
+      boxShadow: state.isFocused
+        ? hasError
+          ? '0 0 0 3px rgba(239, 68, 68, 0.1)'
           : '0 0 0 3px rgba(53, 42, 164, 0.1)'
         : 'none',
       '&:hover': {
@@ -474,10 +525,10 @@ const EditPerfume = () => {
     }),
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isSelected 
-        ? '#352AA4' 
-        : state.isFocused 
-          ? '#E1F8F8' 
+      backgroundColor: state.isSelected
+        ? '#352AA4'
+        : state.isFocused
+          ? '#E1F8F8'
           : 'white',
       color: state.isSelected ? 'white' : '#333',
       padding: '10px 16px',
@@ -548,7 +599,7 @@ const EditPerfume = () => {
       <div className="bg-gradient-to-br from-[#E1F8F8] to-[#D4E8F8] rounded-[30px] shadow-lg overflow-hidden">
         <div className="bg-white/60 backdrop-blur-sm rounded-[30px] p-[32px] max-lg:p-[20px] m-[2px]">
           <form onSubmit={handleSubmit} className="space-y-[32px]">
-            
+
             {/* Basic Information Section */}
             <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
               <div className="flex items-center gap-2 mb-[24px]">
@@ -557,17 +608,19 @@ const EditPerfume = () => {
               </div>
 
               <div className="space-y-[20px]">
-                {/* Image Uploader */}
+                {/* Multiple Image Uploader */}
                 <div>
-                  <ImageUploader
-                    onImageSelect={onImageSelect}
-                    currentImage={form.image}
-                    error={imageError || formErrors.image}
-                    required={false}
+                  <MultipleImageUploader
+                    onImagesChange={handleImagesChange}
+                    currentImages={images}
+                    error={imageError || formErrors.images}
+                    required={true}
+                    maxImages={10}
+                    maxSizeInMB={5}
                   />
-                  {imageError && (
+                  {(imageError || formErrors.images) && (
                     <span className="text-red-500 text-xs mt-1 font-medium flex items-center gap-1">
-                      <span>⚠</span> {imageError}
+                      <span>⚠</span> {imageError || formErrors.images}
                     </span>
                   )}
                 </div>
@@ -575,23 +628,22 @@ const EditPerfume = () => {
                 {/* Name and Brand */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
                   <div>
-
-                  <FormField
-                    label="Perfume Name"
-                    name="name"
-                    value={form.name}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    placeholder="Enter perfume name"
-                    error={touched.name && formErrors.name}
-                    required
+                    <FormField
+                      label="Perfume Name"
+                      name="name"
+                      value={form.name}
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      placeholder="Enter perfume name"
+                      error={touched.name && formErrors.name}
+                      required
                     />
                     {formErrors.name && (
                       <span className="text-red-500 text-xs mt-1 font-medium flex items-center gap-1">
                         <span>⚠</span> {formErrors.name}
                       </span>
                     )}
-                    </div>
+                  </div>
 
                   <FormField
                     label="Perfume Brand Name"

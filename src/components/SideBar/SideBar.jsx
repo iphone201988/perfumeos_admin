@@ -39,6 +39,7 @@ const SideBar = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     { to: '/articles', label: 'Manage Articles', icon: article_icon },
     { to: '/badge', label: 'Manage Badge', icon: badge_icon },
     { to: '/rank', label: 'Manage Rank', icon: rank_icon },
+    { to: '/setting', label: 'Settings', icon: setting_icon },
   ];
 
   return (
