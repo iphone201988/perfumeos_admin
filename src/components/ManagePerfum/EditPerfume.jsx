@@ -77,21 +77,21 @@ const EditPerfume = () => {
 
       case 'brand':
         if (!value || value.trim() === '') {
-          error = 'Brand name is required';
+          // error = 'Brand name is required';
         } else if (value.trim().length < 2) {
-          error = 'Brand name must be at least 2 characters';
+          // error = 'Brand name must be at least 2 characters';
         } else if (value.trim().length > 50) {
-          error = 'Brand name must be less than 50 characters';
+          // error = 'Brand name must be less than 50 characters';
         }
         break;
 
       case 'description':
         if (!value || value.trim() === '') {
-          error = 'Description is required';
+          // error = 'Description is required';
         } else if (value.trim().length < 10) {
-          error = 'Description must be at least 10 characters';
+          // error = 'Description must be at least 10 characters';
         } else if (value.trim().length > 100000) {
-          error = 'Description must be less than 100000 characters';
+          // error = 'Description must be less than 100000 characters';
         }
         break;
 
@@ -146,7 +146,7 @@ const EditPerfume = () => {
 
     // Validate images
     if (images.length === 0) {
-      errors.images = 'At least one image is required';
+      // errors.images = 'At least one image is required';
     }
 
     return errors;

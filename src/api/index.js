@@ -354,57 +354,259 @@ export const apis = createApi({
       }),
       invalidatesTags: [Tags.PERFUMER],
     }),
-     getPerfumeStats: builder.query({
-      query: () => '/admin/perfume/stats',
+    getPerfumeStats: builder.query({
+      query: () => "/admin/perfume/stats",
     }),
-    
+
     exportPerfumesBatch: builder.mutation({
       query: ({ page, limit }) => ({
         url: `/admin/perfume/export?page=${page}&limit=${limit}`,
-        method: 'GET',
+        method: "GET",
       }),
     }),
-    
+
     importPerfumes: builder.mutation({
       query: (data) => ({
-        url: '/admin/perfume/import',
-        method: 'POST',
+        url: "/admin/perfume/import",
+        method: "POST",
         body: data,
       }),
     }),
-     getNotesStats: builder.query({
-      query: () => '/admin/notes/stats',
+    getNotesStats: builder.query({
+      query: () => "/admin/notes/stats",
     }),
     exportNotesBatch: builder.mutation({
       query: ({ page, limit }) => ({
         url: `/admin/notes/export?page=${page}&limit=${limit}`,
-        method: 'GET',
+        method: "GET",
       }),
     }),
     importNotes: builder.mutation({
       query: (data) => ({
-        url: '/admin/notes/import',
-        method: 'POST',
+        url: "/admin/notes/import",
+        method: "POST",
         body: data,
       }),
     }),
 
     // Perfumers endpoints
     getPerfumersStats: builder.query({
-      query: () => '/admin/perfumers/stats',
+      query: () => "/admin/perfumers/stats",
     }),
     exportPerfumersBatch: builder.mutation({
       query: ({ page, limit }) => ({
         url: `/admin/perfumers/export?page=${page}&limit=${limit}`,
-        method: 'GET',
+        method: "GET",
       }),
     }),
     importPerfumers: builder.mutation({
       query: (data) => ({
-        url: '/admin/perfumers/import',
-        method: 'POST',
+        url: "/admin/perfumers/import",
+        method: "POST",
         body: data,
       }),
+    }),
+    getLevelCategories: builder.query({
+      query: ({ page = 1, limit = 10 }) =>
+        `/admin/level-category?page=${page}&limit=${limit}`,
+      providesTags: ["LevelCategory"],
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName;
+      },
+      merge: (currentCache, newItems, { arg }) => {
+        if (arg.page === 1) {
+          return newItems;
+        }
+        return {
+          ...newItems,
+          data: [...(currentCache.data || []), ...(newItems.data || [])],
+        };
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg?.page !== previousArg?.page;
+      },
+    }),
+
+    createLevelCategory: builder.mutation({
+      query: (data) => ({
+        url: "/admin/level-category",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["LevelCategory"],
+    }),
+
+    updateLevelCategory: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/admin/level-category/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["LevelCategory"],
+    }),
+
+    deleteLevelCategory: builder.mutation({
+      query: (id) => ({
+        url: `/admin/level-category/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["LevelCategory", "LevelQuiz", "LevelQuestion"],
+    }),
+
+    // Level Quiz endpoints
+    getLevelQuizzesByCategory: builder.query({
+      query: ({ categoryId, page = 1, limit = 10 }) =>
+        `/admin/level-quiz/category/${categoryId}?page=${page}&limit=${limit}`,
+      providesTags: ["LevelQuiz"],
+      serializeQueryArgs: ({ endpointName, queryArgs }) => {
+        return `${endpointName}-${queryArgs.categoryId}`;
+      },
+      merge: (currentCache, newItems, { arg }) => {
+        if (arg.page === 1) {
+          return newItems;
+        }
+        return {
+          ...newItems,
+          data: [...(currentCache.data || []), ...(newItems.data || [])],
+        };
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg?.page !== previousArg?.page;
+      },
+    }),
+
+    createLevelQuiz: builder.mutation({
+      query: (data) => ({
+        url: "/admin/level-quiz",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["LevelQuiz", "LevelCategory"],
+    }),
+
+    updateLevelQuiz: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/admin/level-quiz/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["LevelQuiz"],
+    }),
+
+    deleteLevelQuiz: builder.mutation({
+      query: (id) => ({
+        url: `/admin/level-quiz/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["LevelQuiz", "LevelCategory", "LevelQuestion"],
+    }),
+
+    // Level Quiz Question endpoints
+    getQuestionsByQuiz: builder.query({
+      query: ({ quizId, page = 1, limit = 10 }) =>
+        `/admin/level-question/quiz/${quizId}?page=${page}&limit=${limit}`,
+      providesTags: ["LevelQuestion"],
+      serializeQueryArgs: ({ endpointName, queryArgs }) => {
+        return `${endpointName}-${queryArgs.quizId}`;
+      },
+      merge: (currentCache, newItems, { arg }) => {
+        if (arg.page === 1) {
+          return newItems;
+        }
+        return {
+          ...newItems,
+          data: [...(currentCache.data || []), ...(newItems.data || [])],
+        };
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg?.page !== previousArg?.page;
+      },
+    }),
+
+    createQuestion: builder.mutation({
+      query: (data) => ({
+        url: "/admin/level-question",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["LevelQuestion", "LevelQuiz"],
+    }),
+
+    updateQuestionLevel: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/admin/level-question/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["LevelQuestion"],
+    }),
+
+    deleteQuestionLevel: builder.mutation({
+      query: (id) => ({
+        url: `/admin/level-question/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["LevelQuestion", "LevelQuiz"],
+    }),
+    getFAQs: builder.query({
+      query: ({ type, page = 1, limit = 10, search }) => {
+        let url = `/admin/faq?page=${page}&limit=${limit}`;
+        if (type) url += `&type=${type}`;
+        if (search) url += `&search=${search}`;
+        return url;
+      },
+      providesTags: ["FAQ"],
+      serializeQueryArgs: ({ endpointName, queryArgs }) => {
+        return `${endpointName}-${queryArgs.type}`;
+      },
+      merge: (currentCache, newItems, { arg }) => {
+        if (arg.page === 1) {
+          return newItems;
+        }
+        return {
+          ...newItems,
+          data: [...(currentCache.data || []), ...(newItems.data || [])],
+          typeCounts: newItems.typeCounts,
+        };
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg?.page !== previousArg?.page;
+      },
+    }),
+
+    createFAQ: builder.mutation({
+      query: (data) => ({
+        url: "/admin/faq",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["FAQ"],
+    }),
+
+    updateFAQ: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/admin/faq/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["FAQ"],
+    }),
+
+    deleteFAQ: builder.mutation({
+      query: (id) => ({
+        url: `/admin/faq/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["FAQ"],
+    }),
+
+    toggleFAQStatus: builder.mutation({
+      query: ({ id, isActive }) => ({
+        url: `/admin/faq/${id}/toggle-status`,
+        method: "PATCH",
+        body: { isActive },
+      }),
+      invalidatesTags: ["FAQ"],
     }),
   }),
 });
@@ -452,10 +654,27 @@ export const {
   useGetPerfumeStatsQuery,
   useExportPerfumesBatchMutation,
   useImportPerfumesMutation,
-   useGetNotesStatsQuery,
+  useGetNotesStatsQuery,
   useExportNotesBatchMutation,
   useImportNotesMutation,
   useGetPerfumersStatsQuery,
   useExportPerfumersBatchMutation,
   useImportPerfumersMutation,
+  useGetLevelCategoriesQuery,
+  useCreateLevelCategoryMutation,
+  useUpdateLevelCategoryMutation,
+  useDeleteLevelCategoryMutation,
+  useGetLevelQuizzesByCategoryQuery,
+  useCreateLevelQuizMutation,
+  useUpdateLevelQuizMutation,
+  useDeleteLevelQuizMutation,
+  useGetQuestionsByQuizQuery,
+  useCreateQuestionMutation,
+  useUpdateQuestionLevelMutation,
+  useDeleteQuestionLevelMutation,
+  useGetFAQsQuery,
+  useCreateFAQMutation,
+  useUpdateFAQMutation,
+  useDeleteFAQMutation,
+  useToggleFAQStatusMutation,
 } = apis;

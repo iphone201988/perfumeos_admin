@@ -6,7 +6,9 @@ import dashboard_icon from '../../assets/icons/dashboard-icon.svg';
 import user_icon from '../../assets/icons/user-icon.svg';
 import perfume_icon from '../../assets/icons/perfume-icon.svg';
 import quiz_icon from '../../assets/icons/quiz-icon.svg';
+import level_quiz_icon from '../../assets/icons/levelQuiz.svg';
 import setting_icon from '../../assets/icons/setting-icon.svg';
+import faq_icon from '../../assets/icons/faq_icon.svg';
 import logout_icon from '../../assets/icons/logout-icon.svg';
 import article_icon from '../../assets/icons/article.svg';
 import badge_icon from '../../assets/icons/badge-icon.svg';
@@ -36,10 +38,12 @@ const SideBar = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     { to: '/notes', label: 'Manage Notes', icon: note_icon },
     { to: '/perfumers', label: 'Manage Perfumers', icon: perfumer_icon },
     { to: '/quiz', label: 'Manage Quiz', icon: quiz_icon },
+    { to: '/level-quiz', label: 'Manage Level Quiz', icon: level_quiz_icon },
     { to: '/articles', label: 'Manage Articles', icon: article_icon },
     { to: '/badge', label: 'Manage Badge', icon: badge_icon },
     { to: '/rank', label: 'Manage Rank', icon: rank_icon },
     { to: '/setting', label: 'Settings', icon: setting_icon },
+    { to: '/faq', label: 'FQA', icon: faq_icon },
   ];
 
   return (

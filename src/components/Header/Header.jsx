@@ -61,6 +61,7 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     if (path.startsWith('/badge')) return 'Manage Badges';
     if (path.startsWith('/rank')) return 'Manage Ranks';
     if (path.startsWith('/setting')) return 'Settings';
+    if (path.startsWith('/level-quiz')) return 'Level Quiz';
 
     // Default fallback
     return 'Dashboard';

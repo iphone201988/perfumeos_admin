@@ -10,7 +10,7 @@ const LoadingOverlay = ({ isVisible, importing, exportProgress }) => {
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-[#352AA4] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <h3 className="text-xl font-bold text-gray-800 mb-2">
-            {importing ? 'Importing Perfumes from CSV...' : 'Exporting Perfumes to CSV...'}
+            {importing ? 'Importing data from CSV...' : 'Exporting data to CSV...'}
           </h3>
           {!importing && exportProgress.total > 0 && (
             <>

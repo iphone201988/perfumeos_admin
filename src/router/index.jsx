@@ -18,6 +18,8 @@ import ManageRanks from "../pages/ManageRanks";
 import ManageNotes from "../pages/ManageNotes";
 import ManagePerfumers from "../pages/ManagePerfumers";
 import Settings from "../pages/Settings";
+import ManageLevelQuiz from "../pages/ManageLevelQuiz";
+import ManageFAQ from "../pages/ManageFAQ";
 const hasToken = () => !!localStorage.getItem("token");
 const router = createBrowserRouter([
     {
@@ -64,7 +66,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "perfumes/:id/edit",
-                element: <EditPerfume/>,
+                element: <EditPerfume />,
             },
             {
                 path: "notes",
@@ -94,6 +96,14 @@ const router = createBrowserRouter([
                 path: "setting",
                 element: <Settings />,
             },
+            {
+                path: "level-quiz",
+                element: <ManageLevelQuiz />,
+            },
+            {
+                path: '/faq',
+                element: <ManageFAQ />
+            }
         ],
     },
     {
