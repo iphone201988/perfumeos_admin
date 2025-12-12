@@ -293,7 +293,7 @@ const ManageQuiz = () => {
             🎯 Classic Trivia
           </button>
           <button
-            className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
+            className={`hidden px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
               tab === QUESTION_TYPES.SCENT
                 ? 'bg-[#352AA4] text-white shadow-md'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -304,7 +304,7 @@ const ManageQuiz = () => {
             👃 Scent or Not?
           </button>
           <button
-            className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
+            className={`hidden px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
               tab === QUESTION_TYPES.GUESS
                 ? 'bg-[#352AA4] text-white shadow-md'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -317,7 +317,7 @@ const ManageQuiz = () => {
         </div>
 
         {/* Sub Tabs */}
-        <div className="flex justify-center gap-[16px] bg-gray-50 rounded-xl p-2">
+        <div className="hidden flex justify-center gap-[16px] bg-gray-50 rounded-xl p-2">
           <button
             className={`px-8 py-2 rounded-lg font-medium transition-all duration-300 ${
               subTab === SUB_TAB_TYPES.QUICK

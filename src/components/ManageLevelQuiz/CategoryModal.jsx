@@ -1,7 +1,7 @@
 // src/components/ManageLevelQuiz/CategoryModal.jsx
 import React, { useState, useEffect } from 'react';
 
-const CategoryModal = ({ isOpen, onClose, onSave, category }) => {
+const CategoryModal = ({ isOpen, onClose, onSave, category, isLoading=false }) => {
   const [formData, setFormData] = useState({
     name: ''
   });
@@ -58,13 +58,13 @@ const CategoryModal = ({ isOpen, onClose, onSave, category }) => {
             />
           </div>
 
-          {category && (
+          {/* {category && (
             <div className="mb-4 p-3 bg-blue-50 rounded-lg">
               <p className="text-sm text-blue-800">
                 <strong>Level Number:</strong> {category.levelNo}
               </p>
             </div>
-          )}
+          )} */}
 
           <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
             <button
@@ -76,7 +76,8 @@ const CategoryModal = ({ isOpen, onClose, onSave, category }) => {
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-[#352AA4] text-white rounded-full hover:bg-[#2a2183] transition-all font-medium"
+              className={"px-6 py-2.5 bg-[#352AA4] text-white rounded-full hover:bg-[#2a2183] transition-all font-medium" + (isLoading ? ' opacity-50 cursor-not-allowed' : '')}
+              disabled={isLoading}
             >
               {category ? 'Update' : 'Create'}
             </button>

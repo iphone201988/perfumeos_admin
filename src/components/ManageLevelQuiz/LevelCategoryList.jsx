@@ -44,14 +44,14 @@ const LevelCategoryList = ({
 
   return (
     <div className="bg-gradient-to-br from-[#E1F8F8] to-[#D4E8F8] rounded-[30px] shadow-lg overflow-hidden">
-      <div className="p-6 border-b border-white/50">
+      {/* <div className="p-6 border-b border-white/50">
         <div className="flex items-center justify-between">
           <h2 className="text-[20px] font-bold text-[#352AA4]">Level Categories</h2>
           <span className="bg-[#352AA4] text-white px-3 py-1 rounded-full text-sm font-medium">
             {total || categories.length}
           </span>
         </div>
-      </div>
+      </div> */}
 
       {/* Scrollable Content */}
       <div 

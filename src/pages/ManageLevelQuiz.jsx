@@ -42,16 +42,16 @@ const ManageLevelQuiz = () => {
   const ITEMS_PER_PAGE = 10;
 
   // API Hooks
-  const { data: categoriesData, isLoading: categoriesLoading, isFetching: categoriesFetching } = 
+  const { data: categoriesData, isLoading: categoriesLoading, isFetching: categoriesFetching } =
     useGetLevelCategoriesQuery({ page: categoryPage, limit: ITEMS_PER_PAGE });
-  
-  const { data: quizzesData, isLoading: quizzesLoading, isFetching: quizzesFetching } = 
+
+  const { data: quizzesData, isLoading: quizzesLoading, isFetching: quizzesFetching } =
     useGetLevelQuizzesByCategoryQuery(
       { categoryId: selectedCategory?._id, page: quizPage, limit: ITEMS_PER_PAGE },
       { skip: !selectedCategory }
     );
 
-  const { data: questionsData, isLoading: questionsLoading, isFetching: questionsFetching } = 
+  const { data: questionsData, isLoading: questionsLoading, isFetching: questionsFetching } =
     useGetQuestionsByQuizQuery(
       { quizId: selectedQuiz?._id, page: questionPage, limit: ITEMS_PER_PAGE },
       { skip: !selectedQuiz }
@@ -83,6 +83,20 @@ const ManageLevelQuiz = () => {
   const isOperationLoading = createCategoryLoading || updateCategoryLoading || deleteCategoryLoading ||
     createQuizLoading || updateQuizLoading || deleteQuizLoading ||
     createQuestionLoading || updateQuestionLoading || deleteQuestionLoading;
+
+  // Get specific loader message based on current operation
+  const getLoaderMessage = () => {
+    if (createCategoryLoading) return { message: 'Creating Level Category', title: 'Please wait...' };
+    if (updateCategoryLoading) return { message: 'Updating Level Category', title: 'Saving changes...' };
+    if (deleteCategoryLoading) return { message: 'Deleting Level Category', title: 'Please wait...' };
+    if (createQuizLoading) return { message: 'Creating Quiz', title: 'Please wait...' };
+    if (updateQuizLoading) return { message: 'Updating Quiz', title: 'Saving changes...' };
+    if (deleteQuizLoading) return { message: 'Deleting Quiz', title: 'Please wait...' };
+    if (createQuestionLoading) return { message: 'Creating Question', title: 'Please wait...' };
+    if (updateQuestionLoading) return { message: 'Updating Question', title: 'Saving changes...' };
+    if (deleteQuestionLoading) return { message: 'Deleting Question', title: 'Please wait...' };
+    return { message: 'Processing...', title: 'Please wait...' };
+  };
 
   // Category Handlers
   const handleAddCategory = () => {
@@ -289,11 +303,8 @@ const ManageLevelQuiz = () => {
       {/* Operation Loading Overlay */}
       {isOperationLoading && (
         <Loader
-          message={
-            createCategoryLoading || createQuizLoading || createQuestionLoading ? 'Creating...' :
-            updateCategoryLoading || updateQuizLoading || updateQuestionLoading ? 'Updating...' :
-            'Deleting...'
-          }
+          message={getLoaderMessage().message}
+          title={getLoaderMessage().title}
           isVisible={true}
         />
       )}
@@ -416,6 +427,7 @@ const ManageLevelQuiz = () => {
         onSave={handleSaveQuiz}
         quiz={editingQuiz}
         categoryName={selectedCategory?.name}
+        isLoading={isOperationLoading}
       />
 
       <QuestionModal
@@ -427,6 +439,7 @@ const ManageLevelQuiz = () => {
         onSave={handleSaveQuestion}
         question={editingQuestion}
         quizTitle={selectedQuiz?.title}
+        isLoading={isOperationLoading}
       />
 
       <ConfirmationModal

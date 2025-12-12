@@ -18,7 +18,9 @@ import ManageRanks from "../pages/ManageRanks";
 import ManageNotes from "../pages/ManageNotes";
 import ManagePerfumers from "../pages/ManagePerfumers";
 import Settings from "../pages/Settings";
-import ManageLevelQuiz from "../pages/ManageLevelQuiz";
+import LevelCategories from "../pages/LevelCategories";
+import LevelQuizzes from "../pages/LevelQuizzes";
+import LevelQuestions from "../pages/LevelQuestions";
 import ManageFAQ from "../pages/ManageFAQ";
 const hasToken = () => !!localStorage.getItem("token");
 const router = createBrowserRouter([
@@ -98,7 +100,15 @@ const router = createBrowserRouter([
             },
             {
                 path: "level-quiz",
-                element: <ManageLevelQuiz />,
+                element: <LevelCategories />,
+            },
+            {
+                path: "level-quiz/:categoryId/quizzes",
+                element: <LevelQuizzes />,
+            },
+            {
+                path: "level-quiz/:categoryId/quizzes/:quizId/questions",
+                element: <LevelQuestions />,
             },
             {
                 path: '/faq',

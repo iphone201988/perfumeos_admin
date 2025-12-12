@@ -46,18 +46,21 @@ const LevelQuizList = ({
   return (
     <div className="bg-gradient-to-br from-[#E1F8F8] to-[#D4E8F8] rounded-[30px] shadow-lg overflow-hidden">
       <div className="p-6 border-b border-white/50">
-        <div className="flex items-center justify-between flex-wrap gap-3">
+        {/* <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h2 className="text-[20px] font-bold text-[#352AA4]">
               {selectedCategory ? 'Level Quizzes' : 'Select a Category'}
             </h2>
             {selectedCategory && (
               <p className="text-sm text-gray-600 mt-1">
-                {selectedCategory.name} • {total || quizzes.length} quiz(zes)
+                {selectedCategory.name}
               </p>
             )}
           </div>
-          {selectedCategory && (
+           <span className="bg-[#352AA4] text-white px-3 py-1 rounded-full text-sm font-medium">
+            {total || quizzes.length}
+          </span> */}
+          {/* {selectedCategory && (
             <button
               onClick={onAddQuiz}
               className="bg-[#352AA4] text-white px-4 py-2 rounded-full hover:bg-[#2a2183] transition-all font-medium flex items-center gap-2"
@@ -67,11 +70,11 @@ const LevelQuizList = ({
               </svg>
               Add Quiz
             </button>
-          )}
-        </div>
+          )} */}
+        {/* </div> */}
       </div>
 
-      <div 
+      <div
         ref={scrollContainerRef}
         className="overflow-y-auto p-6 pt-4"
         style={{ maxHeight: 'calc(100vh - 280px)' }}
@@ -84,7 +87,7 @@ const LevelQuizList = ({
             <p className="text-gray-500 text-lg">Select a category</p>
             <p className="text-sm text-gray-400 mt-1">to view quizzes</p>
           </div>
-        ) : isLoading ? (
+        ) : (isLoading || (isFetching && quizzes.length ===0  )) ? (
           <div className="flex justify-center py-8">
             <div className="w-8 h-8 border-4 border-[#352AA4] border-t-transparent rounded-full animate-spin"></div>
           </div>
@@ -102,11 +105,10 @@ const LevelQuizList = ({
               {quizzes.map((quiz) => (
                 <div
                   key={quiz._id}
-                  className={`bg-white rounded-xl p-4 cursor-pointer transition-all ${
-                    selectedQuiz?._id === quiz._id
+                  className={`bg-white rounded-xl p-4 cursor-pointer transition-all ${selectedQuiz?._id === quiz._id
                       ? 'border-2 border-[#352AA4] shadow-md'
                       : 'border-2 border-transparent hover:border-gray-300'
-                  }`}
+                    }`}
                   onClick={() => onSelectQuiz(quiz)}
                 >
                   <div className="flex items-start justify-between gap-2">

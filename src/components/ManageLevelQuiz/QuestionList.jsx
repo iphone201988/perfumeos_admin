@@ -44,18 +44,21 @@ const QuestionList = ({
   return (
     <div className="bg-gradient-to-br from-[#E1F8F8] to-[#D4E8F8] rounded-[30px] shadow-lg overflow-hidden">
       <div className="p-6 border-b border-white/50">
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <div>
+        {/* <div className="flex items-center justify-between flex-wrap gap-3"> */}
+        {/* <div>
             <h2 className="text-[20px] font-bold text-[#352AA4]">
               {selectedQuiz ? 'Questions' : 'Select a Quiz'}
             </h2>
             {selectedQuiz && (
               <p className="text-sm text-gray-600 mt-1">
-                {selectedQuiz.title} • {total || questions.length} question(s)
+                {selectedQuiz.title} 
               </p>
             )}
           </div>
-          {selectedQuiz && (
+          <span className="bg-[#352AA4] text-white px-3 py-1 rounded-full text-sm font-medium">
+            {total || questions.length}
+          </span> */}
+        {/* {selectedQuiz && (
             <button
               onClick={onAddQuestion}
               className="bg-[#352AA4] text-white px-4 py-2 rounded-full hover:bg-[#2a2183] transition-all font-medium flex items-center gap-2"
@@ -65,11 +68,23 @@ const QuestionList = ({
               </svg>
               Add Question
             </button>
-          )}
-        </div>
+          )} */}
+        {/* </div> */}
+        {questions.length > 0 && (
+          <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-gray-200">
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-4 rounded bg-green-100 border border-green-300"></span>
+              <span className="text-xs text-gray-600">Correct Answer</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-4 rounded bg-gray-100 border border-gray-200"></span>
+              <span className="text-xs text-gray-600">Wrong Options</span>
+            </div>
+          </div>
+        )}
       </div>
 
-      <div 
+      <div
         ref={scrollContainerRef}
         className="overflow-y-auto p-6 pt-4"
         style={{ maxHeight: 'calc(100vh - 280px)' }}
@@ -82,7 +97,7 @@ const QuestionList = ({
             <p className="text-gray-500 text-lg">Select a quiz</p>
             <p className="text-sm text-gray-400 mt-1">to view questions</p>
           </div>
-        ) : isLoading ? (
+        ) : (isLoading || (isFetching && questions.length === 0)) ? (
           <div className="flex justify-center py-8">
             <div className="w-8 h-8 border-4 border-[#352AA4] border-t-transparent rounded-full animate-spin"></div>
           </div>
@@ -110,16 +125,15 @@ const QuestionList = ({
                         </span>
                       </div>
                       <h3 className="font-semibold text-gray-800 mb-3">{question.question}</h3>
-                      
+
                       <div className="grid grid-cols-1 gap-2">
                         {question.options?.map((option, idx) => (
                           <div
                             key={idx}
-                            className={`px-3 py-2 rounded-lg text-sm font-medium ${
-                              option === question.correctAnswer
-                                ? 'bg-green-100 text-green-700 border border-green-300'
-                                : 'bg-gray-100 text-gray-700 border border-gray-200'
-                            }`}
+                            className={`px-3 py-2 rounded-lg text-sm font-medium ${option === question.correctAnswer
+                              ? 'bg-green-100 text-green-700 border border-green-300'
+                              : 'bg-gray-100 text-gray-700 border border-gray-200'
+                              }`}
                           >
                             <span className="font-bold mr-1">{String.fromCharCode(65 + idx)}.</span>
                             {option}
@@ -173,18 +187,7 @@ const QuestionList = ({
               </div>
             )}
 
-            {questions.length > 0 && (
-              <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-200">
-                <div className="flex items-center gap-2">
-                  <span className="w-4 h-4 rounded bg-green-100 border border-green-300"></span>
-                  <span className="text-xs text-gray-600">Correct Answer</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-4 h-4 rounded bg-gray-100 border border-gray-200"></span>
-                  <span className="text-xs text-gray-600">Wrong Options</span>
-                </div>
-              </div>
-            )}
+
           </>
         )}
       </div>

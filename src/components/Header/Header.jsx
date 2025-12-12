@@ -28,7 +28,7 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
       '/users': 'Manage Users',
       '/perfumes': 'Manage Perfumes',
       '/perfumes/add': 'Add Perfume',
-      '/quiz': 'Manage Quiz',
+      '/quiz': 'Manage Play With Friend Quiz',
       '/articles': 'Manage Articles',
 
     };
@@ -53,7 +53,7 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     if (path.startsWith('/users')) return 'Manage Users';
     if (path.startsWith('/users')) return 'User Details';
     if (path.startsWith('/perfumes')) return 'Manage Perfumes';
-    if (path.startsWith('/quiz')) return 'Manage Quiz';
+    if (path.startsWith('/quiz')) return 'Manage Play With Friend Quiz';
     if (path.startsWith('/articles')) return 'Manage Articles';
     if (path.startsWith('/settings')) return 'Admin Settings';
     if (path.startsWith('/notes')) return 'Manage Notes';

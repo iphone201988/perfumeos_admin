@@ -37,7 +37,7 @@ const SideBar = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     { to: '/perfumes', label: 'Manage Perfumes', icon: perfume_icon },
     { to: '/notes', label: 'Manage Notes', icon: note_icon },
     { to: '/perfumers', label: 'Manage Perfumers', icon: perfumer_icon },
-    { to: '/quiz', label: 'Manage Quiz', icon: quiz_icon },
+    { to: '/quiz', label: 'Manage Play With Friend Quiz', icon: quiz_icon },
     { to: '/level-quiz', label: 'Manage Level Quiz', icon: level_quiz_icon },
     { to: '/articles', label: 'Manage Articles', icon: article_icon },
     { to: '/badge', label: 'Manage Badge', icon: badge_icon },

@@ -1,7 +1,7 @@
 // src/components/ManageLevelQuiz/QuestionModal.jsx
 import React, { useState, useEffect } from 'react';
 
-const QuestionModal = ({ isOpen, onClose, onSave, question, quizTitle }) => {
+const QuestionModal = ({ isOpen, onClose, onSave, question, quizTitle, isLoading=false }) => {
   const [formData, setFormData] = useState({
     question: '',
     options: ['', '', '', ''],
@@ -149,7 +149,8 @@ const QuestionModal = ({ isOpen, onClose, onSave, question, quizTitle }) => {
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-[#352AA4] text-white rounded-full hover:bg-[#2a2183] transition-all font-medium"
+              className={"px-6 py-2.5 bg-[#352AA4] text-white rounded-full hover:bg-[#2a2183] transition-all font-medium" + (isLoading ? ' opacity-50 cursor-not-allowed' : '')}
+              disabled={isLoading}
             >
               {question ? 'Update' : 'Create'}
             </button>
