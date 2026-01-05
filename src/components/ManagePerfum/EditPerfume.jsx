@@ -45,12 +45,12 @@ const EditPerfume = () => {
     description: "",
     yearRelease: "",
     concentration: "",
-    occasionDay: "",
-    occasionEvening: "",
-    seasonWinter: "",
-    seasonSummer: "",
-    seasonAutumn: "",
-    seasonSpring: "",
+    // occasionDay: "",
+    // occasionEvening: "",
+    // seasonWinter: "",
+    // seasonSummer: "",
+    // seasonAutumn: "",
+    // seasonSpring: "",
   });
 
   const [mainAccords, setMainAccords] = useState([]);
@@ -106,13 +106,13 @@ const EditPerfume = () => {
         }
         break;
 
-      case 'occasionDay':
-      case 'occasionEvening':
-        const occasionNum = parseInt(value);
-        if (value !== '' && (isNaN(occasionNum) || occasionNum < 0 || occasionNum > 100)) {
-          error = 'Value must be between 0 and 100';
-        }
-        break;
+      // case 'occasionDay':
+      // case 'occasionEvening':
+      //   const occasionNum = parseInt(value);
+      //   if (value !== '' && (isNaN(occasionNum) || occasionNum < 0 || occasionNum > 100)) {
+      //     error = 'Value must be between 0 and 100';
+      //   }
+      //   break;
 
       default:
         break;
@@ -139,10 +139,10 @@ const EditPerfume = () => {
     }
 
     // Validate occasion totals
-    const occasionTotal = parseInt(form.occasionDay || 0) + parseInt(form.occasionEvening || 0);
-    if (occasionTotal > 100) {
-      errors.occasions = 'Total occasion percentages cannot exceed 100%';
-    }
+    // const occasionTotal = parseInt(form.occasionDay || 0) + parseInt(form.occasionEvening || 0);
+    // if (occasionTotal > 100) {
+    //   errors.occasions = 'Total occasion percentages cannot exceed 100%';
+    // }
 
     // Validate images
     if (images.length === 0) {
@@ -168,12 +168,12 @@ const EditPerfume = () => {
         intendedFor: perfume.intendedFor || [],
         yearRelease: perfume.year || "",
         concentration: perfume.concentration || "",
-        occasionDay: ((perfume?.occasionVotes?.day * 100) / perfume?.occasionVotes?.total) || "",
-        occasionEvening: ((perfume?.occasionVotes?.night * 100) / perfume?.occasionVotes?.total) || "",
-        seasonWinter: perfume.seasons?.find((s) => s.name === "winter")?.width.split("%")[0] || "",
-        seasonSummer: perfume.seasons?.find((s) => s.name === "summer")?.width.split("%")[0] || "",
-        seasonAutumn: perfume.seasons?.find((s) => s.name === "fall")?.width.split("%")[0] || "",
-        seasonSpring: perfume.seasons?.find((s) => s.name === "spring")?.width.split("%")[0] || "",
+        // occasionDay: ((perfume?.occasionVotes?.day * 100) / perfume?.occasionVotes?.total) || "",
+        // occasionEvening: ((perfume?.occasionVotes?.night * 100) / perfume?.occasionVotes?.total) || "",
+        // seasonWinter: perfume.seasons?.find((s) => s.name === "winter")?.width.split("%")[0] || "",
+        // seasonSummer: perfume.seasons?.find((s) => s.name === "summer")?.width.split("%")[0] || "",
+        // seasonAutumn: perfume.seasons?.find((s) => s.name === "fall")?.width.split("%")[0] || "",
+        // seasonSpring: perfume.seasons?.find((s) => s.name === "spring")?.width.split("%")[0] || "",
       };
 
       setForm(formData);
@@ -396,7 +396,6 @@ const EditPerfume = () => {
 
     // If there are errors, don't submit
     if (Object.keys(errors).length > 0) {
-      console.log(errors);
       toast.error("Please fix all validation errors before updating");
       return;
     }
@@ -444,21 +443,21 @@ const EditPerfume = () => {
       note: fragranceNotes.map(note => ({ noteId: note.value }))
     }));
 
-    formData.append('occasions', JSON.stringify([
-      { name: "day", width: form.occasionDay },
-      { name: "night", width: form.occasionEvening }
-    ]));
-    formData.append('occasionVotes', JSON.stringify({
-      day: form.occasionDay,
-      night: form.occasionEvening
-    }));
+    // formData.append('occasions', JSON.stringify([
+    //   { name: "day", width: form.occasionDay },
+    //   { name: "night", width: form.occasionEvening }
+    // ]));
+    // formData.append('occasionVotes', JSON.stringify({
+    //   day: form.occasionDay,
+    //   night: form.occasionEvening
+    // }));
 
-    formData.append('seasons', JSON.stringify([
-      { name: "winter", width: form.seasonWinter },
-      { name: "summer", width: form.seasonSummer },
-      { name: "fall", width: form.seasonAutumn },
-      { name: "spring", width: form.seasonSpring }
-    ]));
+    // formData.append('seasons', JSON.stringify([
+    //   { name: "winter", width: form.seasonWinter },
+    //   { name: "summer", width: form.seasonSummer },
+    //   { name: "fall", width: form.seasonAutumn },
+    //   { name: "spring", width: form.seasonSpring }
+    // ]));
 
     try {
       setUpdating(true);
@@ -678,7 +677,7 @@ const EditPerfume = () => {
                       onChange={handleInputChange}
                       onBlur={handleBlur}
                       placeholder="Enter perfume description"
-                      textAera="true"
+                      textArea
                       rows="6"
                       error={touched.description && formErrors.description}
                     />
@@ -713,7 +712,7 @@ const EditPerfume = () => {
             </div>
 
             {/* Occasion Section */}
-            <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
+            {/* <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
               <div className="flex items-center gap-2 mb-[20px]">
                 <div className="w-2 h-8 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></div>
                 <h3 className="text-[20px] font-bold text-[#352AA4]">Occasion Settings</h3>
@@ -746,10 +745,10 @@ const EditPerfume = () => {
                   <span>⚠</span> {formErrors.occasions}
                 </span>
               )}
-            </div>
+            </div> */}
 
             {/* Season Section */}
-            <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
+            {/* <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
               <div className="flex items-center gap-2 mb-[20px]">
                 <div className="w-2 h-8 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></div>
                 <h3 className="text-[20px] font-bold text-[#352AA4]">Season Settings</h3>
@@ -767,7 +766,7 @@ const EditPerfume = () => {
                   <span>⚠</span> {formErrors.seasons}
                 </span>
               )}
-            </div>
+            </div> */}
 
             {/* Perfumer Section */}
             <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">

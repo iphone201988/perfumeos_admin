@@ -10,7 +10,7 @@ import PrivateRoute from "./PrivateRoute";
 import ManageQuiz from "../pages/ManageQuiz";
 import ManageArticle from "../pages/ManageArticle";
 import UserDetails from "../components/ManageUsers/UserDetails";
-import PerfumDetails from "../components/ManagePerfum/PerfumDetails";
+import PerfumeDetails from "../components/ManagePerfum/PerfumeDetails";
 import EditPerfume from "../components/ManagePerfum/EditPerfume";
 import AddPerfume from "../components/ManagePerfum/AddPerfume";
 import ManageBadge from "../pages/ManageBadge";
@@ -22,7 +22,8 @@ import LevelCategories from "../pages/LevelCategories";
 import LevelQuizzes from "../pages/LevelQuizzes";
 import LevelQuestions from "../pages/LevelQuestions";
 import ManageFAQ from "../pages/ManageFAQ";
-const hasToken = () => !!localStorage.getItem("token");
+import ManageFeedback from "../pages/ManageFeedback";
+
 const router = createBrowserRouter([
     {
         path: "/login",
@@ -60,7 +61,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "perfumes/:id",
-                element: <PerfumDetails />,
+                element: <PerfumeDetails />,
             },
             {
                 path: "perfumes/add",
@@ -90,10 +91,10 @@ const router = createBrowserRouter([
                 path: "badge",
                 element: <ManageBadge />,
             },
-            {
-                path: "rank",
-                element: <ManageRanks />,
-            },
+            // {
+            //     path: "rank",
+            //     element: <ManageRanks />,
+            // },
             {
                 path: "setting",
                 element: <Settings />,
@@ -113,6 +114,10 @@ const router = createBrowserRouter([
             {
                 path: '/faq',
                 element: <ManageFAQ />
+            },
+            {
+                path: '/feedback',
+                element: <ManageFeedback />
             }
         ],
     },

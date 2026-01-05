@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useCreatePerFumeMutation, useGetNotesQuery, useGetPerfumersQuery } from "../../api";
+import { useCreatePerfumeMutation, useGetNotesQuery, useGetPerfumersQuery } from "../../api";
 import ImageUploader from "../Form/ImageUploader";
 import FormField from "../Form/FormField";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +23,7 @@ const AddPerfume = () => {
     const navigate = useNavigate();
     const { data: notesResponse, isLoading: notesLoading } = useGetNotesQuery();
     const { data: perfumersResponse, isLoading: perfumersLoading } = useGetPerfumersQuery();
-    const [createPerfume] = useCreatePerFumeMutation();
+    const [createPerfume] = useCreatePerfumeMutation();
     const [creating, setCreating] = useState(false);
     const [imageError, setImageError] = useState('');
     const [form, setForm] = useState({
@@ -34,12 +34,12 @@ const AddPerfume = () => {
         description: "",
         yearRelease: "",
         concentration: "",
-        occasionDay: "",
-        occasionEvening: "",
-        seasonWinter: "",
-        seasonSummer: "",
-        seasonAutumn: "",
-        seasonSpring: "",
+        // occasionDay: "",
+        // occasionEvening: "",
+        // seasonWinter: "",
+        // seasonSummer: "",
+        // seasonAutumn: "",
+        // seasonSpring: "",
     });
 
     // Add form errors state
@@ -56,8 +56,7 @@ const AddPerfume = () => {
 
     const [images, setImages] = useState([]);
     const [imageFiles, setImageFiles] = useState([]);
-   console.log("imageFiles", imageFiles);
-   console.log("images", images);
+
     const handleImagesChange = (imageArray, files, error) => {
         if (error) {
             console.error(error);
@@ -120,13 +119,13 @@ const AddPerfume = () => {
                 }
                 break;
 
-            case 'occasionDay':
-            case 'occasionEvening':
-                const occasionNum = parseInt(value);
-                if (value !== '' && (isNaN(occasionNum) || occasionNum < 0 || occasionNum > 100)) {
-                    error = 'Value must be between 0 and 100';
-                }
-                break;
+            // case 'occasionDay':
+            // case 'occasionEvening':
+            //     const occasionNum = parseInt(value);
+            //     if (value !== '' && (isNaN(occasionNum) || occasionNum < 0 || occasionNum > 100)) {
+            //         error = 'Value must be between 0 and 100';
+            //     }
+            //     break;
 
             default:
                 break;
@@ -181,10 +180,10 @@ const AddPerfume = () => {
         }
 
         // Validate occasion totals
-        const occasionTotal = parseInt(form.occasionDay || 0) + parseInt(form.occasionEvening || 0);
-        if (occasionTotal > 100) {
-            errors.occasions = 'Total occasion percentages cannot exceed 100%';
-        }
+        // const occasionTotal = parseInt(form.occasionDay || 0) + parseInt(form.occasionEvening || 0);
+        // if (occasionTotal > 100) {
+        //     errors.occasions = 'Total occasion percentages cannot exceed 100%';
+        // }
 
         return errors;
     }, [form, file, perfumerIds, fragranceTop, fragranceMiddle, fragranceBottom, fragranceNotes, mainAccords, validateField]);
@@ -320,13 +319,7 @@ const AddPerfume = () => {
             intendedFor: [],
             description: "",
             yearRelease: "",
-            concentration: "",
-            occasionDay: "",
-            occasionEvening: "",
-            seasonWinter: "",
-            seasonSummer: "",
-            seasonAutumn: "",
-            seasonSpring: "",
+
         });
         setMainAccords([]);
         setPerfumerIds([]);
@@ -373,11 +366,10 @@ const AddPerfume = () => {
             formData.append('file', file);
         }
         if (imageFiles && imageFiles.length > 0) {
-        imageFiles.forEach((imgFile) => {
-            console.log(imgFile);
-            formData.append('images', imgFile); // Use 'images' as the field name
-        });
-    }
+            imageFiles.forEach((imgFile) => {
+                formData.append('images', imgFile);
+            });
+        }
 
         // Complex objects as JSON strings
         formData.append('intendedFor', JSON.stringify(form.intendedFor));
@@ -398,22 +390,6 @@ const AddPerfume = () => {
             base: fragranceBottom.map(note => ({ noteId: note.value })),
             note: fragranceNotes.map(note => ({ noteId: note.value }))
         }));
-
-        formData.append('occasions', JSON.stringify([
-            { name: "day", width: form.occasionDay },
-            { name: "night", width: form.occasionEvening }
-        ]));
-        formData.append('occasionVotes', JSON.stringify({
-            day: form.occasionDay,
-            night: form.occasionEvening
-        }))
-
-        formData.append('seasons', JSON.stringify([
-            { name: "winter", width: form.seasonWinter },
-            { name: "summer", width: form.seasonSummer },
-            { name: "fall", width: form.seasonAutumn },
-            { name: "spring", width: form.seasonSpring }
-        ]));
 
         try {
             setCreating(true);
@@ -564,19 +540,6 @@ const AddPerfume = () => {
                             <div className="space-y-[20px]">
                                 {/* Image Uploader */}
                                 <div>
-                                    {/* <ImageUploader
-                                        onImageSelect={onImageSelect}
-                                        currentImage={form.image}
-                                        error={imageError || formErrors.image}
-                                        required={true}
-                                        maxSizeInMB={5}
-                                        allowedTypes={['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']}
-                                    />
-                                    {(imageError || formErrors.image) && (
-                                        <span className="text-red-500 text-xs mt-2 font-medium flex items-center gap-1">
-                                            <span>⚠</span> {imageError || formErrors.image}
-                                        </span>
-                                    )} */}
 
                                     <MultipleImageUploader
                                         onImagesChange={handleImagesChange}
@@ -644,7 +607,7 @@ const AddPerfume = () => {
                                             onChange={handleInputChange}
                                             onBlur={handleBlur}
                                             placeholder="Enter perfume description"
-                                            textAera="true"
+                                            textArea
                                             rows="6"
                                             error={touched.description && formErrors.description}
                                         />
@@ -698,7 +661,7 @@ const AddPerfume = () => {
                         </div>
 
                         {/* Occasion Section */}
-                        <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
+                        {/* <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
                             <div className="flex items-center gap-2 mb-[20px]">
                                 <div className="w-2 h-8 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></div>
                                 <h3 className="text-[20px] font-bold text-[#352AA4]">Occasion Settings</h3>
@@ -737,10 +700,10 @@ const AddPerfume = () => {
                                     <span>⚠</span> {formErrors.occasions}
                                 </span>
                             )}
-                        </div>
+                        </div> */}
 
                         {/* Season Section */}
-                        <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
+                        {/* <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
                             <div className="flex items-center gap-2 mb-[20px]">
                                 <div className="w-2 h-8 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></div>
                                 <h3 className="text-[20px] font-bold text-[#352AA4]">Season Settings</h3>
@@ -758,7 +721,7 @@ const AddPerfume = () => {
                                     <span>⚠</span> {formErrors.seasons}
                                 </span>
                             )}
-                        </div>
+                        </div> */}
 
                         {/* Perfumer Section */}
                         <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">

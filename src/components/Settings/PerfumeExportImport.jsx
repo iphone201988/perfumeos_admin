@@ -28,7 +28,7 @@ const PerfumeExportImport = () => {
     'Name', 'Brand', 'Image', 'Concentration', 'Description', 'Year',
     'Intended For', 'Seasons', 'Occasions', 'Occasion Day Votes',
     'Occasion Night Votes', 'Main Accords', 'Perfumers',
-    'Top Notes', 'Middle Notes', 'Base Notes', 'Other Notes', 'Created At', '_id', 'Images' 
+    'Top Notes', 'Middle Notes', 'Base Notes', 'Other Notes', 'Created At', '_id', 'Images'
   ];
 
   // Format perfume data for CSV row
@@ -265,8 +265,6 @@ const PerfumeExportImport = () => {
           }
         }).filter(Boolean);
 
-        console.log(`Parsed ${parsedPerfumes.length} perfumes from CSV`);
-
         if (parsedPerfumes.length === 0) {
           toast.error('No valid perfumes found in CSV');
           setImporting(false);
@@ -279,8 +277,7 @@ const PerfumeExportImport = () => {
         toast.success(`Successfully imported ${response.imported} perfumes!`);
 
         if (response.failed > 0) {
-          toast.warning(`${response.failed} perfumes failed to import. Check console for details.`);
-          console.log('Import errors:', response.errors);
+          toast.warning(`${response.failed} perfumes failed to import.`);
         }
 
         if (fileInputRef.current) {
@@ -481,7 +478,7 @@ const PerfumeExportImport = () => {
             </div>
             {totalBatches > 1 && (
               <p className="text-xs text-gray-500 mt-3">
-                💡 With {totalPerfumes.toLocaleString()} perfumes and batch size {batchSize.toLocaleString()}, 
+                💡 With {totalPerfumes.toLocaleString()} perfumes and batch size {batchSize.toLocaleString()},
                 this will create {totalBatches} CSV file(s)
               </p>
             )}

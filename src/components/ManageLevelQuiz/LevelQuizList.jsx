@@ -120,6 +120,9 @@ const LevelQuizList = ({
                         <span className="text-gray-500 text-xs">
                           ({quiz.questions?.length || 0} questions)
                         </span>
+                        <span className="text-gray-500 text-xs">
+                          {quiz.isPromotionQuiz ? 'Promotion Quiz' : 'Normal Quiz'}
+                        </span>
                       </div>
                       <h3 className="font-semibold text-gray-800">{quiz.title}</h3>
                     </div>

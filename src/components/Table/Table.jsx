@@ -124,14 +124,14 @@ const Table = ({ columns, data, renderActions }) => {
               className="hover:bg-[#E1F8F8]/30 transition-colors duration-200 group"
             >
               {columns.map((column) => {
-                const { accessor, align = 'left', className = 'none' } = column;
+                const { accessor, align = 'left', className = 'none', render } = column;
                 return (
                   <td
                     key={accessor}
                     className="px-6 py-5 max-lg:px-4 max-lg:py-4 text-[#7C7C7C] text-[14px] font-medium"
                     style={{ textAlign: align, textTransform: className }}
                   >
-                    {renderCellContent(row, accessor, column)}
+                    {render ? render(row[accessor]) : renderCellContent(row, accessor, column)}
                   </td>
                 );
               })}

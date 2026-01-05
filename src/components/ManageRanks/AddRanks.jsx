@@ -9,7 +9,7 @@ const useValidation = () => {
 
   const validateField = (name, value, allValues = {}) => {
     let error = ''
-    
+
     switch (name) {
       case 'name':
         if (!value || !value.trim()) {
@@ -18,7 +18,7 @@ const useValidation = () => {
           error = 'Rank name must be at least 2 characters'
         } else if (value.trim().length > 50) {
           error = 'Rank name cannot exceed 50 characters'
-        } 
+        }
         break
 
       case 'description':
@@ -77,22 +77,22 @@ const useValidation = () => {
   const validateFile = (file) => {
     const maxSize = 5 * 1024 * 1024 // 5MB
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
-    
+
     if (!file) {
       return { isValid: true, error: '' }
     }
 
     if (file.size > maxSize) {
-      return { 
-        isValid: false, 
-        error: `File size must be less than ${maxSize / (1024 * 1024)}MB` 
+      return {
+        isValid: false,
+        error: `File size must be less than ${maxSize / (1024 * 1024)}MB`
       }
     }
 
     if (!allowedTypes.includes(file.type)) {
-      return { 
-        isValid: false, 
-        error: 'Only JPEG, PNG, GIF, and WebP images are allowed' 
+      return {
+        isValid: false,
+        error: 'Only JPEG, PNG, GIF, and WebP images are allowed'
       }
     }
 
@@ -184,7 +184,7 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
       setDescription(initialData.description || '')
       setMin(initialData.min?.toString() || '')
       setMax(initialData.max?.toString() || '')
-      
+
       // Handle existing images
       if (initialData.image) {
         const imageUrl = initialData.image.startsWith('http')
@@ -200,7 +200,7 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
         setOtherPreview(otherImageUrl);
       }
 
-      if(initialData.imageWithoutLabel) {
+      if (initialData.imageWithoutLabel) {
         const imageUrl = initialData.imageWithoutLabel.startsWith('http')
           ? initialData.imageWithoutLabel
           : `${import.meta.env.VITE_BASE_URL}${initialData.imageWithoutLabel}`;
@@ -219,7 +219,7 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
       setMin('')
       setMax('')
     }
-    
+
     // Clear validation errors when modal opens/closes
     clearErrors()
   }, [initialData, open])
@@ -329,7 +329,7 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
+
     try {
       const formData = {
         name,
@@ -364,16 +364,6 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
         submitData.append('imageWithoutLabel', imageWithoutLabel)
       }
 
-      console.log('Submitting rank data:', {
-        name: name.trim(),
-        description: description.trim(),
-        min: parseInt(min),
-        max: parseInt(max),
-        hasImage: !!image,
-        hasOtherImage: !!otherImage,
-        hasImageWithoutLabel: !!imageWithoutLabel
-      })
-
       await onSubmit(submitData)
       onClose()
     } catch (error) {
@@ -396,9 +386,9 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
   if (!open) return null
 
   const hasErrors = Object.keys(errors).some(key => errors[key])
-  const isFormValid = name.trim() && min && max && 
-                     parseInt(min) < parseInt(max) && 
-                     !hasErrors
+  const isFormValid = name.trim() && min && max &&
+    parseInt(min) < parseInt(max) &&
+    !hasErrors
 
   return (
     <div className='w-full min-h-screen fixed top-0 left-0 bg-[rgba(0,0,0,0.80)] z-[9999] flex items-center justify-center p-4'>
@@ -427,9 +417,8 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
           {/* Image Upload Sections */}
           <div className="flex gap-3 max-md:flex-col">
             <div className="flex-1">
-              <label className={`flex justify-center items-center border rounded-2xl p-4 h-[210px] cursor-pointer ${
-                errors.image ? 'border-red-300' : 'border-[#EFEFEF]'
-              }`}>
+              <label className={`flex justify-center items-center border rounded-2xl p-4 h-[210px] cursor-pointer ${errors.image ? 'border-red-300' : 'border-[#EFEFEF]'
+                }`}>
                 <input
                   type="file"
                   accept="image/*"
@@ -456,9 +445,8 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
             </div>
 
             <div className="flex-1">
-              <label className={`flex justify-center items-center border rounded-2xl p-4 h-[210px] cursor-pointer ${
-                errors.otherImage ? 'border-red-300' : 'border-[#EFEFEF]'
-              }`}>
+              <label className={`flex justify-center items-center border rounded-2xl p-4 h-[210px] cursor-pointer ${errors.otherImage ? 'border-red-300' : 'border-[#EFEFEF]'
+                }`}>
                 <input
                   type="file"
                   accept="image/*"
@@ -485,9 +473,8 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
             </div>
 
             <div className="flex-1">
-              <label className={`flex justify-center items-center border rounded-2xl p-4 h-[210px] cursor-pointer ${
-                errors.imageWithoutLabel ? 'border-red-300' : 'border-[#EFEFEF]'
-              }`}>
+              <label className={`flex justify-center items-center border rounded-2xl p-4 h-[210px] cursor-pointer ${errors.imageWithoutLabel ? 'border-red-300' : 'border-[#EFEFEF]'
+                }`}>
                 <input
                   type="file"
                   accept="image/*"
@@ -518,9 +505,8 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
           <label className='flex flex-col w-full'>
             <span className='text-[#7C7C7C] text-[14px] mb-1'>Rank Name *</span>
             <input
-              className={`border rounded-2xl py-[14px] px-[18px] ${
-                errors.name ? 'border-red-300 focus:border-red-500' : 'border-[#EEEEEE] focus:border-[#352AA4]'
-              } focus:outline-none transition-colors`}
+              className={`border rounded-2xl py-[14px] px-[18px] ${errors.name ? 'border-red-300 focus:border-red-500' : 'border-[#EEEEEE] focus:border-[#352AA4]'
+                } focus:outline-none transition-colors`}
               type="text"
               placeholder='Enter rank name'
               value={name}
@@ -533,15 +519,14 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
 
           <label className='flex flex-col w-full'>
             <span className='text-[#7C7C7C] text-[14px] mb-1'>
-              Description 
+              Description
               <span className="text-xs text-gray-400 ml-1">
                 ({description.length}/50000)
               </span>
             </span>
             <textarea
-              className={`border rounded-2xl py-[14px] px-[18px] min-h-[100px] resize-none ${
-                errors.description ? 'border-red-300 focus:border-red-500' : 'border-[#EEEEEE] focus:border-[#352AA4]'
-              } focus:outline-none transition-colors`}
+              className={`border rounded-2xl py-[14px] px-[18px] min-h-[100px] resize-none ${errors.description ? 'border-red-300 focus:border-red-500' : 'border-[#EEEEEE] focus:border-[#352AA4]'
+                } focus:outline-none transition-colors`}
               placeholder='Enter rank description'
               value={description}
               onChange={handleDescriptionChange}
@@ -556,9 +541,8 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
             <label className='flex flex-col w-full'>
               <span className='text-[#7C7C7C] text-[14px] mb-1'>Min Value *</span>
               <input
-                className={`border rounded-2xl py-[14px] px-[18px] ${
-                  errors.min ? 'border-red-300 focus:border-red-500' : 'border-[#EEEEEE] focus:border-[#352AA4]'
-                } focus:outline-none transition-colors`}
+                className={`border rounded-2xl py-[14px] px-[18px] ${errors.min ? 'border-red-300 focus:border-red-500' : 'border-[#EEEEEE] focus:border-[#352AA4]'
+                  } focus:outline-none transition-colors`}
                 type="number"
                 placeholder='0'
                 value={min}
@@ -573,9 +557,8 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
             <label className='flex flex-col w-full'>
               <span className='text-[#7C7C7C] text-[14px] mb-1'>Max Value *</span>
               <input
-                className={`border rounded-2xl py-[14px] px-[18px] ${
-                  errors.max ? 'border-red-300 focus:border-red-500' : 'border-[#EEEEEE] focus:border-[#352AA4]'
-                } focus:outline-none transition-colors`}
+                className={`border rounded-2xl py-[14px] px-[18px] ${errors.max ? 'border-red-300 focus:border-red-500' : 'border-[#EEEEEE] focus:border-[#352AA4]'
+                  } focus:outline-none transition-colors`}
                 type="number"
                 placeholder='100'
                 value={max}
@@ -634,14 +617,13 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
           >
             Cancel
           </button>
-          <button 
-            className={`font-semibold py-2 px-6 rounded-full transition-colors duration-300 flex items-center gap-2 ${
-              isFormValid && !isSubmitting
-                ? 'bg-[#352AA4] hover:bg-[#2a1f7a] text-white' 
+          <button
+            className={`font-semibold py-2 px-6 rounded-full transition-colors duration-300 flex items-center gap-2 ${isFormValid && !isSubmitting
+                ? 'bg-[#352AA4] hover:bg-[#2a1f7a] text-white'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            }`}
+              }`}
             type="submit"
-            // disabled={!isFormValid || isSubmitting}
+          // disabled={!isFormValid || isSubmitting}
           >
             {isSubmitting && (
               <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -649,10 +631,10 @@ const AddRanks = ({ open, onClose, onSubmit, initialData = null }) => {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
             )}
-            {isSubmitting 
-              ? 'Saving...' 
-              : initialData 
-                ? 'Update Rank' 
+            {isSubmitting
+              ? 'Saving...'
+              : initialData
+                ? 'Update Rank'
                 : 'Create Rank'
             }
           </button>

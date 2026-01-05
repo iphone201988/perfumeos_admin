@@ -44,17 +44,8 @@ const LevelCategoryList = ({
 
   return (
     <div className="bg-gradient-to-br from-[#E1F8F8] to-[#D4E8F8] rounded-[30px] shadow-lg overflow-hidden">
-      {/* <div className="p-6 border-b border-white/50">
-        <div className="flex items-center justify-between">
-          <h2 className="text-[20px] font-bold text-[#352AA4]">Level Categories</h2>
-          <span className="bg-[#352AA4] text-white px-3 py-1 rounded-full text-sm font-medium">
-            {total || categories.length}
-          </span>
-        </div>
-      </div> */}
-
       {/* Scrollable Content */}
-      <div 
+      <div
         ref={scrollContainerRef}
         className="overflow-y-auto p-6 pt-4"
         style={{ maxHeight: 'calc(100vh - 280px)' }}
@@ -77,11 +68,10 @@ const LevelCategoryList = ({
               {categories.map((category) => (
                 <div
                   key={category._id}
-                  className={`bg-white rounded-xl p-4 cursor-pointer transition-all ${
-                    selectedCategory?._id === category._id
+                  className={`bg-white rounded-xl p-4 cursor-pointer transition-all ${selectedCategory?._id === category._id
                       ? 'border-2 border-[#352AA4] shadow-md'
                       : 'border-2 border-transparent hover:border-gray-300'
-                  }`}
+                    }`}
                   onClick={() => onSelectCategory(category)}
                 >
                   <div className="flex items-start justify-between gap-2">

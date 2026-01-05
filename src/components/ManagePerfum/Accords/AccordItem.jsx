@@ -34,15 +34,14 @@ const AccordItem = React.memo(({ accord, index, onUpdate, onRemove }) => {
     }, [accord.backgroundColor]);
 
     const debouncedUpdate = useCallback((field, value) => {
-        console.log(field, value)
         // if (updateTimeoutRef.current) {
         //     clearTimeout(updateTimeoutRef.current);
         // }
 
         // updateTimeoutRef.current = setTimeout(() => {
-            // if (isMountedRef.current) {
-                onUpdate(index, field, value);
-            // }
+        // if (isMountedRef.current) {
+        onUpdate(index, field, value);
+        // }
         // }, 10);
     }, [index, onUpdate]);
 

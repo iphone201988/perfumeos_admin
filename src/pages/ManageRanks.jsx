@@ -183,7 +183,7 @@ const ManageRanks = () => {
                         <h6 className="text-[20px] font-semibold text-[#352AA4]">
                             All Ranks ({totalRanks})
                         </h6>
-                        
+
                     </div>
                     <SearchBar
                         searchTerm={searchTerm}
@@ -206,7 +206,6 @@ const ManageRanks = () => {
                             onClick={() => {
                                 setSelectedRanks(row);
                                 setViewRanksPopup(true);
-                                console.log('View rank:', row);
                             }}
                         >
                             <img src={view_icon} alt="View" className="w-5 h-5" />

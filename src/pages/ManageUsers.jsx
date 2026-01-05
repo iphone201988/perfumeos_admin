@@ -39,7 +39,7 @@ const ManageUsers = () => {
     sort: sortValue
   });
   if (isLoading) {
-     return <Loader message="Fetching Users" />;
+    return <Loader message="Fetching Users" />;
   }
 
   // Process users data and add serial numbers
@@ -54,7 +54,7 @@ const ManageUsers = () => {
     status: user.isDeleted ? 'Suspended' : 'Active',
     joinedOn: user.createdAt ? new Date(user.createdAt).toLocaleDateString() : user.joinedOn,
     image: user?.profileImage ? `${import.meta.env.VITE_BASE_URL}${user?.profileImage}` : user_icon,
-    fullname:  user?.firstName && user?.lastName ? `${user?.firstName} ${user?.lastName}` : user?.fullname || ''
+    fullname: (user?.firstName && user?.lastName) ? `${user?.firstName} ${user?.lastName}` : user?.firstName || ''
   }));
 
   const columns = [
@@ -127,14 +127,14 @@ const ManageUsers = () => {
           <h6 className="text-[20px] font-semibold text-[#352AA4]">
             All Users ({totalUsers})
           </h6>
-         
+
         </div>
         <SearchBar
           searchTerm={searchTerm}
           onSearchChange={handleSearch}
           sortValue={sortValue}
           onSortChange={handleSortChange}
-          loader={searchTerm !== debouncedSearchTerm }
+          loader={searchTerm !== debouncedSearchTerm}
         />
       </div>
 
@@ -145,10 +145,7 @@ const ManageUsers = () => {
           <button
             className="ml-auto cursor-pointer p-2 hover:bg-gray-100 rounded"
             title={`View ${row.fullname}`}
-            onClick={() => {
-              handleViewRedirect(row._id);
-              console.log('View user:', row);
-            }}
+            onClick={() => handleViewRedirect(row._id)}
           >
             <img src={view_icon} alt="View" className="w-5 h-5" />
           </button>

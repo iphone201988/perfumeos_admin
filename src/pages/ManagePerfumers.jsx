@@ -192,7 +192,6 @@ const ManagePerfumers = () => {
                             onClick={() => {
                                 setSelectedPerfumers(row);
                                 setViewPerfumersPopup(true);
-                                console.log('View perfumer:', row);
                             }}
                         >
                             <img src={view_icon} alt="View" className="w-5 h-5" />

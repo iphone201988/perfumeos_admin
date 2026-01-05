@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import addpic_icon from "../../assets/icons/addpic-icon.svg";
 import user_icon from "../../assets/icons/user-icon.svg";
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetUserDetailsQuery, useSupendUserMutation, useUpdateUserMutation } from "../../api";
+import { useGetUserDetailsQuery, useSuspendUserMutation, useUpdateUserMutation } from "../../api";
 import { calculateAge } from "../../Utils/function";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import Loader from "../Loader/Loader";
@@ -33,7 +33,7 @@ const UserDetails = () => {
   }, [params, navigate]);
 
   const { data: userResponse, isLoading, error, refetch } = useGetUserDetailsQuery(params.id);
-  const [suspendAccount, { isLoading: isSuspendLoading }] = useSupendUserMutation();
+  const [suspendAccount, { isLoading: isSuspendLoading }] = useSuspendUserMutation();
   const [updateUser, { isLoading: isUpdateLoading }] = useUpdateUserMutation();
   const data = userResponse?.data;
 
@@ -280,8 +280,8 @@ const UserDetails = () => {
                   setPopup(data?.suspendAccount ? "reactivate" : "suspend")
                 }
                 className={`text-sm border-2 rounded-full px-6 py-3 transition-all duration-300 hover:shadow-md font-medium ${data?.suspendAccount
-                    ? 'bg-green-500 text-white border-green-500 hover:bg-green-600'
-                    : 'bg-yellow-500 text-white border-yellow-500 hover:bg-yellow-600'
+                  ? 'bg-green-500 text-white border-green-500 hover:bg-green-600'
+                  : 'bg-yellow-500 text-white border-yellow-500 hover:bg-yellow-600'
                   }`}
                 type="button"
                 disabled={isSuspendLoading}
@@ -541,8 +541,8 @@ const UserDetails = () => {
                         <label
                           key={smell}
                           className={`flex items-center gap-2 cursor-pointer px-4 py-2.5 rounded-xl border-2 transition-all ${formData.enjoySmell.includes(smell)
-                              ? 'bg-[#352AA4] text-white border-[#352AA4]'
-                              : 'bg-white text-gray-700 border-gray-200 hover:border-[#352AA4]/50'
+                            ? 'bg-[#352AA4] text-white border-[#352AA4]'
+                            : 'bg-white text-gray-700 border-gray-200 hover:border-[#352AA4]/50'
                             }`}
                         >
                           <input

@@ -6,7 +6,7 @@ import { useDeletePerfumeMutation, useGetPerfumeByIdQuery } from "../../api";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import Loader from "../Loader/Loader";
 
-const PerfumDetails = () => {
+const PerfumeDetails = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { data: perfumeData, isLoading, error } = useGetPerfumeByIdQuery(params.id);
@@ -31,7 +31,7 @@ const PerfumDetails = () => {
   // Combine all images (primary image + additional images)
   const allImages = [
     perfume.image,
-    ...perfume.images.filter(image => image !== perfume.image) // Filter out primary image
+    ...(perfume.images || []).filter(image => image !== perfume.image) // Filter out primary image
   ].filter(Boolean); // Remove null/undefined values
 
   const onEdit = () => {
@@ -345,12 +345,36 @@ const PerfumDetails = () => {
                 Season
               </h3>
               <div className="space-y-[12px]">
-                {perfume.seasons?.map((season) => (
+                {/* {perfume.seasons?.map((season) => (
                   <div key={season._id} className="flex justify-between items-center bg-gray-50 rounded-lg px-[16px] py-[12px] hover:bg-gray-100 transition-colors">
                     <span className="font-medium text-gray-700 capitalize">{season.name}</span>
                     <span className="text-[#352AA4] font-bold">{Math.round(parseFloat(season.width))}%</span>
                   </div>
-                ))}
+                ))} */}
+                <div className="flex justify-between items-center bg-gray-50 rounded-lg px-[16px] py-[12px] hover:bg-gray-100 transition-colors">
+                  <span className="font-medium text-gray-700 capitalize">{"Spring"}</span>
+                  <span className="text-[#352AA4] font-bold">
+                    {((perfume?.seasonsVote?.spring * 100) / perfume?.seasonVotes?.total) || 0}%
+                  </span>
+                </div>
+                <div className="flex justify-between items-center bg-gray-50 rounded-lg px-[16px] py-[12px] hover:bg-gray-100 transition-colors">
+                  <span className="font-medium text-gray-700 capitalize">{"Summer"}</span>
+                  <span className="text-[#352AA4] font-bold">
+                    {((perfume?.seasonsVote?.summer * 100) / perfume?.seasonVotes?.total) || 0}%
+                  </span>
+                </div>
+                <div className="flex justify-between items-center bg-gray-50 rounded-lg px-[16px] py-[12px] hover:bg-gray-100 transition-colors">
+                  <span className="font-medium text-gray-700 capitalize">{"Fall"}</span>
+                  <span className="text-[#352AA4] font-bold">
+                    {((perfume?.seasonsVote?.fall * 100) / perfume?.seasonVotes?.total) || 0}%
+                  </span>
+                </div>
+                <div className="flex justify-between items-center bg-gray-50 rounded-lg px-[16px] py-[12px] hover:bg-gray-100 transition-colors">
+                  <span className="font-medium text-gray-700 capitalize">{"Winter"}</span>
+                  <span className="text-[#352AA4] font-bold">
+                    {((perfume?.seasonsVote?.winter * 100) / perfume?.seasonVotes?.total) || 0}%
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -494,8 +518,8 @@ const PerfumDetails = () => {
                       setSelectedImageIndex(index);
                     }}
                     className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-300 hover:scale-110 ${selectedImageIndex === index
-                        ? 'border-white ring-2 ring-white'
-                        : 'border-white/30 hover:border-white/70'
+                      ? 'border-white ring-2 ring-white'
+                      : 'border-white/30 hover:border-white/70'
                       }`}
                   >
                     <img
@@ -552,4 +576,4 @@ const PerfumDetails = () => {
   );
 };
 
-export default PerfumDetails;
+export default PerfumeDetails;
