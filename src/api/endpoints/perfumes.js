@@ -3,15 +3,25 @@ import { apis, Tags } from "../base";
 const perfumesApi = apis.injectEndpoints({
     endpoints: (builder) => ({
         getPerfume: builder.query({
-            query: ({ page, limit, search, sort }) => {
+            query: ({ page, limit, search, sort, brandId }) => {
                 const params = new URLSearchParams();
                 if (page) params.append("page", page.toString());
                 if (limit) params.append("limit", limit.toString());
                 if (search) params.append("search", search);
                 if (sort) params.append("sort", sort);
+                if (brandId) params.append("brandId", brandId);
                 return `/admin/perfumes?${params.toString()}`;
             },
             providesTags: [Tags.PERFUME],
+        }),
+        getPerfumeOptions: builder.query({
+            query: ({ page = 1, limit = 20, search = "" }) => {
+                const params = new URLSearchParams();
+                params.append("page", page);
+                params.append("limit", limit);
+                if (search) params.append("search", search);
+                return `/admin/perfumes-optional?${params.toString()}`;
+            },
         }),
         getPerfumeById: builder.query({
             query: (id) => ({
@@ -189,6 +199,8 @@ const perfumesApi = apis.injectEndpoints({
 
 export const {
     useGetPerfumeQuery,
+    useGetPerfumeOptionsQuery,
+    useLazyGetPerfumeOptionsQuery,
     useGetPerfumeByIdQuery,
     useGetPerfumeForEditByIdQuery,
     useUpdatePerfumeMutation,

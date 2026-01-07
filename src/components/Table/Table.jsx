@@ -40,7 +40,7 @@ const Table = ({ columns, data, renderActions }) => {
             />
             <div className="absolute inset-0 rounded-full bg-[#352AA4]/0 group-hover:bg-[#352AA4]/10 transition-all duration-300"></div>
           </div>
-          <span className="capitalize font-medium text-gray-800">{row.name}</span>
+          {/* <span className="capitalize font-medium text-gray-800">{row.name}</span> */}
         </div>
       );
     }

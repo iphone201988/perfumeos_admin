@@ -8,7 +8,7 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
   const token = localStorage.getItem("token");
   const location = useLocation();
   const navigator = useNavigate();
-  
+
   const {
     data,
     error,
@@ -20,7 +20,7 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
   // ✅ Updated dynamic page title matching your router
   const pageTitle = useMemo(() => {
     const path = location.pathname;
-    
+
     // Define route to title mapping (matching your actual routes)
     const routeTitles = {
       '/': 'Dashboard',
@@ -62,6 +62,9 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     if (path.startsWith('/rank')) return 'Manage Ranks';
     if (path.startsWith('/setting')) return 'Settings';
     if (path.startsWith('/level-quiz')) return 'Level Quiz';
+    if (path.startsWith('/brands')) return 'Manage Brands';
+    if (path.startsWith('/reviews')) return 'Manage Reviews';
+    if (path.match(/^\/reviews\/[^/]+\/edit$/)) return 'Edit Review';
 
     // Default fallback
     return 'Dashboard';
@@ -77,7 +80,7 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     if (error) {
       console.error("Header error:", error);
       toast.error(error?.data?.message || 'Something went wrong');
-      
+
       if (error.status === 401) {
         localStorage.clear();
         navigator('/login');
@@ -118,7 +121,7 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
         <button
           onClick={handleProfileClick}
           className="flex items-center gap-[8px] hover:bg-white/30 rounded-lg p-2 transition-colors group"
-         
+
         >
           <img
             className='w-[50px] h-[50px] rounded-full border-4 border-[#67E9E9] object-cover group-hover:border-[#352AA4] transition-colors'
@@ -133,7 +136,7 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
               (admin)
             </p>
           </div>
-          
+
           {/* <svg 
             className="w-4 h-4 text-[#7C7C7C] group-hover:text-[#352AA4] transition-colors max-sm:hidden" 
             fill="none" 

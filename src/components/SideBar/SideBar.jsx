@@ -16,6 +16,8 @@ import rank_icon from '../../assets/icons/rank-icon.svg';
 import note_icon from '../../assets/icons/note-icon.svg';
 import perfumer_icon from '../../assets/icons/perfumer-icon.svg';
 import feedback_icon from '../../assets/icons/feedback-icon.svg';
+import review_icon from '../../assets/icons/review-icon.svg';
+import brand_icon from '../../assets/icons/brand-icon.svg'; // Reuse perfume icon for now or use another generic one if available
 
 const SideBar = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
   const location = useLocation();
@@ -36,6 +38,8 @@ const SideBar = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     { to: '/', label: 'Dashboard', icon: dashboard_icon },
     { to: '/users', label: 'Manage Users', icon: user_icon },
     { to: '/perfumes', label: 'Manage Perfumes', icon: perfume_icon },
+    { to: '/brands', label: 'Manage Brands', icon: brand_icon },
+    { to: '/reviews', label: 'Manage Reviews', icon: review_icon },
     { to: '/notes', label: 'Manage Notes', icon: note_icon },
     { to: '/perfumers', label: 'Manage Perfumers', icon: perfumer_icon },
     { to: '/quiz', label: 'Manage Play With Friend Quiz', icon: quiz_icon },

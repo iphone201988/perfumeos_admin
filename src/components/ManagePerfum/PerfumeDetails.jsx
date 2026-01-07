@@ -74,13 +74,17 @@ const PerfumeDetails = () => {
       setIsFullscreen(false);
     }
   };
+  const backButton = () => {
+    //privious page
+    navigate(-1);
+  };
 
   return (
     <div className="max-w-7xl mx-auto" onKeyDown={handleKeyDown} tabIndex={0}>
       {/* Action Buttons */}
       <div className="flex justify-end gap-[16px] mb-[32px] flex-wrap">
         <button
-          onClick={() => navigate("/perfumes")}
+          onClick={backButton}
           className="bg-white text-[#352AA4] text-sm border-2 border-[#352AA4]/20 rounded-full px-6 py-3 transition-all duration-300 hover:bg-gray-50 hover:border-[#352AA4] hover:shadow-md flex items-center gap-2 font-medium disabled:opacity-60 disabled:cursor-not-allowed"
           type="button"
           disabled={isLoading}
@@ -204,8 +208,8 @@ const PerfumeDetails = () => {
               <div className="grid grid-cols-1 gap-[16px]">
                 {/* Brand */}
                 <div className="flex items-center gap-3 bg-white/80 rounded-2xl p-[16px] shadow-sm border border-[#352AA4]/10">
-                  <div className="w-10 h-10 bg-gradient-to-br from-[#352AA4] to-[#5c4ec9] rounded-full flex items-center justify-center text-white font-bold text-sm">
-                    B
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                  <img src={getImageUrl(perfume.brandImage)} alt="" />
                   </div>
                   <div>
                     <span className="text-[#7C7C7C] text-xs block">Brand Name</span>

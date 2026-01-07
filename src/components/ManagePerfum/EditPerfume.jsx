@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useGetNotesQuery, useGetPerfumeForEditByIdQuery, useGetPerfumersQuery, useUpdatePerfumeMutation } from "../../api";
+import { useGetNotesQuery, useGetOptionalBrandsQuery, useGetPerfumeForEditByIdQuery, useGetPerfumersQuery, useUpdatePerfumeMutation } from "../../api";
 import MultipleImageUploader from "../Form/MultipleImageUploader";
 import FormField from "../Form/FormField";
 import { useNavigate, useParams } from "react-router-dom";
@@ -25,6 +25,7 @@ const EditPerfume = () => {
   const { data: perfumeData, isLoading, error } = useGetPerfumeForEditByIdQuery(params.id);
   const { data: notesResponse, isLoading: notesLoading } = useGetNotesQuery();
   const { data: perfumersResponse, isLoading: perfumersLoading } = useGetPerfumersQuery();
+  const { data: optionalBrandsResponse, isLoading: optionalBrandsLoading } = useGetOptionalBrandsQuery();
   const perfume = useMemo(() => perfumeData?.data || null, [perfumeData]);
   const [updating, setUpdating] = useState(false);
   const [updatePerfume, { isLoading: updateLoading }] = useUpdatePerfumeMutation();
@@ -77,11 +78,7 @@ const EditPerfume = () => {
 
       case 'brand':
         if (!value || value.trim() === '') {
-          // error = 'Brand name is required';
-        } else if (value.trim().length < 2) {
-          // error = 'Brand name must be at least 2 characters';
-        } else if (value.trim().length > 50) {
-          // error = 'Brand name must be less than 50 characters';
+          error = 'Brand is required';
         }
         break;
 
@@ -163,7 +160,7 @@ const EditPerfume = () => {
 
       const formData = {
         name: perfume.name || "",
-        brand: perfume.brand || "",
+        brand: perfume.brandId || perfume.brand || "",
         description: perfume.description || "",
         intendedFor: perfume.intendedFor || [],
         yearRelease: perfume.year || "",
@@ -258,6 +255,14 @@ const EditPerfume = () => {
       label: note.name,
     }));
   }, [notesResponse?.data]);
+
+  const brandOptions = useMemo(() => {
+    if (!optionalBrandsResponse?.data) return [];
+    return optionalBrandsResponse.data.map((brand) => ({
+      value: brand._id,
+      label: brand.name,
+    }));
+  }, [optionalBrandsResponse?.data]);
 
   const perfumerOptions = useMemo(() => {
     if (!perfumersResponse?.data) return [];
@@ -644,16 +649,28 @@ const EditPerfume = () => {
                     )}
                   </div>
 
-                  <FormField
-                    label="Perfume Brand Name"
-                    name="brand"
-                    value={form.brand}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    placeholder="Enter brand name"
-                    error={touched.brand && formErrors.brand}
-                    required
-                  />
+                  <div className="w-full">
+                    <div className="flex flex-col">
+                      <label className="text-[#7C7C7C] text-[14px] font-medium mb-1">Perfume Brand Name</label>
+                      <Select
+                        options={brandOptions}
+                        value={brandOptions.find(opt => opt.value === form.brand) || null}
+                        onChange={(selected) => {
+                          setForm(prev => ({ ...prev, brand: selected ? selected.value : '' }));
+                          setFormErrors(prev => ({ ...prev, brand: '' }));
+                        }}
+                        placeholder="Select brand..."
+                        styles={getCustomStyles(touched.brand && formErrors.brand)}
+                        filterOption={customFilterOption}
+                        isLoading={optionalBrandsLoading}
+                      />
+                      {touched.brand && formErrors.brand && (
+                        <span className="text-red-500 text-xs mt-1 font-medium flex items-center gap-1">
+                          <span>⚠</span> {formErrors.brand}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Intended For and Description */}

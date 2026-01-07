@@ -7,7 +7,8 @@ const ImageUploader = ({
     error = null,
     required = false,
     maxSizeInMB = 5,
-    allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+    allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
+    label = "Perfume Image"
 }) => {
     const inputRef = useRef(null);
 
@@ -41,7 +42,7 @@ const ImageUploader = ({
     return (
         <div className="flex flex-col">
             <label className="text-[#7C7C7C] text-[14px] mb-1">
-                Perfume Image {required && <span className="text-red-500">*</span>}
+                {label} {required && <span className="text-red-500">*</span>}
             </label>
             <label
                 htmlFor="image-upload"

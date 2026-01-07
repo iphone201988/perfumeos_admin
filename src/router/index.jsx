@@ -23,6 +23,11 @@ import LevelQuizzes from "../pages/LevelQuizzes";
 import LevelQuestions from "../pages/LevelQuestions";
 import ManageFAQ from "../pages/ManageFAQ";
 import ManageFeedback from "../pages/ManageFeedback";
+import ManageBrands from "../pages/ManageBrands";
+import AddBrand from "../components/ManageBrand/AddBrand";
+import BrandDetails from "../components/ManageBrand/BrandDetails";
+import ManageReviews from "../pages/ManageReviews";
+import EditReview from "../components/ManageReview/EditReview";
 
 const router = createBrowserRouter([
     {
@@ -58,6 +63,22 @@ const router = createBrowserRouter([
             {
                 path: "perfumes",
                 element: <ManagePerfum />,
+            },
+            {
+                path: "brands",
+                element: <ManageBrands />,
+            },
+            {
+                path: "brands/add",
+                element: <AddBrand />,
+            },
+            {
+                path: "brands/:id",
+                element: <BrandDetails />,
+            },
+            {
+                path: "brands/:id/edit",
+                element: <AddBrand />,
             },
             {
                 path: "perfumes/:id",
@@ -118,6 +139,14 @@ const router = createBrowserRouter([
             {
                 path: '/feedback',
                 element: <ManageFeedback />
+            },
+            {
+                path: '/reviews',
+                element: <ManageReviews />
+            },
+            {
+                path: '/reviews/:id/edit',
+                element: <EditReview />
             }
         ],
     },

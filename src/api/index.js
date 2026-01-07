@@ -8,6 +8,8 @@ import "./endpoints/perfumes";
 import "./endpoints/gamification";
 import "./endpoints/common";
 import "./endpoints/levelQuiz";
+import "./endpoints/brands";
+import "./endpoints/reviews";
 
 export { apis };
 
@@ -20,3 +22,5 @@ export * from "./endpoints/perfumes";
 export * from "./endpoints/gamification";
 export * from "./endpoints/common";
 export * from "./endpoints/levelQuiz";
+export * from "./endpoints/brands";
+export * from "./endpoints/reviews";

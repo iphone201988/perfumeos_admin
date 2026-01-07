@@ -18,6 +18,10 @@ export const Tags = {
     LEVEL_QUIZ: "LevelQuiz",
     LEVEL_QUESTION: "LevelQuestion",
     FAQ: "FAQ",
+    BRAND: "BRAND",
+    BRANDBYID: "BRANDBYID",
+    REVIEW: "REVIEW",
+    REVIEWBYID: "REVIEWBYID",
 };
 
 export const apis = createApi({
@@ -48,6 +52,10 @@ export const apis = createApi({
         Tags.LEVEL_QUIZ,
         Tags.LEVEL_QUESTION,
         Tags.FAQ,
+        Tags.BRAND,
+        Tags.BRANDBYID,
+        Tags.REVIEW,
+        Tags.REVIEWBYID,
     ],
     endpoints: () => ({}),
 });

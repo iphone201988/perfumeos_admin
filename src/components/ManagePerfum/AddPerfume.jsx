@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useCreatePerfumeMutation, useGetNotesQuery, useGetPerfumersQuery } from "../../api";
+import { useCreatePerfumeMutation, useGetNotesQuery, useGetOptionalBrandsQuery, useGetPerfumersQuery } from "../../api";
 import ImageUploader from "../Form/ImageUploader";
 import FormField from "../Form/FormField";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +23,7 @@ const AddPerfume = () => {
     const navigate = useNavigate();
     const { data: notesResponse, isLoading: notesLoading } = useGetNotesQuery();
     const { data: perfumersResponse, isLoading: perfumersLoading } = useGetPerfumersQuery();
+    const { data: optionalBrandsResponse, isLoading: optionalBrandsLoading } = useGetOptionalBrandsQuery();
     const [createPerfume] = useCreatePerfumeMutation();
     const [creating, setCreating] = useState(false);
     const [imageError, setImageError] = useState('');
@@ -83,11 +84,7 @@ const AddPerfume = () => {
 
             case 'brand':
                 if (!value || value.trim() === '') {
-                    error = 'Brand name is required';
-                } else if (value.trim().length < 2) {
-                    error = 'Brand name must be at least 2 characters';
-                } else if (value.trim().length > 50) {
-                    error = 'Brand name must be less than 50 characters';
+                    error = 'Brand is required';
                 }
                 break;
 
@@ -196,6 +193,14 @@ const AddPerfume = () => {
             label: note.name,
         }));
     }, [notesResponse?.data]);
+
+    const brandOptions = React.useMemo(() => {
+        if (!optionalBrandsResponse?.data) return [];
+        return optionalBrandsResponse.data.map((brand) => ({
+            value: brand._id,
+            label: brand.name,
+        }));
+    }, [optionalBrandsResponse?.data]);
 
     const perfumerOptions = React.useMemo(() => {
         if (!perfumersResponse?.data) return [];
@@ -569,20 +574,26 @@ const AddPerfume = () => {
                                         )}
                                     </div>
                                     <div className="w-full">
-                                        <FormField
-                                            label="Perfume Brand Name"
-                                            name="brand"
-                                            value={form.brand}
-                                            onChange={handleInputChange}
-                                            onBlur={handleBlur}
-                                            placeholder="Enter brand name"
-                                            error={touched.brand && formErrors.brand}
-                                        />
-                                        {touched.brand && formErrors.brand && (
-                                            <span className="text-red-500 text-xs mt-1 font-medium flex items-center gap-1">
-                                                <span>⚠</span> {formErrors.brand}
-                                            </span>
-                                        )}
+                                        <div className="flex flex-col">
+                                            <label className="text-[#7C7C7C] text-[14px] font-medium mb-1">Perfume Brand Name</label>
+                                            <Select
+                                                options={brandOptions}
+                                                value={brandOptions.find(opt => opt.value === form.brand) || null}
+                                                onChange={(selected) => {
+                                                    setForm(prev => ({ ...prev, brand: selected ? selected.value : '' }));
+                                                    setFormErrors(prev => ({ ...prev, brand: '' }));
+                                                }}
+                                                placeholder="Select brand..."
+                                                styles={getCustomStyles(touched.brand && formErrors.brand)}
+                                                filterOption={customFilterOption}
+                                                isLoading={optionalBrandsLoading}
+                                            />
+                                            {touched.brand && formErrors.brand && (
+                                                <span className="text-red-500 text-xs mt-1 font-medium flex items-center gap-1">
+                                                    <span>⚠</span> {formErrors.brand}
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
