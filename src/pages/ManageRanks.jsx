@@ -18,7 +18,7 @@ import ViewRanks from '../components/ManageRanks/ViewRanks';
 
 const ManageRanks = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [sortValue, setSortValue] = useState('date_desc');
+    const [sortValue, setSortValue] = useState('createdAt_desc');
     const [currentPage, setCurrentPage] = useState(1);
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
     const [addRanksPopup, setAddRanksPopup] = useState(false);
@@ -167,8 +167,8 @@ const ManageRanks = () => {
         );
     }
     const options = [
-        { label: "Min to Max", value: "date_desc" },
-        { label: "Max to Min", value: "date_asc" },
+        { label: "Newest", value: "createdAt_desc" },
+        { label: "Oldest", value: "createdAt_asc" },
         { label: "A-Z", value: "name_asc" },
         { label: "Z-A", value: "name_desc" }
     ];

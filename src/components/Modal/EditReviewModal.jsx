@@ -16,6 +16,7 @@ const EditReviewModal = ({ isOpen, onClose, reviewData }) => {
         sillage: "",
         gender: "",
         price: "",
+        images: [],
     });
 
 
@@ -39,9 +40,30 @@ const EditReviewModal = ({ isOpen, onClose, reviewData }) => {
                     if (typeof id === 'object' && id._id) return id._id;
                     return id;
                 }) || [],
+                images: reviewData.images || [],
             });
         }
     }, [reviewData]);
+
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return "";
+        if (imagePath.startsWith('http')) return imagePath;
+
+        // Fix for "undefined" prefix in image paths
+        let cleanPath = imagePath;
+        if (cleanPath.startsWith('undefined/')) {
+            cleanPath = cleanPath.replace('undefined/', '');
+        }
+
+        return `${import.meta.env.VITE_BASE_URL}${cleanPath}`;
+    };
+
+    const handleDeleteImage = (index) => {
+        setForm(prev => ({
+            ...prev,
+            images: prev.images.filter((_, i) => i !== index)
+        }));
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -95,26 +117,28 @@ const EditReviewModal = ({ isOpen, onClose, reviewData }) => {
                             {/* Review Content Section */}
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold text-gray-800">Content</h3>
-                                <div className="flex gap-4 justify-between">
+                                <div className="flex gap-4">
                                     <FormField
                                         label="Title"
                                         name="title"
                                         value={form.title}
                                         onChange={handleInputChange}
                                         placeholder="Review Title"
+                                        className="flex-1"
                                     />
 
-                                    <div>
-                                        <label className="text-[#374151] text-[14px] font-medium mb-1 block">Rating (0-5)</label>
-                                        <input
-                                            type="number"
-                                            name="rating"
-                                            value={form.rating}
-                                            onChange={handleInputChange}
-                                            min="0" max="5" step="0.1"
-                                            className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-[#352AA4] focus:ring-2 focus:ring-[#352AA4]/10 outline-none"
-                                        />
-                                    </div>
+                                    <FormField
+                                        label="Rating (0-5)"
+                                        name="rating"
+                                        type="number"
+                                        value={form.rating}
+                                        onChange={handleInputChange}
+                                        placeholder="0-5"
+                                        min="0"
+                                        max="5"
+                                        step="1"
+                                        className="flex-1"
+                                    />
                                 </div>
                                 <FormField
                                     label="Review"
@@ -137,13 +161,14 @@ const EditReviewModal = ({ isOpen, onClose, reviewData }) => {
                                     <div>
                                         <div className="flex justify-between mb-2">
                                             <label className="text-sm font-semibold text-gray-700">Longevity</label>
-                                            <span className="text-sm font-bold text-[#352AA4]">{form.longevity || 0}%</span>
+                                            <span className="text-sm font-bold text-[#352AA4]">{Math.round((form.longevity || 0) * 100)}%</span>
                                         </div>
                                         <input
                                             type="range"
                                             name="longevity"
                                             min="0"
-                                            max="100"
+                                            max="1"
+                                            step="0.01"
                                             value={form.longevity || 0}
                                             onChange={handleInputChange}
                                             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#352AA4]"
@@ -158,13 +183,14 @@ const EditReviewModal = ({ isOpen, onClose, reviewData }) => {
                                     <div>
                                         <div className="flex justify-between mb-2">
                                             <label className="text-sm font-semibold text-gray-700">Sillage</label>
-                                            <span className="text-sm font-bold text-[#352AA4]">{form.sillage || 0}%</span>
+                                            <span className="text-sm font-bold text-[#352AA4]">{Math.round((form.sillage || 0) * 100)}%</span>
                                         </div>
                                         <input
                                             type="range"
                                             name="sillage"
                                             min="0"
-                                            max="100"
+                                            max="1"
+                                            step="0.01"
                                             value={form.sillage || 0}
                                             onChange={handleInputChange}
                                             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#352AA4]"
@@ -179,13 +205,14 @@ const EditReviewModal = ({ isOpen, onClose, reviewData }) => {
                                     <div>
                                         <div className="flex justify-between mb-2">
                                             <label className="text-sm font-semibold text-gray-700">Gender</label>
-                                            <span className="text-sm font-bold text-[#352AA4]">{form.gender || 0}%</span>
+                                            <span className="text-sm font-bold text-[#352AA4]">{Math.round((form.gender || 0) * 100)}%</span>
                                         </div>
                                         <input
                                             type="range"
                                             name="gender"
                                             min="0"
-                                            max="100"
+                                            max="1"
+                                            step="0.01"
                                             value={form.gender || 0}
                                             onChange={handleInputChange}
                                             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#352AA4]"
@@ -200,13 +227,14 @@ const EditReviewModal = ({ isOpen, onClose, reviewData }) => {
                                     <div>
                                         <div className="flex justify-between mb-2">
                                             <label className="text-sm font-semibold text-gray-700">Value</label>
-                                            <span className="text-sm font-bold text-[#352AA4]">{form.price || 0}%</span>
+                                            <span className="text-sm font-bold text-[#352AA4]">{Math.round((form.price || 0) * 100)}%</span>
                                         </div>
                                         <input
                                             type="range"
                                             name="price"
                                             min="0"
-                                            max="100"
+                                            max="1"
+                                            step="0.01"
                                             value={form.price || 0}
                                             onChange={handleInputChange}
                                             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#352AA4]"
@@ -217,6 +245,38 @@ const EditReviewModal = ({ isOpen, onClose, reviewData }) => {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <hr className="border-gray-100" />
+
+                            {/* Images Section */}
+                            <div>
+                                <h3 className="text-lg font-bold text-[#352AA4] mb-4">Images</h3>
+                                {form.images && form.images.length > 0 ? (
+                                    <div className="flex flex-wrap gap-4">
+                                        {form.images.map((img, idx) => (
+                                            <div key={idx} className="relative group">
+                                                <img
+                                                    src={getImageUrl(img)}
+                                                    alt={`Review preview ${idx + 1}`}
+                                                    className="w-24 h-24 object-cover rounded-xl border border-gray-100 shadow-sm"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleDeleteImage(idx)}
+                                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                                    title="Delete Image"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-sm text-gray-500 italic">No images attached to this review.</p>
+                                )}
                             </div>
 
                             <hr className="border-gray-100" />

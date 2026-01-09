@@ -18,7 +18,7 @@ import AddNote from '../components/ManageNotes/AddNote';
 
 const ManageNotes = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [sortValue, setSortValue] = useState('date_desc');
+    const [sortValue, setSortValue] = useState('createdAt_desc');
     const [currentPage, setCurrentPage] = useState(1);
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
     const [addNotesPopup, setAddNotesPopup] = useState(false);
@@ -154,8 +154,8 @@ const ManageNotes = () => {
         );
     }
     const options = [
-        { label: "Newest", value: "date_desc" },
-        { label: "Oldest", value: "date_asc" },
+        { label: "Newest", value: "createdAt_desc" },
+        { label: "Oldest", value: "createdAt_asc" },
         { label: "A-Z", value: "name_asc" },
         { label: "Z-A", value: "name_desc" }
     ];

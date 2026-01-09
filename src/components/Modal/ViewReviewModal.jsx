@@ -8,9 +8,15 @@ const ViewReviewModal = ({ isOpen, onClose, review }) => {
     const navigate = useNavigate();
     const getImageUrl = (imagePath) => {
         if (!imagePath) return user_icon;
-        return imagePath.startsWith('http')
-            ? imagePath
-            : `${import.meta.env.VITE_BASE_URL}${imagePath}`;
+        if (imagePath.startsWith('http')) return imagePath;
+
+        // Fix for "undefined" prefix in image paths
+        let cleanPath = imagePath;
+        if (cleanPath.startsWith('undefined/')) {
+            cleanPath = cleanPath.replace('undefined/', '');
+        }
+
+        return `${import.meta.env.VITE_BASE_URL}${cleanPath}`;
     };
 
 
@@ -75,13 +81,14 @@ const ViewReviewModal = ({ isOpen, onClose, review }) => {
                             <div>
                                 <div className="flex justify-between mb-2">
                                     <label className="text-sm font-semibold text-gray-700">Longevity</label>
-                                    <span className="text-sm font-bold text-[#352AA4]">{review.longevity || 0}%</span>
+                                    <span className="text-sm font-bold text-[#352AA4]">{Math.round((review.longevity || 0) * 100)}%</span>
                                 </div>
                                 <input
                                     type="range"
                                     readOnly
                                     min="0"
-                                    max="100"
+                                    max="1"
+                                    step="0.01"
                                     value={review.longevity || 0}
                                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-default accent-[#352AA4]"
                                 />
@@ -95,13 +102,14 @@ const ViewReviewModal = ({ isOpen, onClose, review }) => {
                             <div>
                                 <div className="flex justify-between mb-2">
                                     <label className="text-sm font-semibold text-gray-700">Sillage</label>
-                                    <span className="text-sm font-bold text-[#352AA4]">{review.sillage || 0}%</span>
+                                    <span className="text-sm font-bold text-[#352AA4]">{Math.round((review.sillage || 0) * 100)}%</span>
                                 </div>
                                 <input
                                     type="range"
                                     readOnly
                                     min="0"
-                                    max="100"
+                                    max="1"
+                                    step="0.01"
                                     value={review.sillage || 0}
                                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-default accent-[#352AA4]"
                                 />
@@ -115,13 +123,14 @@ const ViewReviewModal = ({ isOpen, onClose, review }) => {
                             <div>
                                 <div className="flex justify-between mb-2">
                                     <label className="text-sm font-semibold text-gray-700">Gender</label>
-                                    <span className="text-sm font-bold text-[#352AA4]">{review.gender || 0}%</span>
+                                    <span className="text-sm font-bold text-[#352AA4]">{Math.round((review.gender || 0) * 100)}%</span>
                                 </div>
                                 <input
                                     type="range"
                                     readOnly
                                     min="0"
-                                    max="100"
+                                    max="1"
+                                    step="0.01"
                                     value={review.gender || 0}
                                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-default accent-[#352AA4]"
                                 />
@@ -135,13 +144,14 @@ const ViewReviewModal = ({ isOpen, onClose, review }) => {
                             <div>
                                 <div className="flex justify-between mb-2">
                                     <label className="text-sm font-semibold text-gray-700">Price</label>
-                                    <span className="text-sm font-bold text-[#352AA4]">{review.price || 0}%</span>
+                                    <span className="text-sm font-bold text-[#352AA4]">{Math.round((review.price || 0) * 100)}%</span>
                                 </div>
                                 <input
                                     type="range"
                                     readOnly
                                     min="0"
-                                    max="100"
+                                    max="1"
+                                    step="0.01"
                                     value={review.price || 0}
                                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-default accent-[#352AA4]"
                                 />
@@ -152,6 +162,34 @@ const ViewReviewModal = ({ isOpen, onClose, review }) => {
                             </div>
                         </div>
                     </div>
+
+                    {/* Review Images Gallery */}
+                    {review.images && review.images.length > 0 && (
+                        <>
+                            <hr className="border-gray-100" />
+                            <div>
+                                <h4 className="text-lg font-bold text-[#352AA4] mb-4">Review Images</h4>
+                                <div className="flex flex-wrap gap-4">
+                                    {review.images.map((img, idx) => (
+                                        <div key={idx} className="relative group">
+                                            <a
+                                                href={getImageUrl(img)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="block overflow-hidden rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+                                            >
+                                                <img
+                                                    src={getImageUrl(img)}
+                                                    alt={`Review image ${idx + 1}`}
+                                                    className="w-32 h-32 object-cover transition-transform duration-300 group-hover:scale-110"
+                                                />
+                                            </a>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </>
+                    )}
 
                     {/* Associations */}
                     {(review.perfumeIds?.length > 0 || review.noteIds?.length > 0) && (

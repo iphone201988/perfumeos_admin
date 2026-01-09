@@ -13,7 +13,7 @@ import ViewBadge from '../components/ManageBadge/ViewBadge';
 
 const ManageBadge = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortValue, setSortValue] = useState('date_desc');
+  const [sortValue, setSortValue] = useState('createdAt_desc');
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [addBadgePopup, setAddBadgePopup] = useState(false);

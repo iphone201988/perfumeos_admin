@@ -12,7 +12,7 @@ import Loader from '../components/Loader/Loader';
 
 const ManagePerfum = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortValue, setSortValue] = useState('date_desc');
+  const [sortValue, setSortValue] = useState('createdAt_desc');
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
@@ -68,7 +68,7 @@ const ManagePerfum = () => {
 
   const columns = [
     { label: '#', accessor: 'sno' },
-    { label: 'Name', accessor: 'image', type: 'image' },
+    { label: 'Name', accessor: 'name', type: 'imageWithName' },
     // { label: 'Name', accessor: 'name' },
     { label: 'Brand', accessor: 'brand' },
     { label: 'Gender ', accessor: 'gender', className: 'capitalize' },
@@ -113,7 +113,7 @@ const ManagePerfum = () => {
             sortValue={sortValue}
             onSortChange={handleSortChange}
             placeholder="Search perfumes..."
-            loader ={searchTerm !== debouncedSearchTerm}
+            loader={searchTerm !== debouncedSearchTerm}
           />
         </div>
         {/* table */}

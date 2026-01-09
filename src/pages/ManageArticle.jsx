@@ -23,7 +23,7 @@ const ITEMS_PER_PAGE = 20;
 
 const ManageArticle = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortValue, setSortValue] = useState('date_desc');
+  const [sortValue, setSortValue] = useState('createdAt_desc');
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [addArticlePopup, setAddArticlePopup] = useState(false);
@@ -232,7 +232,12 @@ const ManageArticle = () => {
             onSortChange={handleSortChange}
             placeholder="Search articles..."
             loader={searchTerm !== debouncedSearchTerm}
-
+            options={[
+              { label: "Newest", value: "createdAt_desc" },
+              { label: "Oldest", value: "createdAt_asc" },
+              { label: "A-Z", value: "title_asc" },
+              { label: "Z-A", value: "title_desc" }
+            ]}
           />
         </div>
 

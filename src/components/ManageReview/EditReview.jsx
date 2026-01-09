@@ -30,6 +30,7 @@ const EditReview = () => {
         price: "",
         perfumeIds: [], // remind me of
         noteIds: [], // smells like
+        images: [],
     });
 
     const [formErrors, setFormErrors] = useState({});
@@ -93,9 +94,30 @@ const EditReview = () => {
                     if (typeof id === 'object' && id._id) return id._id;
                     return id;
                 }) || [],
+                images: review.images || [],
             });
         }
     }, [review]);
+
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return "";
+        if (imagePath.startsWith('http')) return imagePath;
+
+        // Fix for "undefined" prefix in image paths
+        let cleanPath = imagePath;
+        if (cleanPath.startsWith('undefined/')) {
+            cleanPath = cleanPath.replace('undefined/', '');
+        }
+
+        return `${import.meta.env.VITE_BASE_URL}${cleanPath}`;
+    };
+
+    const handleDeleteImage = (index) => {
+        setForm(prev => ({
+            ...prev,
+            images: prev.images.filter((_, i) => i !== index)
+        }));
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -219,49 +241,92 @@ const EditReview = () => {
                         <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
                             <h3 className="text-[18px] font-bold text-[#352AA4] mb-4">Attributes</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Longevity */}
                                 <div>
-                                    <label className="text-[#374151] text-[14px] font-medium mb-1 block">Longevity</label>
-                                    <Select
-                                        options={longevityOptions}
-                                        value={getSelectedOption(longevityOptions, form.longevity)}
-                                        onChange={(opt) => handleSelectChange('longevity', opt)}
-                                        styles={customStyles}
-                                        isClearable
-                                        placeholder="Select Longevity"
+                                    <div className="flex justify-between mb-2">
+                                        <label className="text-sm font-semibold text-gray-700">Longevity</label>
+                                        <span className="text-sm font-bold text-[#352AA4]">{Math.round((form.longevity || 0) * 100)}%</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        name="longevity"
+                                        min="0"
+                                        max="1"
+                                        step="0.01"
+                                        value={form.longevity || 0}
+                                        onChange={handleInputChange}
+                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#352AA4]"
                                     />
+                                    <div className="flex justify-between text-xs text-gray-400 mt-1">
+                                        <span>Fades Fast</span>
+                                        <span>Lasts Long</span>
+                                    </div>
                                 </div>
+
+                                {/* Sillage */}
                                 <div>
-                                    <label className="text-[#374151] text-[14px] font-medium mb-1 block">Sillage</label>
-                                    <Select
-                                        options={sillageOptions}
-                                        value={getSelectedOption(sillageOptions, form.sillage)}
-                                        onChange={(opt) => handleSelectChange('sillage', opt)}
-                                        styles={customStyles}
-                                        isClearable
-                                        placeholder="Select Sillage"
+                                    <div className="flex justify-between mb-2">
+                                        <label className="text-sm font-semibold text-gray-700">Sillage</label>
+                                        <span className="text-sm font-bold text-[#352AA4]">{Math.round((form.sillage || 0) * 100)}%</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        name="sillage"
+                                        min="0"
+                                        max="1"
+                                        step="0.01"
+                                        value={form.sillage || 0}
+                                        onChange={handleInputChange}
+                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#352AA4]"
                                     />
+                                    <div className="flex justify-between text-xs text-gray-400 mt-1">
+                                        <span>Barely Noticeable</span>
+                                        <span>Room Filler</span>
+                                    </div>
                                 </div>
+
+                                {/* Gender */}
                                 <div>
-                                    <label className="text-[#374151] text-[14px] font-medium mb-1 block">Gender Suggestion</label>
-                                    <Select
-                                        options={genderOptions}
-                                        value={getSelectedOption(genderOptions, form.gender)}
-                                        onChange={(opt) => handleSelectChange('gender', opt)}
-                                        styles={customStyles}
-                                        isClearable
-                                        placeholder="Select Gender"
+                                    <div className="flex justify-between mb-2">
+                                        <label className="text-sm font-semibold text-gray-700">Gender Suggestion</label>
+                                        <span className="text-sm font-bold text-[#352AA4]">{Math.round((form.gender || 0) * 100)}%</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        name="gender"
+                                        min="0"
+                                        max="1"
+                                        step="0.01"
+                                        value={form.gender || 0}
+                                        onChange={handleInputChange}
+                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#352AA4]"
                                     />
+                                    <div className="flex justify-between text-xs text-gray-400 mt-1">
+                                        <span>Masculine</span>
+                                        <span>Feminine</span>
+                                    </div>
                                 </div>
+
+                                {/* Price */}
                                 <div>
-                                    <label className="text-[#374151] text-[14px] font-medium mb-1 block">Price Value</label>
-                                    <Select
-                                        options={priceOptions}
-                                        value={getSelectedOption(priceOptions, form.price)}
-                                        onChange={(opt) => handleSelectChange('price', opt)}
-                                        styles={customStyles}
-                                        isClearable
-                                        placeholder="Select Price Value"
+                                    <div className="flex justify-between mb-2">
+                                        <label className="text-sm font-semibold text-gray-700">Price Value</label>
+                                        <span className="text-sm font-bold text-[#352AA4]">{Math.round((form.price || 0) * 100)}%</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        name="price"
+                                        min="0"
+                                        max="1"
+                                        step="0.01"
+                                        value={form.price || 0}
+                                        onChange={handleInputChange}
+                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#352AA4]"
                                     />
+                                    <div className="flex justify-between text-xs text-gray-400 mt-1">
+                                        <span>Budget Friendly</span>
+                                        <span>Luxury</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -294,6 +359,35 @@ const EditReview = () => {
                                     />
                                 </div>
                             </div>
+                        </div>
+
+                        <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
+                            <h3 className="text-[18px] font-bold text-[#352AA4] mb-4">Images</h3>
+                            {form.images && form.images.length > 0 ? (
+                                <div className="flex flex-wrap gap-4">
+                                    {form.images.map((img, idx) => (
+                                        <div key={idx} className="relative group">
+                                            <img
+                                                src={getImageUrl(img)}
+                                                alt={`Review preview ${idx + 1}`}
+                                                className="w-32 h-32 object-cover rounded-2xl border border-gray-100 shadow-md"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => handleDeleteImage(idx)}
+                                                className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full p-1.5 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 scale-90 group-hover:scale-100 duration-200"
+                                                title="Delete Image"
+                                            >
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-gray-500 italic text-sm">No images attached to this review.</p>
+                            )}
                         </div>
                     </form>
                 </div>

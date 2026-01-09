@@ -43,12 +43,23 @@ const brandsApi = apis.injectEndpoints({
             }),
             invalidatesTags: [Tags.BRAND],
         }),
-        getOptionalBrands: builder.query({
-            query: () => ({
-                url: `/admin/optional-brands`,
+        getBrandsStats: builder.query({
+            query: () => "/admin/brands/stats",
+        }),
+
+        exportBrandsBatch: builder.mutation({
+            query: ({ page, limit }) => ({
+                url: `/admin/brands/export?page=${page}&limit=${limit}`,
                 method: "GET",
             }),
-            providesTags: [Tags.BRAND],
+        }),
+
+        importBrands: builder.mutation({
+            query: (data) => ({
+                url: "/admin/brands/import",
+                method: "POST",
+                body: data,
+            }),
         }),
 
     }),
@@ -61,4 +72,7 @@ export const {
     useUpdateBrandMutation,
     useDeleteBrandMutation,
     useGetOptionalBrandsQuery,
+    useGetBrandsStatsQuery,
+    useExportBrandsBatchMutation,
+    useImportBrandsMutation,
 } = brandsApi;

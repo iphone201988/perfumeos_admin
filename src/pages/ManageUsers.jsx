@@ -11,7 +11,7 @@ import Loader from '../components/Loader/Loader';
 
 const ManageUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortValue, setSortValue] = useState('date_desc');
+  const [sortValue, setSortValue] = useState('createdAt_desc');
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const navigate = useNavigate();

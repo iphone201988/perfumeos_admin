@@ -372,36 +372,36 @@ const ManageReviews = () => {
                                 <div className="bg-gray-50 rounded-lg p-2 border border-gray-100">
                                     <div className="flex justify-between items-end mb-1">
                                         <span className="text-[10px] text-gray-500 font-medium">Longevity</span>
-                                        <span className="text-[10px] font-bold text-[#352AA4]">{Math.round(review.longevity || 0)}%</span>
+                                        <span className="text-[10px] font-bold text-[#352AA4]">{Math.round((review.longevity || 0) * 100)}%</span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-1.5">
                                         <div
                                             className="bg-[#352AA4] h-1.5 rounded-full transition-all duration-500"
-                                            style={{ width: `${Math.round(review.longevity || 0)}%` }}
+                                            style={{ width: `${Math.round((review.longevity || 0) * 100)}%` }}
                                         />
                                     </div>
                                 </div>
                                 <div className="bg-gray-50 rounded-lg p-2 border border-gray-100">
                                     <div className="flex justify-between items-end mb-1">
                                         <span className="text-[10px] text-gray-500 font-medium">Sillage</span>
-                                        <span className="text-[10px] font-bold text-[#352AA4]">{Math.round(review.sillage || 0)}%</span>
+                                        <span className="text-[10px] font-bold text-[#352AA4]">{Math.round((review.sillage || 0) * 100)}%</span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-1.5">
                                         <div
                                             className="bg-[#06B6D4] h-1.5 rounded-full transition-all duration-500"
-                                            style={{ width: `${Math.round(review.sillage || 0)}%` }}
+                                            style={{ width: `${Math.round((review.sillage || 0) * 100)}%` }}
                                         />
                                     </div>
                                 </div>
                                 <div className="bg-gray-50 rounded-lg p-2 border border-gray-100">
                                     <div className="flex justify-between items-end mb-1">
                                         <span className="text-[10px] text-gray-500 font-medium">Price</span>
-                                        <span className="text-[10px] font-bold text-[#352AA4]">{Math.round(review.price || 0)}%</span>
+                                        <span className="text-[10px] font-bold text-[#352AA4]">{Math.round((review.price || 0) * 100)}%</span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-1.5">
                                         <div
                                             className="bg-[#10B981] h-1.5 rounded-full transition-all duration-500"
-                                            style={{ width: `${Math.round(review.price || 0)}%` }}
+                                            style={{ width: `${Math.round((review.price || 0) * 100)}%` }}
                                         />
                                     </div>
                                 </div>
