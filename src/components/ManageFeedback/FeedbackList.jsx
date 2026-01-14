@@ -1,9 +1,9 @@
 import React from 'react';
-
+import user_icon from '../../assets/user-img.png';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const getImageUrl = (url) => {
-    if (!url) return null;
+    if (!url) return user_icon;
     if (url.startsWith('/uploads')) {
         return `${BASE_URL}${url}`;
     }

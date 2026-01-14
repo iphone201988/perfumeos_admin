@@ -5,7 +5,7 @@ import { useGetPerfumersStatsQuery, useExportPerfumersBatchMutation, useImportPe
 import LoadingOverlay from './LoadingOverlay';
 import BatchSizeSelector from './BatchSizeSelector';
 import BatchSelectorModal from './BatchSelectorModal';
-import { escapeCSV } from '../../utils/helperCsv';
+import { escapeCSV, parseCSV } from '../../utils/helperCsv';
 
 const PerfumersExportImport = () => {
   const [batchSize, setBatchSize] = useState(2000);
@@ -167,52 +167,32 @@ const PerfumersExportImport = () => {
       try {
         setImporting(true);
         const text = e.target.result;
-        const cleanText = text.replace(/^\uFEFF/, '');
-        const lines = cleanText.split('\n').filter(line => line.trim());
+        const rows = parseCSV(text);
 
-        if (lines.length < 2) {
+        if (rows.length < 2) {
           toast.error('CSV file is empty or invalid');
           setImporting(false);
           return;
         }
 
-        const dataLines = lines.slice(1);
+        const dataRows = rows.slice(1);
 
-        const parsedPerfumers = dataLines.map((line, index) => {
+        const parsedPerfumers = dataRows.map((values, index) => {
           try {
-            const values = [];
-            let current = '';
-            let inQuotes = false;
-
-            for (let i = 0; i < line.length; i++) {
-              const char = line[i];
-
-              if (char === '"') {
-                if (inQuotes && line[i + 1] === '"') {
-                  current += '"';
-                  i++;
-                } else {
-                  inQuotes = !inQuotes;
-                }
-              } else if (char === ',' && !inQuotes) {
-                values.push(current.trim());
-                current = '';
-              } else {
-                current += char;
-              }
-            }
-            values.push(current.trim());
+            // Trim values and check for name
+            const trimmedValues = values.map(v => (v || '').trim());
+            if (!trimmedValues[0]) return null;
 
             return {
-              name: values[0] || '',
-              bigImage: values[1] || '',
-              smallImage: values[2] || '',
-              description: values[3] || '',
-              createdAt: values[4] || '',
-              _id: values[5] || '',
+              name: trimmedValues[0],
+              bigImage: trimmedValues[1] || '',
+              smallImage: trimmedValues[2] || '',
+              description: trimmedValues[3] || '',
+              createdAt: trimmedValues[4] || '',
+              _id: trimmedValues[5] || '',
             };
           } catch (error) {
-            console.error(`Error parsing line ${index + 2}:`, error);
+            console.error(`Error parsing row ${index + 2}:`, error);
             return null;
           }
         }).filter(Boolean);

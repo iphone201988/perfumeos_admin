@@ -61,6 +61,9 @@ const brandsApi = apis.injectEndpoints({
                 body: data,
             }),
         }),
+        getOptionalBrands: builder.query({
+            query: () => "/admin/optional-brands",
+        }),
 
     }),
 });
@@ -71,8 +74,8 @@ export const {
     useCreateBrandMutation,
     useUpdateBrandMutation,
     useDeleteBrandMutation,
-    useGetOptionalBrandsQuery,
     useGetBrandsStatsQuery,
     useExportBrandsBatchMutation,
     useImportBrandsMutation,
+    useGetOptionalBrandsQuery,
 } = brandsApi;

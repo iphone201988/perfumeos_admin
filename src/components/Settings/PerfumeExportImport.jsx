@@ -5,7 +5,7 @@ import { useGetPerfumeStatsQuery, useExportPerfumesBatchMutation, useImportPerfu
 import LoadingOverlay from './LoadingOverlay';
 import BatchSizeSelector from './BatchSizeSelector';
 import BatchSelectorModal from './BatchSelectorModal';
-import { escapeCSV, serializeComplexData, deserializeComplexData } from '../../utils/helperCsv';
+import { escapeCSV, serializeComplexData, deserializeComplexData, parseCSV } from '../../utils/helperCsv';
 
 const PerfumeExportImport = () => {
   const [batchSize, setBatchSize] = useState(2000);
@@ -25,9 +25,8 @@ const PerfumeExportImport = () => {
 
   // CSV Headers for Perfumes
   const csvHeaders = [
-    'Name', 'Brand', 'Image', 'Concentration', 'Description', 'Year',
-    'Intended For', 'Seasons', 'Occasions', 'Occasion Day Votes',
-    'Occasion Night Votes', 'Main Accords', 'Perfumers',
+    'Name', 'Brand', 'Brand Id', 'Image', 'Concentration', 'Description', 'Year',
+    'Intended For', 'Main Accords', 'Perfumers',
     'Top Notes', 'Middle Notes', 'Base Notes', 'Other Notes', 'Created At', '_id', 'Images'
   ];
 
@@ -35,15 +34,12 @@ const PerfumeExportImport = () => {
   const formatPerfumeRow = (perfume) => [
     escapeCSV(perfume.name),
     escapeCSV(perfume.brand),
+    escapeCSV(perfume.brandId),
     escapeCSV(perfume.image),
     escapeCSV(perfume.concentration),
     escapeCSV(perfume.description),
     escapeCSV(perfume.year),
     escapeCSV(serializeComplexData(perfume.intendedFor)),
-    escapeCSV(serializeComplexData(perfume.seasons)),
-    escapeCSV(serializeComplexData(perfume.occasions)),
-    escapeCSV(perfume.occasionVotes?.day || 0),
-    escapeCSV(perfume.occasionVotes?.night || 0),
     escapeCSV(serializeComplexData(perfume.mainAccords)),
     escapeCSV(serializeComplexData(perfume.perfumers)),
     escapeCSV(serializeComplexData(perfume.notes?.top)),
@@ -194,73 +190,45 @@ const PerfumeExportImport = () => {
         const text = e.target.result;
 
         // Remove BOM if present
-        const cleanText = text.replace(/^\uFEFF/, '');
-        const lines = cleanText.split('\n').filter(line => line.trim());
+        const rows = parseCSV(text);
 
-        if (lines.length < 2) {
+        if (rows.length < 2) {
           toast.error('CSV file is empty or invalid');
           setImporting(false);
           return;
         }
 
-        // Skip header row
-        const dataLines = lines.slice(1);
+        const dataRows = rows.slice(1);
 
-        // Parse CSV with proper quote handling
-        const parsedPerfumes = dataLines.map((line, index) => {
+        const parsedPerfumes = dataRows.map((values, index) => {
           try {
-            const values = [];
-            let current = '';
-            let inQuotes = false;
+            // Trim values and check for at least a name
+            const trimmedValues = values.map(v => (v || '').trim());
+            if (!trimmedValues[0]) return null;
 
-            for (let i = 0; i < line.length; i++) {
-              const char = line[i];
-
-              if (char === '"') {
-                if (inQuotes && line[i + 1] === '"') {
-                  current += '"';
-                  i++;
-                } else {
-                  inQuotes = !inQuotes;
-                }
-              } else if (char === ',' && !inQuotes) {
-                values.push(current.trim());
-                current = '';
-              } else {
-                current += char;
-              }
-            }
-            values.push(current.trim());
-
-            // Map CSV columns to perfume object
             return {
-              name: values[0] || '',
-              brand: values[1] || '',
-              image: values[2] || '',
-              concentration: values[3] || '',
-              description: values[4] || '',
-              year: values[5] ? parseInt(values[5]) : null,
-              intendedFor: deserializeComplexData(values[6]),
-              seasons: deserializeComplexData(values[7]),
-              occasions: deserializeComplexData(values[8]),
-              occasionVotes: {
-                day: values[9] ? parseInt(values[9]) : 0,
-                night: values[10] ? parseInt(values[10]) : 0
-              },
-              mainAccords: deserializeComplexData(values[11]),
-              perfumers: deserializeComplexData(values[12]),
+              name: trimmedValues[0],
+              brand: trimmedValues[1] || '',
+              brandId: trimmedValues[2] || '',
+              image: trimmedValues[3] || '',
+              concentration: trimmedValues[4] || '',
+              description: trimmedValues[5] || '',
+              year: trimmedValues[6] ? parseInt(trimmedValues[6]) : null,
+              intendedFor: deserializeComplexData(trimmedValues[7]),
+              mainAccords: deserializeComplexData(trimmedValues[8]),
+              perfumers: deserializeComplexData(trimmedValues[9]),
               notes: {
-                top: deserializeComplexData(values[13]),
-                middle: deserializeComplexData(values[14]),
-                base: deserializeComplexData(values[15]),
-                notes: deserializeComplexData(values[16])
+                top: deserializeComplexData(trimmedValues[10]),
+                middle: deserializeComplexData(trimmedValues[11]),
+                base: deserializeComplexData(trimmedValues[12]),
+                notes: deserializeComplexData(trimmedValues[13])
               },
-              createdAt: values[17],
-              _id: values[18],
-              images: deserializeComplexData(values[19]) || []
+              createdAt: trimmedValues[14],
+              _id: trimmedValues[15],
+              images: deserializeComplexData(trimmedValues[16]) || []
             };
           } catch (error) {
-            console.error(`Error parsing line ${index + 2}:`, error);
+            console.error(`Error parsing row ${index + 2}:`, error);
             return null;
           }
         }).filter(Boolean);
@@ -305,15 +273,12 @@ const PerfumeExportImport = () => {
       [
         'Bleu de Chanel',
         'Chanel',
+        '132165465746879879879',
         'https://example.png',
         'Eau de Parfum',
         'A woody aromatic fragrance with citrus notes and a sophisticated blend of incense and cedar.',
         '2010',
         'men',
-        '{"name":"winter","width":"30%"}|{"name":"spring","width":"25%"}|{"name":"summer","width":"15%"}|{"name":"fall","width":"30%"}',
-        '{"name":"day","width":"60%"}|{"name":"night","width":"40%"}',
-        '150',
-        '100',
         '{"name":"woody","width":"80%","backgroundColor":"rgb(139, 69, 19)"}|{"name":"citrus","width":"70%","backgroundColor":"rgb(255, 165, 0)"}|{"name":"aromatic","width":"60%","backgroundColor":"rgb(46, 139, 87)"}',
         '{"name":"Jacques Polge"}',
         '{"name":"Lemon"}|{"name":"Bergamot"}|{"name":"Pink Pepper"}',
@@ -326,15 +291,12 @@ const PerfumeExportImport = () => {
       [
         'La Vie Est Belle',
         'Lancôme',
+        '12312324124124124124',
         'https://example.png',
         'Eau de Parfum',
         'A sweet floral gourmand fragrance with iris, patchouli, and praline.',
         '2012',
         'women',
-        '{"name":"winter","width":"25%"}|{"name":"spring","width":"35%"}|{"name":"summer","width":"20%"}|{"name":"fall","width":"20%"}',
-        '{"name":"day","width":"40%"}|{"name":"night","width":"60%"}',
-        '80',
-        '120',
         '{"name":"sweet","width":"90%","backgroundColor":"rgb(255, 182, 193)"}|{"name":"floral","width":"85%","backgroundColor":"rgb(255, 192, 203)"}|{"name":"gourmand","width":"75%","backgroundColor":"rgb(210, 180, 140)"}',
         '{"name":"Olivier Polge"}|{"name":"Dominique Ropion"}',
         '{"name":"Blackcurrant"}|{"name":"Pear"}',

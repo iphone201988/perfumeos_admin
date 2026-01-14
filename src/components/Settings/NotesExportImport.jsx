@@ -5,7 +5,7 @@ import { useGetNotesStatsQuery, useExportNotesBatchMutation, useImportNotesMutat
 import LoadingOverlay from './LoadingOverlay';
 import BatchSizeSelector from './BatchSizeSelector';
 import BatchSelectorModal from './BatchSelectorModal';
-import { deserializeComplexData, serializeComplexData, escapeCSV } from '../../utils/helperCsv';
+import { deserializeComplexData, serializeComplexData, escapeCSV, parseCSV } from '../../utils/helperCsv';
 const NotesExportImport = () => {
   const [batchSize, setBatchSize] = useState(2000);
   const [selectedBatches, setSelectedBatches] = useState([]);
@@ -36,7 +36,7 @@ const NotesExportImport = () => {
 
       const headers = [
         'Name', 'Image', 'Background URL', 'Group', 'Odor Profile',
-        'Scientific Name', 'Other Names', 'Thumbnails', 'URL', 'Created At','_id'
+        'Scientific Name', 'Other Names', 'Thumbnails', 'URL', 'Created At', '_id'
       ];
 
       let csvRows = [headers.join(',')];
@@ -183,55 +183,36 @@ const NotesExportImport = () => {
       try {
         setImporting(true);
         const text = e.target.result;
-        const cleanText = text.replace(/^\uFEFF/, '');
-        const lines = cleanText.split('\n').filter(line => line.trim());
+        const rows = parseCSV(text);
 
-        if (lines.length < 2) {
+        if (rows.length < 2) {
           toast.error('CSV file is empty or invalid');
           setImporting(false);
           return;
         }
 
-        const dataLines = lines.slice(1);
+        const dataRows = rows.slice(1);
 
-        const parsedNotes = dataLines.map((line, index) => {
+        const parsedNotes = dataRows.map((values, index) => {
           try {
-            const values = [];
-            let current = '';
-            let inQuotes = false;
-
-            for (let i = 0; i < line.length; i++) {
-              const char = line[i];
-
-              if (char === '"') {
-                if (inQuotes && line[i + 1] === '"') {
-                  current += '"';
-                  i++;
-                } else {
-                  inQuotes = !inQuotes;
-                }
-              } else if (char === ',' && !inQuotes) {
-                values.push(current.trim());
-                current = '';
-              } else {
-                current += char;
-              }
-            }
-            values.push(current.trim());
+            // Trim values and check for name
+            const trimmedValues = values.map(v => (v || '').trim());
+            if (!trimmedValues[0]) return null;
 
             return {
-              name: values[0] || '',
-              image: values[1] || '',
-              bgUrl: values[2] || '',
-              group: values[3] || '',
-              odorProfile: values[4] || '',
-              scientificName: values[5] || '',
-              otherNames: deserializeComplexData(values[6]),
-              thumbnails: deserializeComplexData(values[7]),
-              _id: values[8] || '',
+              name: trimmedValues[0],
+              image: trimmedValues[1] || '',
+              bgUrl: trimmedValues[2] || '',
+              group: trimmedValues[3] || '',
+              odorProfile: trimmedValues[4] || '',
+              scientificName: trimmedValues[5] || '',
+              otherNames: deserializeComplexData(trimmedValues[6]),
+              thumbnails: deserializeComplexData(trimmedValues[7]),
+              createdAt: trimmedValues[8] || '',
+              _id: trimmedValues[9] || '',
             };
           } catch (error) {
-            console.error(`Error parsing line ${index + 2}:`, error);
+            console.error(`Error parsing row ${index + 2}:`, error);
             return null;
           }
         }).filter(Boolean);
@@ -280,12 +261,14 @@ const NotesExportImport = () => {
       [
         'Lemon', 'https:/abc/images/lemon.jpg', 'https:/abc/bg/lemon.jpg', 'Citrus', 'Fresh, Zesty, Bright',
         'Citrus limon', 'Citron|Lime', 'http://abc/thumb/lemon1.jpg|/http://abc/thumb/lemon2.jpg',
-         new Date().toISOString(), 
+        new Date().toISOString(),
+        "132456879865464654654654"
       ],
       [
         'Rose', 'https:/abc/images/rose.jpg', 'https:/abc/bg/rose.jpg', 'Floral', 'Sweet, Romantic, Soft',
         'Rosa damascena', 'Damask Rose|Bulgarian Rose', 'http://abc/thumb/rose1.jpg|/http://abc/thumb/rose2.jpg',
-         new Date().toISOString(), 
+        new Date().toISOString(),
+        "13245687986546465aa654654"
       ]
     ];
 

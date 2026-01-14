@@ -5,7 +5,7 @@ import { useGetBrandsStatsQuery, useExportBrandsBatchMutation, useImportBrandsMu
 import LoadingOverlay from './LoadingOverlay';
 import BatchSizeSelector from './BatchSizeSelector';
 import BatchSelectorModal from './BatchSelectorModal';
-import { deserializeComplexData, serializeComplexData, escapeCSV } from '../../utils/helperCsv';
+import { deserializeComplexData, serializeComplexData, escapeCSV, parseCSV } from '../../utils/helperCsv';
 
 const BrandsExportImport = () => {
     const [batchSize, setBatchSize] = useState(2000);
