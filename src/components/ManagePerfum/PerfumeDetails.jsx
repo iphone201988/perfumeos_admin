@@ -2,20 +2,24 @@ import React, { useState } from "react";
 import addpic_icon from "../../assets/icons/addpic-icon.svg";
 import user_icon from "../../assets/icons/addpic-icon.svg";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDeletePerfumeMutation, useGetPerfumeByIdQuery } from "../../api";
+import { useDeletePerfumeMutation, useGetPerfumeByIdQuery, useDeleteImageMutation } from "../../api";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import Loader from "../Loader/Loader";
+import { toast } from "react-toastify";
 
 const PerfumeDetails = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const { data: perfumeData, isLoading, error } = useGetPerfumeByIdQuery(params.id);
+  const { data: perfumeData, isLoading, error, refetch } = useGetPerfumeByIdQuery(params.id);
   const [deletePerfume] = useDeletePerfumeMutation();
+  const [deleteImage] = useDeleteImageMutation();
   const [isDeleted, setIsDeleted] = useState(false);
 
   // Image gallery state
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState(null);
+  const [confirmDeleteImage, setConfirmDeleteImage] = useState(false);
 
   if (isLoading) {
     return <Loader message="Loading Perfume Details" />;
@@ -28,11 +32,28 @@ const PerfumeDetails = () => {
     return null;
   }
 
-  // Combine all images (primary image + additional images)
-  const allImages = [
-    perfume.image,
-    ...(perfume.images || []).filter(image => image !== perfume.image) // Filter out primary image
-  ].filter(Boolean); // Remove null/undefined values
+  // Combine all images (primary image + uploaded images)
+  // const mainImage = perfume.image ? { url: perfume.image, status: 'Main', _id: 'main' } : null;
+
+  const uploadedObjs = (perfume.uploadedImages || []).map(img => ({
+    url: img.url,
+    status: img.status,
+    _id: img._id,
+    likeCount: img.likeCount,
+  }));
+
+  // Combine
+  const combinedImages = [...uploadedObjs].filter(Boolean);
+
+  // Deduplicate based on URL
+  const uniqueImagesMap = new Map();
+  combinedImages.forEach(img => {
+    if (!uniqueImagesMap.has(img.url)) {
+      uniqueImagesMap.set(img.url, img);
+    }
+  });
+
+  const allImages = Array.from(uniqueImagesMap.values());
 
   const onEdit = () => {
     navigate(`/perfumes/${params.id}/edit`);
@@ -42,6 +63,29 @@ const PerfumeDetails = () => {
     await deletePerfume(params.id);
     setIsDeleted(false);
     navigate("/perfumes");
+  };
+
+  const handleDeleteImageConfirm = (imageId) => {
+    setImageToDelete(imageId);
+    setConfirmDeleteImage(true);
+  };
+
+  const performDeleteImage = async () => {
+    if (!imageToDelete) return;
+    try {
+      await deleteImage(imageToDelete).unwrap();
+      toast.success("Image deleted successfully");
+      setConfirmDeleteImage(false);
+      setImageToDelete(null);
+      refetch();
+      // Adjust selected index if needed
+      if (selectedImageIndex >= 0 && selectedImageIndex < allImages.length) {
+        setSelectedImageIndex(0);
+      }
+    } catch (error) {
+      console.error("Delete image error:", error);
+      toast.error(error?.data?.message || "Failed to delete image");
+    }
   };
 
   const getImageUrl = (imageUrl) => {
@@ -77,6 +121,15 @@ const PerfumeDetails = () => {
   const backButton = () => {
     //privious page
     navigate(-1);
+  };
+
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'approved': return 'bg-green-500';
+      case 'pending': return 'bg-yellow-500';
+      case 'rejected': return 'bg-red-500';
+      default: return 'bg-[#352AA4]';
+    }
   };
 
   return (
@@ -117,24 +170,63 @@ const PerfumeDetails = () => {
               <div className="relative group">
                 {/* Main Image Display */}
                 <div className="flex justify-center items-center bg-gradient-to-br from-white to-gray-50 border-2 border-[#352AA4]/10 rounded-3xl p-[16px] h-[320px] w-[320px] shadow-md transition-all duration-300 group-hover:shadow-xl overflow-hidden relative">
-                  <img
-                    src={getImageUrl(allImages[selectedImageIndex])}
-                    alt={`${perfume.name} - Image ${selectedImageIndex + 1}`}
-                    className="object-contain max-h-[280px] drop-shadow-lg cursor-pointer transition-transform duration-300 hover:scale-110"
-                    onClick={() => setIsFullscreen(true)}
-                  />
+
+                  {allImages.length > 0 ? (
+                    <>
+                      <img
+                        src={getImageUrl(allImages[selectedImageIndex]?.url)}
+                        alt={`${perfume.name} - Image ${selectedImageIndex + 1}`}
+                        className="object-contain max-h-[280px] drop-shadow-lg cursor-pointer transition-transform duration-300 hover:scale-110"
+                        onClick={() => setIsFullscreen(true)}
+                      />
+                      {/* Status Badge */}
+                      <div className={`absolute top-4 left-4 ${getStatusColor(allImages[selectedImageIndex]?.status)} text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10`}>
+                        {allImages[selectedImageIndex]?.status || 'Main'}
+                      </div>
+
+                      {/* Delete Button - Only for uploaded images */}
+                      {allImages[selectedImageIndex]?._id !== 'main' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteImageConfirm(allImages[selectedImageIndex]?._id);
+                          }}
+                          className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-md transition-all z-20"
+                          title="Delete Image"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      )}
+                      {/* Status Badge */}
+                      <div className={`absolute top-4 left-4 ${getStatusColor(allImages[selectedImageIndex]?.status)} text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10`}>
+                        {allImages[selectedImageIndex]?.status || 'Main'}
+                      </div>
+
+                      {/* Like Count Badge */}
+                      <div className="absolute top-4 right-16 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10 flex items-center gap-1">
+                        <span>♥</span>
+                        <span>{allImages[selectedImageIndex]?.likeCount || 0}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-gray-400">No Image</div>
+                  )}
+
 
                   {/* Image Counter Badge */}
-                  {allImages.length > 1 && (
+                  {/* {allImages.length > 1 && (
                     <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full">
                       {selectedImageIndex + 1} / {allImages.length}
                     </div>
-                  )}
+                    )} */}
+               
 
                   {/* Fullscreen Icon */}
                   <button
                     onClick={() => setIsFullscreen(true)}
-                    className="absolute top-4 left-4 bg-white/90 hover:bg-white p-2 rounded-lg shadow-md transition-all duration-200 opacity-0 group-hover:opacity-100"
+                    className="absolute bottom-4 right-4 bg-white/90 hover:bg-white p-2 rounded-lg shadow-md transition-all duration-200 opacity-0 group-hover:opacity-100"
                     title="View fullscreen"
                   >
                     <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,27 +260,27 @@ const PerfumeDetails = () => {
                 </div>
 
                 {/* Thumbnail Gallery */}
-                {/* {allImages.length > 1 && (
-                  <div className="mt-4 flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                    {allImages.map((image, index) => (
+                {allImages.length > 1 && (
+                  <div className="mt-4 flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 max-w-[320px]">
+                    {allImages.map((imageObj, index) => (
                       <button
                         key={index}
                         onClick={() => setSelectedImageIndex(index)}
-                        className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-300 hover:scale-110 hover:shadow-md ${
-                          selectedImageIndex === index
-                            ? 'border-[#352AA4] ring-2 ring-[#352AA4] ring-offset-2'
-                            : 'border-gray-200 hover:border-[#352AA4]/50'
-                        }`}
+                        className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-300 hover:scale-110 hover:shadow-md relative ${selectedImageIndex === index
+                          ? 'border-[#352AA4] ring-2 ring-[#352AA4] ring-offset-2'
+                          : 'border-gray-200 hover:border-[#352AA4]/50'
+                          }`}
                       >
                         <img
-                          src={getImageUrl(image)}
+                          src={getImageUrl(imageObj.url)}
                           alt={`Thumbnail ${index + 1}`}
                           className="w-full h-full object-cover"
                         />
+                        <div className={`absolute bottom-0 left-0 w-full h-1 ${getStatusColor(imageObj.status)}`}></div>
                       </button>
                     ))}
                   </div>
-                )} */}
+                )}
 
                 {/* Decorative corner accent */}
                 <div className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full opacity-20"></div>
@@ -209,7 +301,7 @@ const PerfumeDetails = () => {
                 {/* Brand */}
                 <div className="flex items-center gap-3 bg-white/80 rounded-2xl p-[16px] shadow-sm border border-[#352AA4]/10">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                  <img src={getImageUrl(perfume.brandImage)} alt="" />
+                    <img src={getImageUrl(perfume.brandImage)} alt="" />
                   </div>
                   <div>
                     <span className="text-[#7C7C7C] text-xs block">Brand Name</span>
@@ -473,11 +565,22 @@ const PerfumeDetails = () => {
           )}
 
           <div className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
-            <img
-              src={getImageUrl(allImages[selectedImageIndex])}
-              alt={`${perfume.name} - Fullscreen`}
-              className="max-w-full max-h-full object-contain drop-shadow-2xl"
-            />
+            <div className="relative">
+              <img
+                src={getImageUrl(allImages[selectedImageIndex]?.url)}
+                alt={`${perfume.name} - Fullscreen`}
+                className="max-w-full max-h-[85vh] object-contain drop-shadow-2xl"
+              />
+              {/* Status Badge Fullscreen */}
+              <div className={`absolute top-4 left-4 ${getStatusColor(allImages[selectedImageIndex]?.status)} text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10`}>
+                {allImages[selectedImageIndex]?.status || 'Main'}
+              </div>
+              {/* Like Count Badge Fullscreen */}
+              <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10 flex items-center gap-1">
+                <span>♥</span>
+                <span>{allImages[selectedImageIndex]?.likeCount || 0}</span>
+              </div>
+            </div>
 
             {/* Navigation Arrows for Fullscreen */}
             {allImages.length > 1 && (
@@ -514,23 +617,24 @@ const PerfumeDetails = () => {
           {allImages.length > 1 && (
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 max-w-4xl overflow-x-auto">
               <div className="flex gap-2 px-4">
-                {allImages.map((image, index) => (
+                {allImages.map((imageObj, index) => (
                   <button
                     key={index}
                     onClick={(e) => {
                       e.stopPropagation();
                       setSelectedImageIndex(index);
                     }}
-                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-300 hover:scale-110 ${selectedImageIndex === index
+                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-300 hover:scale-110 relative ${selectedImageIndex === index
                       ? 'border-white ring-2 ring-white'
                       : 'border-white/30 hover:border-white/70'
                       }`}
                   >
                     <img
-                      src={getImageUrl(image)}
+                      src={getImageUrl(imageObj.url)}
                       alt={`Thumbnail ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
+                    <div className={`absolute bottom-0 left-0 w-full h-1 ${getStatusColor(imageObj.status)}`}></div>
                   </button>
                 ))}
               </div>
@@ -547,6 +651,13 @@ const PerfumeDetails = () => {
           message="Are you sure you want to delete this perfume?"
         />
       )}
+
+      <ConfirmationModal
+        isOpen={confirmDeleteImage}
+        onClose={() => setConfirmDeleteImage(false)}
+        onConfirm={performDeleteImage}
+        message="Are you sure you want to delete this image? This cannot be undone."
+      />
 
       <style jsx>{`
         @keyframes fadeIn {

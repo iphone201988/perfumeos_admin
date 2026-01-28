@@ -177,12 +177,12 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
       setScientificName(initialData.scientificName || '')
       setOtherNames(initialData.otherNames && initialData.otherNames.length > 0 ? initialData.otherNames : [''])
 
-      if (initialData.image) {
-        const imageUrl = initialData.image.startsWith('http')
-          ? initialData.image
-          : `${import.meta.env.VITE_BASE_URL}${initialData.image}`;
-        setPreview(imageUrl);
-      }
+      // if (initialData.image) {
+      //   const imageUrl = initialData.image.startsWith('http')
+      //     ? initialData.image
+      //     : `${import.meta.env.VITE_BASE_URL}${initialData.image}`;
+      //   setPreview(imageUrl);
+      // }
     } else {
       // Reset all fields
       setName('')

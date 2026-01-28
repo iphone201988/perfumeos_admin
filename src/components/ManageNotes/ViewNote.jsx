@@ -2,10 +2,17 @@ import React, { useEffect, useState } from 'react'
 import cross_icon from '../../assets/icons/cross-icon.svg'
 import user_icon from '../../assets/user-img.png'
 import ConfirmationModal from '../Modal/ConfirmationModal'
+import { useDeleteImageMutation } from '../../api'
+import { toast } from 'react-toastify'
 
 const ViewNote = ({ open, onClose, noteData = null, onEdit, onRemove }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [type, setType] = useState(1);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+    const [deleteImage] = useDeleteImageMutation();
+    const [localImages, setLocalImages] = useState([]);
+    const [imageToDelete, setImageToDelete] = useState(null);
+    const [confirmDeleteImage, setConfirmDeleteImage] = useState(false);
 
     const handleConfirmRemove = () => {
         setIsModalOpen(false);
@@ -16,10 +23,54 @@ const ViewNote = ({ open, onClose, noteData = null, onEdit, onRemove }) => {
         setIsModalOpen(false);
     };
 
+    // Initialize images from noteData
+    useEffect(() => {
+        if (noteData) {
+            const uploadedObjs = (noteData.uploadImages || []).map(img => ({
+                url: img.url,
+                status: img.status,
+                _id: img._id,
+                likeCount: img.likeCount
+            }));
+
+            setLocalImages(uploadedObjs);
+            setSelectedImageIndex(0);
+        }
+    }, [noteData]);
+
+    const handleDeleteImageConfirm = (imageId) => {
+        setImageToDelete(imageId);
+        setConfirmDeleteImage(true);
+    };
+
+    const performDeleteImage = async () => {
+        if (!imageToDelete) return;
+        try {
+            await deleteImage(imageToDelete).unwrap();
+            toast.success("Image deleted successfully");
+
+            // Remove from local state
+            const updatedImages = localImages.filter(img => img._id !== imageToDelete);
+            setLocalImages(updatedImages);
+
+            // Adjust index
+            if (selectedImageIndex >= updatedImages.length) {
+                setSelectedImageIndex(Math.max(0, updatedImages.length - 1));
+            }
+
+            setConfirmDeleteImage(false);
+            setImageToDelete(null);
+        } catch (error) {
+            console.error("Delete image error:", error);
+            toast.error(error?.data?.message || "Failed to delete image");
+        }
+    };
+
     // Prevent body scroll when modal is open
     useEffect(() => {
         if (open) {
             document.body.style.overflow = 'hidden'
+            setSelectedImageIndex(0);
         } else {
             document.body.style.overflow = 'unset'
         }
@@ -28,7 +79,7 @@ const ViewNote = ({ open, onClose, noteData = null, onEdit, onRemove }) => {
         return () => {
             document.body.style.overflow = 'unset'
         }
-    }, [open])
+    }, [open, noteData?._id])
 
     // Auto-close modal if not open
     if (!open || !noteData) return null
@@ -78,15 +129,77 @@ const ViewNote = ({ open, onClose, noteData = null, onEdit, onRemove }) => {
                 {/* Note Images */}
                 <div className="flex gap-4 mb-6 max-md:flex-col">
                     <div className="flex-1">
-                        <div className="border border-[#EFEFEF] rounded-2xl p-4 h-[200px] flex items-center justify-center">
-                            <img
-                                src={getImageUrl(noteData.image)}
-                                alt={noteData.name || 'Note'}
-                                className="max-h-[160px] max-w-full object-contain rounded-xl"
-                            />
+                        <div className="relative group border border-[#EFEFEF] rounded-2xl p-4 h-[300px] flex items-center justify-center bg-gray-50">
+                            {(() => {
+                                const currentImage = localImages[selectedImageIndex];
+
+                                if (!currentImage) return <span className="text-gray-400">No Image</span>;
+
+                                return (
+                                    <>
+                                        <img
+                                            src={getImageUrl(currentImage.url)}
+                                            alt={noteData.name || 'Note'}
+                                            className="max-h-full max-w-full object-contain rounded-xl"
+                                        />
+
+                                        {/* Status Badge */}
+                                        <div className={`absolute top-4 left-4 ${currentImage.status === 'approved' ? 'bg-green-500' :
+                                                currentImage.status === 'pending' ? 'bg-yellow-500' :
+                                                    currentImage.status === 'rejected' ? 'bg-red-500' :
+                                                        'bg-[#352AA4]'
+                                            } text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10 capitalize`}>
+                                            {currentImage.status || 'Main'}
+                                        </div>
+
+                                        {/* Like Count Badge */}
+                                        <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10 flex items-center gap-1">
+                                            <span>♥</span>
+                                            <span>{currentImage.likeCount || 0}</span>
+                                        </div>
+
+                                        {/* Delete Button - Only for uploaded images */}
+                                        {currentImage._id !== 'main' && (
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDeleteImageConfirm(currentImage._id);
+                                                }}
+                                                className="absolute top-4 right-16 bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-md transition-all z-20"
+                                                title="Delete Image"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        )}
+
+                                        {/* Navigation Arrows */}
+                                        {localImages.length > 1 && (
+                                            <>
+                                                <button
+                                                    onClick={() => setSelectedImageIndex(prev => prev === 0 ? localImages.length - 1 : prev - 1)}
+                                                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all"
+                                                >
+                                                    <span className="text-xl font-bold">‹</span>
+                                                </button>
+                                                <button
+                                                    onClick={() => setSelectedImageIndex(prev => prev === localImages.length - 1 ? 0 : prev + 1)}
+                                                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all"
+                                                >
+                                                    <span className="text-xl font-bold">›</span>
+                                                </button>
+                                                {/* Counter */}
+                                                <div className="absolute bottom-4 right-4 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
+                                                    {selectedImageIndex + 1} / {localImages.length}
+                                                </div>
+                                            </>
+                                        )}
+                                    </>
+                                );
+                            })()}
                         </div>
                     </div>
-
                 </div>
 
                 {/* Note Information Grid */}
@@ -142,15 +255,15 @@ const ViewNote = ({ open, onClose, noteData = null, onEdit, onRemove }) => {
                         </div>
                     </div>
 
-                {/* Description */}
-                {noteData.description && (
-                    <div className="mb-6">
-                        <h6 className="text-[14px] font-medium text-[#7C7C7C] mb-2">Description</h6>
-                        <div className="border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px] bg-gray-50">
-                            <span className="text-[#333333]">{noteData.description}</span>
+                    {/* Description */}
+                    {noteData.description && (
+                        <div className="mb-6">
+                            <h6 className="text-[14px] font-medium text-[#7C7C7C] mb-2">Description</h6>
+                            <div className="border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px] bg-gray-50">
+                                <span className="text-[#333333]">{noteData.description}</span>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
                     {/* Created Date */}
                     <div className="md:col-span-2">
                         <h6 className="text-[14px] font-medium text-[#7C7C7C] mb-2">Created On</h6>
@@ -193,13 +306,21 @@ const ViewNote = ({ open, onClose, noteData = null, onEdit, onRemove }) => {
                     )}
                 </div>
 
-                {/* Confirmation Modal */}
+                {/* Confirmation Modal for Note Deletion */}
                 <ConfirmationModal
                     isOpen={isModalOpen}
                     onClose={handleCancelRemove}
                     onConfirm={handleConfirmRemove}
                     message={"Are you sure you want to permanently delete this note?"}
                     className={"text-red-500 border-red-500 hover:bg-red-500"}
+                />
+
+                {/* Confirmation Modal for Image Deletion */}
+                <ConfirmationModal
+                    isOpen={confirmDeleteImage}
+                    onClose={() => setConfirmDeleteImage(false)}
+                    onConfirm={performDeleteImage}
+                    message="Are you sure you want to delete this image? This cannot be undone."
                 />
             </div>
         </div>

@@ -58,9 +58,15 @@ const ViewReviewModal = ({ isOpen, onClose, review }) => {
                                     {review.perfumeName}
                                 </p>
                             </div>
-                            <div className="flex items-center gap-2 bg-[#FFF9E6] px-4 py-2 rounded-xl border border-[#FFEBA0]">
-                                <span className="text-yellow-500 text-xl">★</span>
-                                <span className="text-xl font-bold text-gray-800">{review.rating}</span>
+                            <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2 bg-[#FFF9E6] px-4 py-2 rounded-xl border border-[#FFEBA0]">
+                                    <span className="text-yellow-500 text-xl">★</span>
+                                    <span className="text-xl font-bold text-gray-800">{review.rating}</span>
+                                </div>
+                                <div className="flex items-center gap-2 bg-red-50 px-4 py-2 rounded-xl border border-red-100">
+                                    <span className="text-red-500 text-xl">♥</span>
+                                    <span className="text-xl font-bold text-red-700">{review.reviewLikesCount || 0}</span>
+                                </div>
                             </div>
                         </div>
 

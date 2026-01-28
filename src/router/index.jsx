@@ -28,6 +28,7 @@ import AddBrand from "../components/ManageBrand/AddBrand";
 import BrandDetails from "../components/ManageBrand/BrandDetails";
 import ManageReviews from "../pages/ManageReviews";
 import EditReview from "../components/ManageReview/EditReview";
+import ManageImages from "../pages/ManageImages";
 
 const router = createBrowserRouter([
     {
@@ -147,6 +148,10 @@ const router = createBrowserRouter([
             {
                 path: '/reviews/:id/edit',
                 element: <EditReview />
+            },
+            {
+                path: '/images',
+                element: <ManageImages />
             }
         ],
     },
@@ -154,6 +159,10 @@ const router = createBrowserRouter([
         path: "*",
         element: <NotFound />,
     },
-]);
+],
+    {
+        basename: "/admin", // 👈
+    }
+);
 
 export default router;

@@ -181,7 +181,7 @@ const PerfumeExportImport = () => {
       toast.error('Please upload a CSV file');
       return;
     }
-
+    console.log("file");
     const reader = new FileReader();
 
     reader.onload = async (e) => {
@@ -205,7 +205,7 @@ const PerfumeExportImport = () => {
             // Trim values and check for at least a name
             const trimmedValues = values.map(v => (v || '').trim());
             if (!trimmedValues[0]) return null;
-
+            console.log(trimmedValues);
             return {
               name: trimmedValues[0],
               brand: trimmedValues[1] || '',

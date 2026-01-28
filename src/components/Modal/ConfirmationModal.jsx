@@ -9,13 +9,13 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, message, className="tex
         <h3 className="text-lg font-semibold text-center">{message}</h3>
         <div className="flex justify-center gap-4 mt-4">
           <button
-            className="text-gray-500 border border-gray-300 py-2 px-4 rounded-md hover:bg-gray-100"
+            className="text-gray-500 border border-gray-300 py-2 px-4 rounded-md hover:bg-gray-100 cursor-pointer"
             onClick={onClose}
           >
             Cancel
           </button>
           <button
-            className={`py-2 px-4 rounded-md  hover:text-white ${className} ${isLoading ? ' opacity-50 cursor-not-allowed' : ''}`}
+            className={`py-2 px-4 rounded-md  hover:text-white ${className} ${isLoading ? ' opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             onClick={onConfirm}
           >
             Confirm

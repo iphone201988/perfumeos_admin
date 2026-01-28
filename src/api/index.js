@@ -10,6 +10,7 @@ import "./endpoints/common";
 import "./endpoints/levelQuiz";
 import "./endpoints/brands";
 import "./endpoints/reviews";
+import "./endpoints/images";
 
 export { apis };
 
@@ -24,3 +25,4 @@ export * from "./endpoints/common";
 export * from "./endpoints/levelQuiz";
 export * from "./endpoints/brands";
 export * from "./endpoints/reviews";
+export * from "./endpoints/images";

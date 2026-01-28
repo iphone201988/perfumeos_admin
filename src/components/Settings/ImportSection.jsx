@@ -63,24 +63,23 @@ const ImportSection = ({ importing, setImporting }) => {
             return {
               name: values[0] || '',
               brand: values[1] || '',
-              concentration: values[2] || '',
-              description: values[3] || '',
-              year: values[4] ? parseInt(values[4]) : null,
-              intendedFor: deserializeComplexData(values[5]),
-              seasons: deserializeComplexData(values[6]),
-              occasions: deserializeComplexData(values[7]),
-              occasionVotes: {
-                day: values[8] ? parseInt(values[8]) : 0,
-                night: values[9] ? parseInt(values[9]) : 0
-              },
-              mainAccords: deserializeComplexData(values[10]),
-              perfumers: deserializeComplexData(values[11]),
+              brandId: values[2] || '',
+              image: values[3] || '',
+              concentration: values[4] || '',
+              description: values[5] || '',
+              year: values[6] ? parseInt(values[6]) : null,
+              intendedFor: deserializeComplexData(values[7]),
+              mainAccords: deserializeComplexData(values[8]),
+              perfumers: deserializeComplexData(values[9]),
               notes: {
-                top: deserializeComplexData(values[12]),
-                middle: deserializeComplexData(values[13]),
-                base: deserializeComplexData(values[14]),
-                notes: deserializeComplexData(values[15])
-              }
+                top: deserializeComplexData(values[10]),
+                middle: deserializeComplexData(values[11]),
+                base: deserializeComplexData(values[12]),
+                notes: deserializeComplexData(values[13])
+              },
+              createdAt: values[14],
+              _id: values[15],
+              images: deserializeComplexData(values[16]) || []
             };
           } catch (error) {
             console.error(`Error parsing line ${index + 2}:`, error);

@@ -355,6 +355,10 @@ const ManageReviews = () => {
                                         <span className="text-yellow-500 text-xs">★</span>
                                         <span className="text-sm font-extrabold text-[#B45309]">{review.rating}</span>
                                     </div>
+                                    <div className="flex items-center gap-1.5 bg-red-50 px-2.5 py-1 rounded-lg border border-red-100">
+                                        <span className="text-red-500 text-xs">♥</span>
+                                        <span className="text-sm font-extrabold text-red-700">{review.reviewLikesCount || 0}</span>
+                                    </div>
                                 </div>
                             </div>
 

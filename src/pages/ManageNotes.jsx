@@ -62,15 +62,18 @@ const ManageNotes = () => {
     const totalPages = badgesResponse?.data?.pagination?.totalPage || 1;
 
     // Add serial numbers and format data
-    const Notes = rawNotes.map((note, index) => ({
-        ...note,
-        sno: (currentPage - 1) * itemsPerPage + index + 1,
-        status: note.isDeleted ? 'Suspended' : 'Active',
-        joinedOn: note.createdAt ? new Date(note.createdAt).toLocaleDateString() : note.joinedOn,
-        image: note?.image ? note?.image?.startsWith('http')
-            ? note?.image
-            : `${import.meta.env.VITE_BASE_URL}${note?.image}` : user_icon
-    }));
+    const Notes = rawNotes.map((note, index) => {
+        const firstUpload = note.uploadImages?.[0]?.url;
+        const mainImg = firstUpload || note.image;
+
+        return {
+            ...note,
+            sno: (currentPage - 1) * itemsPerPage + index + 1,
+            status: note.isDeleted ? 'Suspended' : 'Active',
+            joinedOn: note.createdAt ? new Date(note.createdAt).toLocaleDateString() : note.joinedOn,
+            image: mainImg ? (mainImg.startsWith('http') ? mainImg : `${import.meta.env.VITE_BASE_URL}${mainImg}`) : user_icon
+        };
+    });
 
     const columns = [
         { label: '#', accessor: 'sno' },

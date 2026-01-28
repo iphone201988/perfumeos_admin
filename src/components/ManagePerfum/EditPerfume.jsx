@@ -179,30 +179,30 @@ const EditPerfume = () => {
       const existingImages = [];
 
       // Add primary image if exists
-      if (perfume.image) {
-        existingImages.push({
-          url: perfume.image,
-          file: null,
-          id: `existing-${Date.now()}-0`,
-          isExisting: true
-        });
-      }
+      // if (perfume.image) {
+      //   existingImages.push({
+      //     url: perfume.image,
+      //     file: null,
+      //     id: `existing-${Date.now()}-0`,
+      //     isExisting: true
+      //   });
+      // }
 
       // Add additional images if exist
-      if (perfume.images && perfume.images.length > 0) {
-        perfume.images
-          .filter(img => img !== perfume.image) // Avoid adding the primary image again
-          .forEach((img, idx) => {
-            existingImages.push({
-              url: img,
-              file: null,
-              id: `existing-${idx + 1}`,  // Use timestamp and index
-              isExisting: true
-            });
-          });
-      }
+      // if (perfume.images && perfume.images.length > 0) {
+      //   perfume.images
+      //     .filter(img => img !== perfume.image) // Avoid adding the primary image again
+      //     .forEach((img, idx) => {
+      //       existingImages.push({
+      //         url: img,
+      //         file: null,
+      //         id: `existing-${idx + 1}`,  // Use timestamp and index
+      //         isExisting: true
+      //       });
+      //     });
+      // }
 
-      setImages(existingImages);
+      // setImages(existingImages);
 
       // Convert perfumer IDs to react-select format
       const perfumerIdList = Array.isArray(perfume.perfumers)
