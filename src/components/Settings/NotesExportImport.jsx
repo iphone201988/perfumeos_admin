@@ -210,6 +210,10 @@ const NotesExportImport = () => {
               thumbnails: deserializeComplexData(trimmedValues[7]),
               createdAt: trimmedValues[8] || '',
               _id: trimmedValues[9] || '',
+              simplifiedNote: trimmedValues[10] || '',
+              simplifiedFamily: trimmedValues[11] || '',
+              scentCategory: trimmedValues[12] || '',
+              description: trimmedValues[13] || '',
             };
           } catch (error) {
             console.error(`Error parsing row ${index + 2}:`, error);
@@ -254,7 +258,8 @@ const NotesExportImport = () => {
   const handleDownloadSample = () => {
     const headers = [
       'Name', 'Image', 'Background URL', 'Group', 'Odor Profile',
-      'Scientific Name', 'Other Names', 'Thumbnails', 'Created At', '_id'
+      'Scientific Name', 'Other Names', 'Thumbnails', 'Created At', '_id', 'Simplified Note',
+      'Simplified Family', 'Scent Profile Category', 'Updated Description'
     ];
 
     const sampleData = [
@@ -262,13 +267,15 @@ const NotesExportImport = () => {
         'Lemon', 'https:/abc/images/lemon.jpg', 'https:/abc/bg/lemon.jpg', 'Citrus', 'Fresh, Zesty, Bright',
         'Citrus limon', 'Citron|Lime', 'http://abc/thumb/lemon1.jpg|/http://abc/thumb/lemon2.jpg',
         new Date().toISOString(),
-        "132456879865464654654654"
+        "132456879865464654654654",
+        "floral"
       ],
       [
         'Rose', 'https:/abc/images/rose.jpg', 'https:/abc/bg/rose.jpg', 'Floral', 'Sweet, Romantic, Soft',
         'Rosa damascena', 'Damask Rose|Bulgarian Rose', 'http://abc/thumb/rose1.jpg|/http://abc/thumb/rose2.jpg',
         new Date().toISOString(),
-        "13245687986546465aa654654"
+        "13245687986546465aa654654",
+        "fresh"
       ]
     ];
 
@@ -310,7 +317,7 @@ const NotesExportImport = () => {
         setExportProgress={setExportProgress}
         exportBatchMutation={exportNotesBatch}
         dataType="notes"
-        headers={['Name', 'Image', 'Background URL', 'Group', 'Odor Profile', 'Scientific Name', 'Other Names', 'Thumbnails', 'Created At', '_id']}
+        headers={['Name', 'Image', 'Background URL', 'Group', 'Odor Profile', 'Scientific Name', 'Other Names', 'Thumbnails', 'Created At', '_id', 'Simplified Note', 'Simplified Family', 'Scent Profile Category', 'Description']}
         formatRowData={(note) => [
           escapeCSV(note.name),
           escapeCSV(note.image),
@@ -322,6 +329,10 @@ const NotesExportImport = () => {
           escapeCSV(serializeComplexData(note.thumbnails)),
           escapeCSV(note.createdAt),
           escapeCSV(note._id),
+          escapeCSV(note.simplifiedNote),
+          escapeCSV(note.simplifiedFamily),
+          escapeCSV(note.scentCategory),
+          escapeCSV(note.description),
         ]}
       />
 

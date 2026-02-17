@@ -10,6 +10,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
   const [image, setImage] = useState(null)
   const [preview, setPreview] = useState(null)
   const [group, setGroup] = useState('')
+  const [scentCategory, setScentCategory] = useState('')
   const [scientificName, setScientificName] = useState('')
   const [otherNames, setOtherNames] = useState([''])
 
@@ -20,7 +21,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
   // Validation rules
   const validateField = (fieldName, value) => {
     let error = ''
-    
+
     switch (fieldName) {
       case 'name':
         if (!value || value.trim() === '') {
@@ -31,7 +32,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
           error = 'Note name must be less than 100 characters'
         }
         break
-      
+
       case 'odorProfile':
         if (!value || value.trim() === '') {
         } else if (value.trim().length < 10) {
@@ -40,7 +41,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
           error = 'Odor profile must be less than 500 characters'
         }
         break
-      
+
       case 'group':
         if (!value || value.trim() === '') {
         } else if (value.trim().length < 2) {
@@ -49,7 +50,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
           error = 'Group must be less than 50 characters'
         }
         break
-      
+
       case 'scientificName':
         if (!value || value.trim() === '') {
         } else if (value.trim().length < 2) {
@@ -58,53 +59,53 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
           error = 'Scientific name must be less than 100 characters'
         }
         break
-      
+
       case 'otherNames':
         // Validate other names array
         const validNames = value.filter(n => n && n.trim() !== '')
-        const duplicateNames = validNames.filter((name, index) => 
+        const duplicateNames = validNames.filter((name, index) =>
           validNames.indexOf(name) !== index
         )
-        
+
         if (duplicateNames.length > 0) {
           // error = 'Other names must be unique'
         }
-        
+
         // Check individual name lengths
         const longNames = validNames.filter(name => name.trim().length > 50)
         if (longNames.length > 0) {
           error = 'Each name must be less than 50 characters'
         }
         break
-      
+
       default:
         break
     }
-    
+
     return error
   }
 
   // Validate entire form
   const validateForm = () => {
     const newErrors = {}
-    
+
     // Validate basic fields
     newErrors.name = validateField('name', name)
     newErrors.odorProfile = validateField('odorProfile', odorProfile)
     newErrors.group = validateField('group', group)
     newErrors.scientificName = validateField('scientificName', scientificName)
     newErrors.otherNames = validateField('otherNames', otherNames)
-    
+
     // Image validation (only required for new notes)
     if (!initialData && !image) {
       newErrors.image = 'Please select an image'
     }
-    
+
     // Remove empty errors
     Object.keys(newErrors).forEach(key => {
       if (!newErrors[key]) delete newErrors[key]
     })
-    
+
     return newErrors
   }
 
@@ -124,25 +125,28 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
       case 'scientificName':
         setScientificName(value)
         break
+      case 'scentCategory':
+        setScentCategory(value)
+        break
       default:
         break
     }
-    
+
     // Mark as touched
     setTouched(prev => ({ ...prev, [fieldName]: true }))
-    
+
     // Validate and update errors
     const error = validateField(fieldName, value)
-    setErrors(prev => ({ 
-      ...prev, 
-      [fieldName]: error 
+    setErrors(prev => ({
+      ...prev,
+      [fieldName]: error
     }))
   }
 
   // Handle blur events
   const handleBlur = (fieldName) => {
     setTouched(prev => ({ ...prev, [fieldName]: true }))
-    
+
     let value
     switch (fieldName) {
       case 'name':
@@ -157,14 +161,17 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
       case 'scientificName':
         value = scientificName
         break
+      case 'scentCategory':
+        value = scentCategory
+        break
       default:
         return
     }
-    
+
     const error = validateField(fieldName, value)
-    setErrors(prev => ({ 
-      ...prev, 
-      [fieldName]: error 
+    setErrors(prev => ({
+      ...prev,
+      [fieldName]: error
     }))
   }
 
@@ -174,6 +181,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
       setName(initialData.name || '')
       setOdorProfile(initialData.odorProfile || '')
       setGroup(initialData.group || '')
+      setScentCategory(initialData.scentCategory || '')
       setScientificName(initialData.scientificName || '')
       setOtherNames(initialData.otherNames && initialData.otherNames.length > 0 ? initialData.otherNames : [''])
 
@@ -190,10 +198,11 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
       setPreview(null)
       setOdorProfile('')
       setGroup('')
+      setScentCategory('')
       setScientificName('')
       setOtherNames([''])
     }
-    
+
     // Reset validation states
     setErrors({})
     setTouched({})
@@ -226,12 +235,12 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
     const updatedNames = [...otherNames]
     updatedNames[index] = value
     setOtherNames(updatedNames)
-    
+
     // Validate other names
     const error = validateField('otherNames', updatedNames)
-    setErrors(prev => ({ 
-      ...prev, 
-      otherNames: error 
+    setErrors(prev => ({
+      ...prev,
+      otherNames: error
     }))
     setTouched(prev => ({ ...prev, otherNames: true }))
   }
@@ -244,12 +253,12 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
     if (otherNames.length > 1) {
       const updatedNames = otherNames.filter((_, i) => i !== index)
       setOtherNames(updatedNames)
-      
+
       // Re-validate other names
       const error = validateField('otherNames', updatedNames)
-      setErrors(prev => ({ 
-        ...prev, 
-        otherNames: error 
+      setErrors(prev => ({
+        ...prev,
+        otherNames: error
       }))
     }
   }
@@ -261,28 +270,28 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
       // Validate file type
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
       if (!allowedTypes.includes(file.type)) {
-        setErrors(prev => ({ 
-          ...prev, 
-          image: 'Please select a valid image file (JPG, PNG, GIF, WebP)' 
+        setErrors(prev => ({
+          ...prev,
+          image: 'Please select a valid image file (JPG, PNG, GIF, WebP)'
         }))
         return
       }
-      
+
       // Validate file size (5MB limit)
       const maxSize = 5 * 1024 * 1024
       if (file.size > maxSize) {
-        setErrors(prev => ({ 
-          ...prev, 
-          image: 'Image size must be less than 5MB' 
+        setErrors(prev => ({
+          ...prev,
+          image: 'Image size must be less than 5MB'
         }))
         return
       }
-      
+
       setImage(file)
       setPreview(URL.createObjectURL(file))
-      setErrors(prev => ({ 
-        ...prev, 
-        image: '' 
+      setErrors(prev => ({
+        ...prev,
+        image: ''
       }))
       setTouched(prev => ({ ...prev, image: true }))
     }
@@ -295,7 +304,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
     // Validate entire form
     const formErrors = validateForm()
     setErrors(formErrors)
-    
+
     // Mark all fields as touched
     setTouched({
       name: true,
@@ -317,6 +326,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
     formData.append('name', name.trim())
     formData.append('odorProfile', odorProfile.trim())
     formData.append('group', group.trim())
+    formData.append('scentCategory', scentCategory.trim())
     formData.append('scientificName', scientificName.trim())
 
     // Add otherNames array - filter out empty values
@@ -499,6 +509,26 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
             />
             {errors.group && touched.group && (
               <span className="text-red-500 text-xs mt-1">{errors.group}</span>
+            )}
+          </label>
+
+          <label className='flex flex-col w-full'>
+            <span className='text-[#7C7C7C] text-[14px] mb-1'>
+              Scent Category
+            </span>
+            <input
+              className={`
+                border rounded-2xl py-[14px] px-[18px]
+                ${errors.scentCategory && touched.scentCategory ? 'border-red-500' : 'border-[#EEEEEE]'}
+              `}
+              type="text"
+              placeholder='Enter Scent Category name'
+              value={scentCategory}
+              onChange={(e) => handleFieldChange('scentCategory', e.target.value)}
+              onBlur={() => handleBlur('scentCategory')}
+            />
+            {errors.scentCategory && touched.scentCategory && (
+              <span className="text-red-500 text-xs mt-1">{errors.scentCategory}</span>
             )}
           </label>
 

@@ -412,14 +412,14 @@ const ManageReviews = () => {
                             </div>
 
                             {/* Card Content Preview */}
-                            <div className="flex-1 overflow-hidden min-h-0 relative mb-4">
+                            <div className="flex-1 overflow-hidden min-h-0 relative mb-1">
                                 <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
                                     {review.review || "No content provided."}
                                 </p>
                             </div>
 
                             {/* Card Actions */}
-                            <div className="flex items-center justify-between pt-3 border-t border-gray-100 mt-auto">
+                            <div className="flex items-center justify-between pt-3 border-t border-gray-100 ">
                                 <button
                                     onClick={() => handleView(review)}
                                     className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-600 hover:text-[#352AA4] hover:bg-[#352AA4]/5 rounded-lg transition-colors group/btn"

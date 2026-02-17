@@ -180,7 +180,7 @@ const PerfumeDetails = () => {
                         onClick={() => setIsFullscreen(true)}
                       />
                       {/* Status Badge */}
-                      <div className={`absolute top-4 left-4 ${getStatusColor(allImages[selectedImageIndex]?.status)} text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10`}>
+                      <div className={`absolute top-4 left-4 ${getStatusColor(allImages[selectedImageIndex]?.status)} text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10 capitalize`}>
                         {allImages[selectedImageIndex]?.status || 'Main'}
                       </div>
 
@@ -200,7 +200,7 @@ const PerfumeDetails = () => {
                         </button>
                       )}
                       {/* Status Badge */}
-                      <div className={`absolute top-4 left-4 ${getStatusColor(allImages[selectedImageIndex]?.status)} text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10`}>
+                      <div className={`absolute top-4 left-4 ${getStatusColor(allImages[selectedImageIndex]?.status)} text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10 capitalize`}>
                         {allImages[selectedImageIndex]?.status || 'Main'}
                       </div>
 
@@ -261,15 +261,15 @@ const PerfumeDetails = () => {
 
                 {/* Thumbnail Gallery */}
                 {allImages.length > 1 && (
-                  <div className="mt-4 flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 max-w-[320px]">
+                  <div className="mt-4 flex gap-2 overflow-x-auto p-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 max-w-[320px]">
                     {allImages.map((imageObj, index) => (
                       <button
                         key={index}
                         onClick={() => setSelectedImageIndex(index)}
                         className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-300 hover:scale-110 hover:shadow-md relative ${selectedImageIndex === index
-                          ? 'border-[#352AA4] ring-2 ring-[#352AA4] ring-offset-2'
+                          ? 'border-[#352AA4] ring-1 ring-[#352AA4]'
                           : 'border-gray-200 hover:border-[#352AA4]/50'
-                          }`}
+                          } capitalize`}
                       >
                         <img
                           src={getImageUrl(imageObj.url)}
@@ -572,7 +572,7 @@ const PerfumeDetails = () => {
                 className="max-w-full max-h-[85vh] object-contain drop-shadow-2xl"
               />
               {/* Status Badge Fullscreen */}
-              <div className={`absolute top-4 left-4 ${getStatusColor(allImages[selectedImageIndex]?.status)} text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10`}>
+              <div className={`absolute top-4 left-4 ${getStatusColor(allImages[selectedImageIndex]?.status)} text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10 capitalize`}>
                 {allImages[selectedImageIndex]?.status || 'Main'}
               </div>
               {/* Like Count Badge Fullscreen */}
@@ -624,7 +624,7 @@ const PerfumeDetails = () => {
                       e.stopPropagation();
                       setSelectedImageIndex(index);
                     }}
-                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-300 hover:scale-110 relative ${selectedImageIndex === index
+                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-300 hover:scale-110 relative capitalize ${selectedImageIndex === index
                       ? 'border-white ring-2 ring-white'
                       : 'border-white/30 hover:border-white/70'
                       }`}

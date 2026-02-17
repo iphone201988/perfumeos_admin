@@ -4,6 +4,8 @@ import Table from '../components/Table/Table';
 import Pagination from '../components/Table/Pagination';
 import view_icon from '../assets/icons/view-icon.svg';
 import user_icon from '../assets/user-img.png';
+import edit_icon from '../assets/icons/edit-icon.svg';
+import delete_icon from '../assets/icons/delete-icon.svg';
 import {
     useGetAllNotesQuery,
     useAddNoteMutation,
@@ -82,9 +84,8 @@ const ManageNotes = () => {
             accessor: 'name',
             type: 'imageWithName'
         },
-        { label: 'Scientific Name', accessor: 'scientificName' },
         { label: 'Group', accessor: 'group' },
-        { label: 'Created on', accessor: 'joinedOn' },
+        { label: 'Category', accessor: 'scentCategory' },
     ];
 
     const handleSearch = (e) => {
@@ -189,6 +190,7 @@ const ManageNotes = () => {
                     columns={columns}
                     data={Notes}
                     renderActions={(row) => (
+                        <div className="flex gap-2">
                         <button
                             className="ml-auto cursor-pointer p-2 hover:bg-gray-100 rounded"
                             title={`View ${row.name}`}
@@ -199,6 +201,27 @@ const ManageNotes = () => {
                         >
                             <img src={view_icon} alt="View" className="w-5 h-5" />
                         </button>
+                        <button
+                            className="ml-auto cursor-pointer p-2 hover:bg-gray-100 rounded"
+                            title={`Edit ${row.name}`}
+                            onClick={() => {
+                                setSelectedNotes(row);
+                                setEditNotesPopup(true);
+                            }}
+                        >
+                            <img src={edit_icon} alt="Edit" className="w-5 h-5" />
+                        </button>
+                        <button
+                            className="ml-auto cursor-pointer p-2 hover:bg-gray-100 rounded"
+                            title={`Delete ${row.name}`}
+                            onClick={() => {
+                                setSelectedNotes(row);
+                                setDeleteNotesPopup(true);
+                            }}
+                        >
+                            <img src={delete_icon} alt="Delete" className="w-5 h-5" />
+                        </button>
+                        </div>
                     )}
                 />
 

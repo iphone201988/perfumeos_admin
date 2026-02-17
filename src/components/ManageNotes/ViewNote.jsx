@@ -145,9 +145,9 @@ const ViewNote = ({ open, onClose, noteData = null, onEdit, onRemove }) => {
 
                                         {/* Status Badge */}
                                         <div className={`absolute top-4 left-4 ${currentImage.status === 'approved' ? 'bg-green-500' :
-                                                currentImage.status === 'pending' ? 'bg-yellow-500' :
-                                                    currentImage.status === 'rejected' ? 'bg-red-500' :
-                                                        'bg-[#352AA4]'
+                                            currentImage.status === 'pending' ? 'bg-yellow-500' :
+                                                currentImage.status === 'rejected' ? 'bg-red-500' :
+                                                    'bg-[#352AA4]'
                                             } text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10 capitalize`}>
                                             {currentImage.status || 'Main'}
                                         </div>
@@ -247,6 +247,14 @@ const ViewNote = ({ open, onClose, noteData = null, onEdit, onRemove }) => {
                         </div>
                     </div>
 
+                    {/* Scent Category */}
+                    <div>
+                        <h6 className="text-[14px] font-medium text-[#7C7C7C] mb-2">Scent Category</h6>
+                        <div className="border border-[#EEEEEE] rounded-2xl py-[14px] px-[18px] bg-gray-50">
+                            <span className="text-[#333333] font-medium capitalize">{noteData.scentCategory ?? 'N/A'}</span>
+                        </div>
+                    </div>
+
                     {/* odor Profile */}
                     <div className="md:col-span-2">
                         <h6 className="text-[14px] font-medium text-[#7C7C7C] mb-2">Odor Profile</h6>
@@ -323,7 +331,7 @@ const ViewNote = ({ open, onClose, noteData = null, onEdit, onRemove }) => {
                     message="Are you sure you want to delete this image? This cannot be undone."
                 />
             </div>
-        </div>
+        </div >
     )
 }
 
