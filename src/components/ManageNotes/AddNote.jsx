@@ -516,7 +516,7 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
             <span className='text-[#7C7C7C] text-[14px] mb-1'>
               Scent Category
             </span>
-            <input
+            {/* <input
               className={`
                 border rounded-2xl py-[14px] px-[18px]
                 ${errors.scentCategory && touched.scentCategory ? 'border-red-500' : 'border-[#EEEEEE]'}
@@ -529,7 +529,23 @@ const AddNote = ({ open, onClose, onSubmit, initialData = null }) => {
             />
             {errors.scentCategory && touched.scentCategory && (
               <span className="text-red-500 text-xs mt-1">{errors.scentCategory}</span>
-            )}
+            )} */}
+            <select
+              className={`
+                border rounded-2xl py-[14px] px-[18px]
+                ${errors.scentCategory && touched.scentCategory ? 'border-red-500' : 'border-[#EEEEEE]'}
+              `}
+              value={scentCategory}
+              onChange={(e) => handleFieldChange('scentCategory', e.target.value)}
+              onBlur={() => handleBlur('scentCategory')}
+            >
+              <option value="">Select Scent Category</option>
+              <option value="Fresh Citrus">Fresh Citrus</option>
+              <option value="Aromatic/Herbal">Aromatic/Herbal</option>
+              <option value="Floral">Floral</option>
+              <option value="Woody">Woody</option>
+              <option value="Amber/Oriental">Amber/Oriental</option>
+            </select>
           </label>
 
           <label className='flex flex-col w-full'>

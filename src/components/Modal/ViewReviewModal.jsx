@@ -52,7 +52,7 @@ const ViewReviewModal = ({ isOpen, onClose, review }) => {
                     <div>
                         <div className="flex justify-between items-start mb-4">
                             <div>
-                                <h3 className="text-2xl font-bold text-gray-800 mb-2">{review.reviewTitle}</h3>
+                                {/* <h3 className="text-2xl font-bold text-gray-800 mb-2">{review.reviewTitle}</h3> */}
                                 <p className="text-[#352AA4] font-medium text-lg flex items-center gap-2">
                                     <span className="opacity-75">Review for:</span>
                                     {review.perfumeName}

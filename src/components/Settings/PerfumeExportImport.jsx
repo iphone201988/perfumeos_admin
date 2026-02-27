@@ -27,7 +27,8 @@ const PerfumeExportImport = () => {
   const csvHeaders = [
     'Name', 'Brand', 'Brand Id', 'Image', 'Concentration', 'Description', 'Year',
     'Intended For', 'Main Accords', 'Perfumers',
-    'Top Notes', 'Middle Notes', 'Base Notes', 'Other Notes', 'Created At', '_id', 'Images'
+    'Top Update Notes', 'Middle Update Notes', 'Base Update Notes', 'Other Update Notes', 'Created At', '_id', 'Images',
+
   ];
 
   // Format perfume data for CSV row
@@ -225,7 +226,7 @@ const PerfumeExportImport = () => {
               },
               createdAt: trimmedValues[14],
               _id: trimmedValues[15],
-              images: deserializeComplexData(trimmedValues[16]) || []
+              images: deserializeComplexData(trimmedValues[16]) || [],
             };
           } catch (error) {
             console.error(`Error parsing row ${index + 2}:`, error);

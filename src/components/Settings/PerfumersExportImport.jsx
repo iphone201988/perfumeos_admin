@@ -51,7 +51,8 @@ const PerfumersExportImport = () => {
               escapeCSV(perfumer.smallImage),
               escapeCSV(perfumer.description),
               escapeCSV(perfumer.url),
-              escapeCSV(perfumer.createdAt)
+              escapeCSV(perfumer.createdAt),
+              escapeCSV(perfumer._id),
             ];
             csvRows.push(row.join(','));
           });
@@ -115,7 +116,8 @@ const PerfumersExportImport = () => {
               escapeCSV(perfumer.smallImage),
               escapeCSV(perfumer.description),
               escapeCSV(perfumer.url),
-              escapeCSV(perfumer.createdAt)
+              escapeCSV(perfumer.createdAt),
+              escapeCSV(perfumer._id)
             ];
             csvRows.push(row.join(','));
           });

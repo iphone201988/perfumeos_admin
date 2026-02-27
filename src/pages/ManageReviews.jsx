@@ -364,9 +364,9 @@ const ManageReviews = () => {
 
                             {/* Review Title & Perfume */}
                             <div className="mb-3">
-                                <h3 className="text-base font-bold text-[#352AA4] mb-1 truncate leading-tight group-hover:text-[#2a2185] transition-colors">{review.reviewTitle}</h3>
+                                {/* <h3 className="text-base font-bold text-[#352AA4] mb-1 truncate leading-tight group-hover:text-[#2a2185] transition-colors">{review.reviewTitle}</h3> */}
                                 <p className="text-xs text-gray-500 font-medium flex items-center gap-1 truncate">
-                                    <span className="opacity-70">on</span>
+                                    <span className="opacity-70 text-[#352AA4]">Review for:</span>
                                     <span className="text-gray-700 font-semibold truncate">{review.perfumeName}</span>
                                 </p>
                             </div>

@@ -208,13 +208,13 @@ const EditReview = () => {
                         <div className="bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
                             <h3 className="text-[18px] font-bold text-[#352AA4] mb-4">Review Content</h3>
                             <div className="space-y-4">
-                                <FormField
+                                {/* <FormField
                                     label="Title"
                                     name="title"
                                     value={form.title}
                                     onChange={handleInputChange}
                                     placeholder="Review Title"
-                                />
+                                /> */}
                                 <FormField
                                     label="Review"
                                     name="review"

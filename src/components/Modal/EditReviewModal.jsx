@@ -117,15 +117,15 @@ const EditReviewModal = ({ isOpen, onClose, reviewData }) => {
                             {/* Review Content Section */}
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold text-gray-800">Content</h3>
-                                <div className="flex gap-4">
-                                    <FormField
+                                <div className="flex gap-4 w-[100px]">
+                                    {/* <FormField
                                         label="Title"
                                         name="title"
                                         value={form.title}
                                         onChange={handleInputChange}
                                         placeholder="Review Title"
                                         className="flex-1"
-                                    />
+                                    /> */}
 
                                     <FormField
                                         label="Rating (0-5)"
