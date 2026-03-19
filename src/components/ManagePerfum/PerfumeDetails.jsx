@@ -367,7 +367,7 @@ const PerfumeDetails = () => {
                             <span className="text-white text-xs font-bold">{layer.charAt(0).toUpperCase()}</span>
                           </div>
                           <h4 className="text-[#352AA4] text-[18px] font-semibold capitalize">
-                            {layer} notes
+                            {layer === "notes" ? "Other notes" : `${layer} notes`}
                           </h4>
                         </div>
 
