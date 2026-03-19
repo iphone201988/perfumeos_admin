@@ -349,7 +349,7 @@ const PerfumeDetails = () => {
           </div>
 
           {/* Fragrance Pyramid Section */}
-          {(perfume?.notes?.base?.length > 0 || perfume?.notes?.middle?.length > 0 || perfume?.notes?.top?.length > 0 || perfume?.notes?.note?.length > 0) && (
+          {(perfume?.notes?.base?.length > 0 || perfume?.notes?.middle?.length > 0 || perfume?.notes?.top?.length > 0 || perfume?.notes?.notes?.length > 0) && (
             <div className="mt-[40px] bg-white/80 rounded-2xl p-[24px] shadow-sm border border-[#352AA4]/10">
               <h3 className="text-[24px] font-bold text-[#352AA4] mb-[24px] flex items-center gap-2">
                 <span className="w-2 h-8 bg-gradient-to-b from-[#352AA4] to-[#5c4ec9] rounded-full"></span>
@@ -357,7 +357,7 @@ const PerfumeDetails = () => {
               </h3>
 
               <div className="space-y-[24px]">
-                {["top", "middle", "base", "note"].map((layer) => {
+                {["top", "middle", "base", "notes"].map((layer) => {
                   const notes = perfume.notes?.[layer];
                   if (notes && notes.length > 0) {
                     return (
