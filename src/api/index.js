@@ -11,6 +11,7 @@ import "./endpoints/levelQuiz";
 import "./endpoints/brands";
 import "./endpoints/reviews";
 import "./endpoints/images";
+import "./endpoints/entries";
 
 export { apis };
 
@@ -26,3 +27,4 @@ export * from "./endpoints/levelQuiz";
 export * from "./endpoints/brands";
 export * from "./endpoints/reviews";
 export * from "./endpoints/images";
+export * from "./endpoints/entries";

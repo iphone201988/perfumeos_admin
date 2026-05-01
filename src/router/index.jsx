@@ -29,6 +29,7 @@ import BrandDetails from "../components/ManageBrand/BrandDetails";
 import ManageReviews from "../pages/ManageReviews";
 import EditReview from "../components/ManageReview/EditReview";
 import ManageImages from "../pages/ManageImages";
+import ManageEntries from "../pages/ManageEntries";
 
 const router = createBrowserRouter([
     {
@@ -141,17 +142,21 @@ const router = createBrowserRouter([
                 path: '/feedback',
                 element: <ManageFeedback />
             },
-            {
-                path: '/reviews',
-                element: <ManageReviews />
-            },
-            {
-                path: '/reviews/:id/edit',
-                element: <EditReview />
-            },
+            // {
+            //     path: '/reviews',
+            //     element: <ManageReviews />
+            // },
+            // {
+            //     path: '/reviews/:id/edit',
+            //     element: <EditReview />
+            // },
             {
                 path: '/images',
                 element: <ManageImages />
+            },
+            {
+                path: '/entries',
+                element: <ManageEntries />
             }
         ],
     },
