@@ -19,6 +19,8 @@ import feedback_icon from '../../assets/icons/feedback-icon.svg';
 import review_icon from '../../assets/icons/review-icon.svg';
 import brand_icon from '../../assets/icons/brand-icon.svg';
 import addpic_icon from '../../assets/icons/addpic-icon.svg';
+import perfume_reported_icon from '../../assets/icons/report-icon.svg';
+import images_icon from '../../assets/icons/images-icon.svg';
 
 const SideBar = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
   const location = useLocation();
@@ -41,8 +43,9 @@ const SideBar = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     { to: '/perfumes', label: 'Manage Perfumes', icon: perfume_icon },
     { to: '/brands', label: 'Manage Brands', icon: brand_icon },
     // { to: '/reviews', label: 'Manage Reviews', icon: review_icon },
-    { to: '/images', label: 'Manage Images', icon: addpic_icon },
+    { to: '/images', label: 'Manage Images', icon: images_icon },
     { to: '/entries', label: 'Manage Entries', icon:  review_icon  },
+    { to: '/scan-reported-perfumes', label: 'Scan Reported', icon: perfume_reported_icon },
     { to: '/notes', label: 'Manage Notes', icon: note_icon },
     { to: '/perfumers', label: 'Manage Perfumers', icon: perfumer_icon },
     { to: '/quiz', label: 'Manage Play With Friend Quiz', icon: quiz_icon },

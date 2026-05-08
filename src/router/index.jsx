@@ -30,6 +30,7 @@ import ManageReviews from "../pages/ManageReviews";
 import EditReview from "../components/ManageReview/EditReview";
 import ManageImages from "../pages/ManageImages";
 import ManageEntries from "../pages/ManageEntries";
+import ManageScanReportPerfume from "../pages/ManageScanReportPerfume";
 
 const router = createBrowserRouter([
     {
@@ -157,6 +158,10 @@ const router = createBrowserRouter([
             {
                 path: '/entries',
                 element: <ManageEntries />
+            },
+            {
+                path: '/scan-reported-perfumes',
+                element: <ManageScanReportPerfume />
             }
         ],
     },

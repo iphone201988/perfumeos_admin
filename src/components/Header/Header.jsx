@@ -66,6 +66,7 @@ const Header = ({ isMobile, mobileMenuOpen, setMobileMenuOpen }) => {
     if (path.startsWith('/reviews')) return 'Manage Reviews';
     if (path.match(/^\/reviews\/[^/]+\/edit$/)) return 'Edit Review';
     if (path.startsWith('/entries')) return 'Manage Entries';
+    if (path.startsWith('/scan-reported-perfumes')) return 'Scan Reported';
 
     // Default fallback
     return 'Dashboard';

@@ -541,7 +541,6 @@ const EditPerfume = () => {
       transition: 'all 0.2s ease',
     }),
   });
-
   // Early return AFTER all hooks have been called
   if (isLoading) {
     return <Loader message="Getting perfume data" />;

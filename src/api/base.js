@@ -24,6 +24,7 @@ export const Tags = {
     REVIEWBYID: "REVIEWBYID",
     IMAGE: "IMAGE",
     ENTRY: "ENTRY",
+    SCAN_REPORT: "SCAN_REPORT",
 };
 
 export const apis = createApi({
@@ -60,6 +61,7 @@ export const apis = createApi({
         Tags.REVIEWBYID,
         Tags.IMAGE,
         Tags.ENTRY,
+        Tags.SCAN_REPORT,
     ],
     endpoints: () => ({}),
 });

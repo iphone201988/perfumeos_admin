@@ -29,7 +29,7 @@ const Table = ({ columns, data, renderActions }) => {
     if (column.type === 'image') {
       return (
         <div className="flex items-center gap-3">
-          <div className="relative group">
+          <div className="relative group flex-shrink-0">
             <img
               src={row[accessor] || user_icon}
               alt={row.name || 'User'}
@@ -49,7 +49,7 @@ const Table = ({ columns, data, renderActions }) => {
     if (column.type === 'imageWithName') {
       return (
         <div className="flex items-center gap-3">
-          <div className="relative group">
+          <div className="relative group flex-shrink-0">
             <img
               src={row.image || row.avatar || user_icon}
               alt={row.name || 'User'}
@@ -60,7 +60,7 @@ const Table = ({ columns, data, renderActions }) => {
             />
             <div className="absolute inset-0 rounded-full bg-[#352AA4]/0 group-hover:bg-[#352AA4]/10 transition-all duration-300"></div>
           </div>
-          <span className="font-medium text-gray-800">{row[accessor]}</span>
+          <span className="font-medium text-gray-800 capitalize break-words line-clamp-3">{row[accessor]}</span>
         </div>
       );
     }

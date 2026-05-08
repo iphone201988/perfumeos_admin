@@ -12,6 +12,7 @@ import "./endpoints/brands";
 import "./endpoints/reviews";
 import "./endpoints/images";
 import "./endpoints/entries";
+import "./endpoints/scanReports";
 
 export { apis };
 
@@ -28,3 +29,4 @@ export * from "./endpoints/brands";
 export * from "./endpoints/reviews";
 export * from "./endpoints/images";
 export * from "./endpoints/entries";
+export * from "./endpoints/scanReports";

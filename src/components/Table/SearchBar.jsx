@@ -3,9 +3,9 @@ import search_icon from '../../assets/icons/search-icon.svg';
 const defaultOptions = [{ label: "Newest", value: "createdAt_desc" }, { label: "Oldest", value: "createdAt_asc" }, { label: "A-Z", value: "name_asc" }, { label: "Z-A", value: "name_desc" }]
 const SearchBar = ({ searchTerm, onSearchChange, sortValue, onSortChange, placeholder = "Search users...", loader, options = defaultOptions }) => {
   return (
-    <div className="flex gap-[16px] flex-wrap max-sm:gap-[8px] max-sm:w-full">
+    <div className="flex flex-col sm:flex-row gap-3 w-full">
       {/* Search Input */}
-      <div className="flex bg-[#352AA4] px-[10px] py-[8px] rounded-[20px] gap-[8px] items-center max-sm:flex-1 max-sm:min-w-0">
+      <div className="flex bg-[#352AA4] px-[10px] py-[8px] rounded-[20px] gap-[8px] items-center max-sm:flex-1 max-sm:min-w-0" >
         {loader ? (
           //spin loader
           <div className="w-4 h-4 bg-gray-300 rounded flex-shrink-0 animate-spin"></div>
