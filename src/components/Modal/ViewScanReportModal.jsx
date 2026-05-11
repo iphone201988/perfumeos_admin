@@ -11,7 +11,7 @@ const ViewScanReportModal = ({
     if (!isOpen || !reportData) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 pt-12">
             <div className="bg-white rounded-[24px] shadow-2xl max-w-3xl w-full max-h-[70vh] overflow-hidden flex flex-col animate-fade-in">
                 {/* Modal Header */}
                 <div className="bg-gradient-to-r from-[#352AA4] to-[#5c4ec9] p-6 shrink-0 relative">

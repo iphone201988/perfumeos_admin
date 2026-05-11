@@ -655,14 +655,18 @@ const UserDetails = () => {
                       </div>
                     ) : (
                       <div className="py-[14px] px-[18px] bg-gray-50 border border-[#EEEEEE] rounded-xl">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="font-medium">{(formData.perfumeStrength || 0).toFixed(2)}</span>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-xs text-gray-500">Light</span>
+                          <span className="text-xs text-gray-500">Strong</span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
+
+                        <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                           <div
-                            className="bg-gradient-to-r from-[#352AA4] to-[#5c4ec9] h-2 rounded-full transition-all"
-                            style={{ width: `${(formData.perfumeStrength || 0) * 100}%` }}
-                          ></div>
+                            className="bg-gradient-to-r from-[#352AA4] to-[#5c4ec9] h-2 rounded-full transition-all duration-300"
+                            style={{
+                              width: `${(formData.perfumeStrength || 0) * 100}%`,
+                            }}
+                          />
                         </div>
                       </div>
                     )}
